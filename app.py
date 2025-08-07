@@ -40,7 +40,7 @@ def weather_prediction():
             return render_template('result.html', 
                                  result=result, 
                                  module='Weather Prediction',
-                                 back_url=url_for('weather_prediction'))
+                                 back_url='weather-prediction')
         except Exception as e:
             logging.error(f"Weather prediction error: {str(e)}")
             flash(f'Error getting weather data: {str(e)}', 'error')
@@ -68,7 +68,7 @@ def symptom_checker_route():
             return render_template('result.html', 
                                  result=result, 
                                  module='Symptom Checker',
-                                 back_url=url_for('symptom_checker_route'))
+                                 back_url='symptom-checker')
         except Exception as e:
             logging.error(f"Symptom checker error: {str(e)}")
             flash(f'Error processing symptoms: {str(e)}', 'error')
@@ -90,7 +90,7 @@ def local_alert_route():
             return render_template('result.html', 
                                  result=result, 
                                  module='Local Alert',
-                                 back_url=url_for('local_alert_route'))
+                                 back_url='local-alert')
         except Exception as e:
             logging.error(f"Local alert error: {str(e)}")
             flash(f'Error checking local alerts: {str(e)}', 'error')
@@ -120,7 +120,7 @@ def risk_calculator_route():
             return render_template('result.html', 
                                  result=result, 
                                  module='Risk Calculator',
-                                 back_url=url_for('risk_calculator_route'))
+                                 back_url='risk-calculator')
         except Exception as e:
             logging.error(f"Risk calculator error: {str(e)}")
             flash(f'Error calculating risk: {str(e)}', 'error')
@@ -134,11 +134,22 @@ def visualization():
     try:
         # Generate visualization data
         charts_data = visualizer.generate_charts()
-        return render_template('visualization.html', charts_data=charts_data)
+        map_data = visualizer.get_map_data()
+        return render_template('visualization.html', charts_data=charts_data, map_data=map_data)
     except Exception as e:
         logging.error(f"Visualization error: {str(e)}")
         flash(f'Error generating visualizations: {str(e)}', 'error')
-        return render_template('visualization.html', charts_data=None)
+        return render_template('visualization.html', charts_data=None, map_data=None)
+
+@app.route('/api/map-data')
+def map_data_api():
+    """API endpoint for map data"""
+    try:
+        map_data = visualizer.get_map_data()
+        return jsonify(map_data)
+    except Exception as e:
+        logging.error(f"Map data API error: {str(e)}")
+        return jsonify({'locations': [], 'message': 'Error loading map data'})
 
 @app.route('/prevention')
 def prevention():
