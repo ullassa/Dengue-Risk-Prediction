@@ -1,6 +1,10 @@
 import os
 import logging
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
+from datetime import datetime
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, session
+from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
+from werkzeug.security import generate_password_hash, check_password_hash
 from modules.weather_prediction import WeatherPredictor
 from modules.symptom_checker import SymptomChecker
 from modules.local_alert import LocalAlert
@@ -14,6 +18,41 @@ logging.basicConfig(level=logging.DEBUG)
 app = Flask(__name__)
 app.secret_key = os.environ.get("SESSION_SECRET", "dengue_prediction_secret_key")
 
+# Database configuration
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///dengue_users.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# Initialize SQLAlchemy
+db = SQLAlchemy(app)
+
+# Initialize Flask-Login
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+login_manager.login_message = 'Please log in to access this page.'
+login_manager.login_message_category = 'info'
+
+# Database Models
+class User(UserMixin, db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password_hash = db.Column(db.String(256), nullable=False)
+    histories = db.relationship('History', backref='user', lazy=True, cascade='all, delete-orphan')
+
+class History(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    city_name = db.Column(db.String(100), nullable=False)
+    risk_level = db.Column(db.String(50), nullable=False)
+    temperature = db.Column(db.Float, nullable=True)
+    humidity = db.Column(db.Float, nullable=True)
+    date_time = db.Column(db.DateTime, default=datetime.utcnow)
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
 # Initialize modules
 weather_predictor = WeatherPredictor()
 symptom_checker = SymptomChecker()
@@ -21,12 +60,142 @@ local_alert = LocalAlert()
 risk_calculator = RiskCalculator()
 visualizer = Visualizer()
 
+# Create database tables
+with app.app_context():
+    db.create_all()
+
+# Authentication routes
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    """User registration"""
+    if request.method == 'POST':
+        try:
+            name = request.form.get('name', '').strip()
+            email = request.form.get('email', '').strip().lower()
+            password = request.form.get('password', '')
+            
+            # Validation
+            if not name or not email or not password:
+                flash('All fields are required', 'error')
+                return render_template('auth/signup.html')
+            
+            if len(password) < 6:
+                flash('Password must be at least 6 characters long', 'error')
+                return render_template('auth/signup.html')
+            
+            # Check if user already exists
+            if User.query.filter_by(email=email).first():
+                flash('Email address already registered', 'error')
+                return render_template('auth/signup.html')
+            
+            # Create new user
+            password_hash = generate_password_hash(password)
+            user = User(name=name, email=email, password_hash=password_hash)
+            db.session.add(user)
+            db.session.commit()
+            
+            flash('Account created successfully! Please log in.', 'success')
+            return redirect(url_for('login'))
+            
+        except Exception as e:
+            logging.error(f"Signup error: {str(e)}")
+            flash('An error occurred during registration. Please try again.', 'error')
+            return render_template('auth/signup.html')
+    
+    return render_template('auth/signup.html')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    """User login"""
+    if request.method == 'POST':
+        try:
+            email = request.form.get('email', '').strip().lower()
+            password = request.form.get('password', '')
+            
+            if not email or not password:
+                flash('Email and password are required', 'error')
+                return render_template('auth/login.html')
+            
+            user = User.query.filter_by(email=email).first()
+            
+            if user and check_password_hash(user.password_hash, password):
+                login_user(user)
+                flash(f'Welcome back, {user.name}!', 'success')
+                next_page = request.args.get('next')
+                return redirect(next_page) if next_page else redirect(url_for('dashboard'))
+            else:
+                flash('Invalid email or password', 'error')
+                return render_template('auth/login.html')
+                
+        except Exception as e:
+            logging.error(f"Login error: {str(e)}")
+            flash('An error occurred during login. Please try again.', 'error')
+            return render_template('auth/login.html')
+    
+    return render_template('auth/login.html')
+
+@app.route('/logout')
+@login_required
+def logout():
+    """User logout"""
+    logout_user()
+    flash('You have been logged out successfully', 'info')
+    return redirect(url_for('index'))
+
 @app.route('/')
 def index():
-    """Main dashboard page"""
+    """Landing page - redirects to dashboard if logged in"""
+    if current_user.is_authenticated:
+        return redirect(url_for('dashboard'))
     return render_template('index.html')
 
+@app.route('/dashboard')
+@login_required
+def dashboard():
+    """User dashboard with risk check history"""
+    try:
+        # Get user's recent risk check history (last 10)
+        history = History.query.filter_by(user_id=current_user.id)\
+                               .order_by(History.date_time.desc())\
+                               .limit(10)\
+                               .all()
+        
+        # Get some stats
+        total_checks = History.query.filter_by(user_id=current_user.id).count()
+        recent_cities = db.session.query(History.city_name)\
+                                  .filter_by(user_id=current_user.id)\
+                                  .distinct()\
+                                  .limit(5)\
+                                  .all()
+        recent_cities = [city[0] for city in recent_cities]
+        
+        return render_template('dashboard.html', 
+                             history=history, 
+                             total_checks=total_checks,
+                             recent_cities=recent_cities)
+    except Exception as e:
+        logging.error(f"Dashboard error: {str(e)}")
+        flash('Error loading dashboard data', 'error')
+        return render_template('dashboard.html', history=[], total_checks=0, recent_cities=[])
+
+def save_weather_history(user_id, city, result):
+    """Save weather prediction to user's history"""
+    try:
+        history = History(
+            user_id=user_id,
+            city_name=city,
+            risk_level=result.get('risk_level', 'Unknown'),
+            temperature=result.get('weather_data', {}).get('temperature', None),
+            humidity=result.get('weather_data', {}).get('humidity', None),
+            date_time=datetime.utcnow()
+        )
+        db.session.add(history)
+        db.session.commit()
+    except Exception as e:
+        logging.error(f"Error saving weather history: {str(e)}")
+
 @app.route('/weather-prediction', methods=['GET', 'POST'])
+@login_required
 def weather_prediction():
     """Weather-based dengue risk prediction"""
     if request.method == 'POST':
@@ -37,6 +206,10 @@ def weather_prediction():
                 return render_template('weather_prediction.html')
             
             result = weather_predictor.predict_risk(city)
+            
+            # Save to user's history
+            save_weather_history(current_user.id, city, result)
+            
             return render_template('result.html', 
                                  result=result, 
                                  module='Weather Prediction',
@@ -49,6 +222,7 @@ def weather_prediction():
     return render_template('weather_prediction.html')
 
 @app.route('/symptom-checker', methods=['GET', 'POST'])
+@login_required
 def symptom_checker_route():
     """Symptom-based dengue risk assessment"""
     if request.method == 'POST':
@@ -77,6 +251,7 @@ def symptom_checker_route():
     return render_template('symptom_checker.html')
 
 @app.route('/local-alert', methods=['GET', 'POST'])
+@login_required
 def local_alert_route():
     """Local dengue alert system"""
     if request.method == 'POST':
@@ -99,6 +274,7 @@ def local_alert_route():
     return render_template('local_alert.html')
 
 @app.route('/risk-calculator', methods=['GET', 'POST'])
+@login_required
 def risk_calculator_route():
     """Score-based dengue risk calculator"""
     if request.method == 'POST':
@@ -129,6 +305,7 @@ def risk_calculator_route():
     return render_template('risk_calculator.html')
 
 @app.route('/visualization')
+@login_required
 def visualization():
     """Spatio-temporal visualization of dengue data"""
     try:
@@ -152,6 +329,7 @@ def map_data_api():
         return jsonify({'locations': [], 'message': 'Error loading map data'})
 
 @app.route('/prevention')
+@login_required
 def prevention():
     """Prevention and awareness hub"""
     return render_template('prevention.html')

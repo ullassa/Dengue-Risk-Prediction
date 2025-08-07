@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Dashboard - Dengue Risk Prediction System{% endblock %}
+{% block title %}Home - Dengue Risk Prediction System{% endblock %}
 
 {% block content %}
 <div class="container">
@@ -15,6 +15,17 @@
                 <p class="lead mb-4">
                     Advanced hydro-climatic spatio-temporal analysis for dengue outbreak prediction and prevention
                 </p>
+                {% if not current_user.is_authenticated %}
+                <!-- Call to action for non-authenticated users -->
+                <div class="d-flex flex-wrap justify-content-center gap-3 mb-4">
+                    <a href="{{ url_for('signup') }}" class="btn btn-light btn-lg">
+                        <i class="fas fa-user-plus me-2"></i>Get Started
+                    </a>
+                    <a href="{{ url_for('login') }}" class="btn btn-outline-light btn-lg">
+                        <i class="fas fa-sign-in-alt me-2"></i>Sign In
+                    </a>
+                </div>
+                {% endif %}
                 <div class="row text-center">
                     <div class="col-md-3">
                         <i class="fas fa-cloud-rain fa-2x mb-2"></i>

@@ -1,0 +1,224 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Dengue Risk System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Welcome Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h2 class="card-title mb-0">
+                                <i class="fas fa-user me-2"></i>Welcome, {{ current_user.name }}!
+                            </h2>
+                            <p class="mb-0">Your personalized dengue risk monitoring dashboard</p>
+                        </div>
+                        <div class="col-md-4 text-md-end">
+                            <a href="{{ url_for('logout') }}" class="btn btn-light">
+                                <i class="fas fa-sign-out-alt me-2"></i>Logout
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quick Stats -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <i class="fas fa-chart-line fa-2x text-primary mb-2"></i>
+                    <h3 class="text-primary">{{ total_checks }}</h3>
+                    <p class="mb-0">Total Risk Checks</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <i class="fas fa-map-marker-alt fa-2x text-info mb-2"></i>
+                    <h3 class="text-info">{{ recent_cities|length }}</h3>
+                    <p class="mb-0">Cities Monitored</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <i class="fas fa-clock fa-2x text-success mb-2"></i>
+                    <h3 class="text-success">{{ history|length }}</h3>
+                    <p class="mb-0">Recent Checks</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-bolt me-2"></i>Quick Risk Assessment
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-3 col-md-6 mb-2">
+                            <a href="{{ url_for('weather_prediction') }}" class="btn btn-outline-primary w-100">
+                                <i class="fas fa-cloud-sun me-2"></i>Weather Risk
+                            </a>
+                        </div>
+                        <div class="col-lg-3 col-md-6 mb-2">
+                            <a href="{{ url_for('local_alert_route') }}" class="btn btn-outline-warning w-100">
+                                <i class="fas fa-bell me-2"></i>Local Alerts
+                            </a>
+                        </div>
+                        <div class="col-lg-3 col-md-6 mb-2">
+                            <a href="{{ url_for('symptom_checker_route') }}" class="btn btn-outline-info w-100">
+                                <i class="fas fa-stethoscope me-2"></i>Symptom Check
+                            </a>
+                        </div>
+                        <div class="col-lg-3 col-md-6 mb-2">
+                            <a href="{{ url_for('visualization') }}" class="btn btn-outline-success w-100">
+                                <i class="fas fa-chart-bar me-2"></i>Analytics
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent Cities -->
+    {% if recent_cities %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-map me-2"></i>Recently Monitored Cities
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for city in recent_cities %}
+                        <div class="col-md-2 col-sm-4 col-6 mb-2">
+                            <a href="{{ url_for('weather_prediction') }}" class="btn btn-outline-secondary btn-sm w-100">
+                                {{ city }}
+                            </a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Risk Check History -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-history me-2"></i>Recent Risk Assessments
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if history %}
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>City</th>
+                                        <th>Risk Level</th>
+                                        <th>Temperature</th>
+                                        <th>Humidity</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for entry in history %}
+                                    <tr>
+                                        <td>
+                                            <small>{{ entry.date_time.strftime('%Y-%m-%d %H:%M') }}</small>
+                                        </td>
+                                        <td>
+                                            <i class="fas fa-map-marker-alt text-muted me-1"></i>
+                                            {{ entry.city_name }}
+                                        </td>
+                                        <td>
+                                            {% if entry.risk_level == 'High' %}
+                                                <span class="badge bg-danger">{{ entry.risk_level }}</span>
+                                            {% elif entry.risk_level == 'Moderate' or entry.risk_level == 'Medium' %}
+                                                <span class="badge bg-warning">{{ entry.risk_level }}</span>
+                                            {% elif entry.risk_level == 'Low' %}
+                                                <span class="badge bg-success">{{ entry.risk_level }}</span>
+                                            {% else %}
+                                                <span class="badge bg-secondary">{{ entry.risk_level }}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if entry.temperature %}
+                                                {{ "%.1f"|format(entry.temperature) }}°C
+                                            {% else %}
+                                                <small class="text-muted">N/A</small>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if entry.humidity %}
+                                                {{ "%.0f"|format(entry.humidity) }}%
+                                            {% else %}
+                                                <small class="text-muted">N/A</small>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <a href="{{ url_for('weather_prediction') }}" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-redo-alt"></i> Recheck
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        {% if total_checks > 10 %}
+                        <div class="text-center mt-3">
+                            <small class="text-muted">
+                                Showing latest 10 of {{ total_checks }} total assessments
+                            </small>
+                        </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-chart-line fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No Risk Assessments Yet</h5>
+                            <p class="text-muted mb-3">Start monitoring dengue risk in your area</p>
+                            <a href="{{ url_for('weather_prediction') }}" class="btn btn-primary">
+                                <i class="fas fa-plus me-2"></i>Start First Assessment
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Dashboard loaded for user: {{ current_user.name }}');
+    console.log('Total checks: {{ total_checks }}');
+});
+</script>
+{% endblock %}

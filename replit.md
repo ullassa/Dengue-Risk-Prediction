@@ -2,6 +2,8 @@
 
 This is a Hydro-Climatic Spatio-Temporal Dengue Risk Prediction System built with Flask. The application predicts dengue outbreak risks using multiple assessment methods including weather analysis, symptom checking, location-based alerts, environmental risk calculation, and data visualization. The system integrates real-time weather data with historical dengue case patterns to provide comprehensive risk assessments and prevention guidance.
 
+**Latest Update (Aug 7, 2025)**: Extended with complete user authentication system using Flask-Login, personalized dashboards, and risk history tracking. All prediction modules now require user login and automatically save assessment history to individual user accounts.
+
 # User Preferences
 
 Preferred communication style: Simple, everyday language.
@@ -17,10 +19,19 @@ Preferred communication style: Simple, everyday language.
 
 ## Backend Architecture
 - **Web Framework**: Flask with modular architecture
-- **Route Structure**: RESTful endpoints for each functional module
-- **Session Management**: Flask sessions with configurable secret key
+- **Authentication**: Flask-Login with session-based user management
+- **Database**: SQLite with SQLAlchemy ORM for user accounts and history tracking
+- **Route Structure**: RESTful endpoints for each functional module with access control
+- **Session Management**: Flask-Login sessions with Werkzeug password hashing
 - **Error Handling**: Try-catch blocks with logging and user-friendly error messages
 - **Logging**: Python logging module for debugging and monitoring
+
+## User Management System
+- **User Registration**: Secure signup with email uniqueness validation
+- **User Authentication**: Login/logout with password verification
+- **Access Control**: All prediction modules protected with @login_required decorator
+- **Personalized Dashboard**: User-specific welcome message and quick stats
+- **History Tracking**: Automatic saving of weather risk assessments per user
 
 ## Modular Component Design
 The system uses a modular architecture with separate Python modules:
