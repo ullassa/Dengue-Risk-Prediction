@@ -9,8 +9,8 @@ A comprehensive Flask web application for predicting dengue outbreak risks using
 ### Local Development
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/DengueDetect.git
-cd DengueDetect
+git clone https://github.com/ullassa/Dengue-Risk-Prediction.git
+cd Dengue-Risk-Prediction
 
 # Install dependencies
 pip install -r requirements.txt
