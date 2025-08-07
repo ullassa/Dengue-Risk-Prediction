@@ -42,10 +42,11 @@ class LocalAlert:
             
             # Find matching location
             if not dengue_data.empty:
-                # Check for direct location match
+                # Check for direct location match using correct column names
                 location_matches = dengue_data[
-                    dengue_data['location'].str.lower().str.contains(location_lower, na=False) |
-                    dengue_data['state'].str.lower().str.contains(location_lower, na=False)
+                    dengue_data['City'].str.lower().str.contains(location_lower, na=False) |
+                    dengue_data['District'].str.lower().str.contains(location_lower, na=False) |
+                    dengue_data['State'].str.lower().str.contains(location_lower, na=False)
                 ]
                 
                 # Get recent cases (last 30 days)
@@ -54,9 +55,10 @@ class LocalAlert:
                 
                 if not location_matches.empty:
                     # Convert date column to datetime if it exists
-                    if 'date' in location_matches.columns:
-                        location_matches['date'] = pd.to_datetime(location_matches['date'], errors='coerce')
-                        recent_cases = location_matches[location_matches['date'] >= thirty_days_ago]
+                    if 'Date' in location_matches.columns:
+                        location_matches = location_matches.copy()
+                        location_matches['Date'] = pd.to_datetime(location_matches['Date'], errors='coerce')
+                        recent_cases = location_matches[location_matches['Date'] >= thirty_days_ago]
                     else:
                         recent_cases = location_matches
                     
