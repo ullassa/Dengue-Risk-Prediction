@@ -1,6 +1,6 @@
 import pandas as pd
 import matplotlib
-matplotlib.use('Agg')  # Use non-interactive backend
+matplotlib.use('Agg')  # Use non-interactive backend for server deployment
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
@@ -10,6 +10,9 @@ import json
 import logging
 from datetime import datetime, timedelta
 import os
+
+# Set matplotlib font to prevent font cache issues on server
+plt.rcParams['font.family'] = 'DejaVu Sans'
 
 class Visualizer:
     def __init__(self):

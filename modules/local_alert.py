@@ -42,7 +42,7 @@ class LocalAlert:
             
             # Find matching location
             if not dengue_data.empty:
-                # Check for direct location match using correct column names
+                # Check for direct location match using correct column names from CSV
                 location_matches = dengue_data[
                     dengue_data['City'].str.lower().str.contains(location_lower, na=False) |
                     dengue_data['District'].str.lower().str.contains(location_lower, na=False) |
@@ -62,6 +62,7 @@ class LocalAlert:
                     else:
                         recent_cases = location_matches
                     
+                    # Use correct column name 'Cases' from CSV
                     total_cases = recent_cases['Cases'].sum() if 'Cases' in recent_cases.columns else len(recent_cases)
                     
                     # Determine risk level based on your specific case count thresholds
