@@ -1,0 +1,146 @@
+🔬 Complete Overview of Hydro-Climatic Spatio-Temporal Dengue Risk Prediction System
+🎯 Project Aim:
+This project aims to predict dengue outbreaks based on weather conditions, past dengue case data, and user-reported risk factors.
+By integrating climate analysis, symptom checkers, location-based alerts, and preventive guidance, the system enables users to assess dengue risk in their locality and take necessary precautions in advance.
+
+💡 Core Idea:
+Dengue is deeply influenced by hydro-climatic conditions like rainfall, temperature, and humidity. These environmental factors create favorable conditions for mosquito breeding and viral transmission.
+
+By analyzing historical weather data, dengue outbreak trends, and user-submitted information, we can predict potential dengue outbreaks and provide early warnings, reducing the spread and impact.
+
+🔍 Feature Breakdown:
+1️⃣ Weather-Based Dengue Risk Prediction 🌦
+Pull live weather data using OpenWeatherMap API (temperature, humidity, rainfall).
+
+Analyze data using rule-based logic or a lightweight ML model.
+
+Display user-specific dengue risk level: Low, Medium, High.
+
+📊 Example Rule:
+
+python
+Copy
+Edit
+if temperature > 25 and humidity > 70 and rainfall > 50:
+    risk = "High"
+2️⃣ Symptom-Based Dengue Risk Checker ✅
+Ask users if they have symptoms like:
+
+Fever
+
+Joint pain
+
+Rashes
+
+Vomiting
+
+Based on WHO guidelines, give Low / Medium / High risk levels.
+
+3️⃣ Local Dengue Alert System 🚨
+Users enter their district or city name.
+
+The system checks against a CSV/database of reported dengue cases.
+
+If risk is high in that area → Alert the user with warning messages and do’s/don’ts.
+
+4️⃣ Score-Based Dengue Risk Calculator 📊
+Ask yes/no lifestyle/environment questions like:
+
+"Is there stagnant water near your home?"
+
+"Have you seen more mosquitoes lately?"
+
+Each "yes" gets a score (1 point).
+
+Total score between 0–10 → Show suggestions accordingly.
+
+5️⃣ Spatio-Temporal Visualization of Dengue Spread 🗺
+Load historical data (from Kaggle or WHO) to generate:
+
+Heatmaps of affected zones (using Google Maps API or Folium)
+
+Time-series graphs (using Matplotlib)
+
+Helps identify high-risk patterns geographically and seasonally.
+
+6️⃣ Prevention & Awareness Hub 📢
+Static section with:
+
+Tips to avoid dengue
+
+Do’s and Don’ts
+
+Infographics/videos (hosted locally or via YouTube)
+
+FAQs related to dengue
+
+⚙️ Tech Stack & Tools
+Layer	Tools
+Backend	Flask or Django (Flask preferred for simplicity on Replit)
+Frontend	HTML/CSS, JS (with Bootstrap for UI)
+Database	SQLite or CSV
+APIs	OpenWeatherMap API, Google Maps API (optional)
+ML (Optional)	Scikit-learn (for basic prediction model if needed)
+Visualization	Matplotlib, Seaborn, Folium (maps)
+
+📊 Data Sources Needed
+✅ Kaggle dataset: Dengue cases over time in India
+
+✅ OpenWeatherMap API: Live temperature, rainfall, humidity
+
+✅ Government health bulletins (convert PDFs to CSV)
+
+✅ Custom dengue_cases.csv file for local alert system
+
+🔄 System Workflow
+User opens the app (Web/Mobile).
+
+Chooses one of the modules:
+
+Weather Prediction
+
+Symptom Checker
+
+Local Alert
+
+Risk Calculator
+
+Spatio-Temporal Analysis
+
+Awareness Section
+
+System processes the inputs.
+
+Based on input and historical data → Predicts dengue risk.
+
+User receives:
+
+Risk Level
+
+Alert (if needed)
+
+Health guidance
+
+🧩 File & Folder Structure (Ideal for Replit or Local)
+cpp
+Copy
+Edit
+dengue_predictor/
+├── templates/
+│   ├── index.html
+│   ├── result.html
+│   └── prevention.html
+├── static/
+│   └── style.css
+├── datasets/
+│   ├── dengue_cases.csv
+│   └── weather_history.csv
+├── app.py
+├── modules/
+│   ├── weather_prediction.py
+│   ├── symptom_checker.py
+│   ├── risk_calculator.py
+│   ├── local_alert.py
+│   └── visualizer.py
+├── requirements.txt
+└── README.md
