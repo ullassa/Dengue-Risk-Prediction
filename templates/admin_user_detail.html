@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+
+{% block title %}User Details - {{ user.name }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h2>
+                <i class="fas fa-user"></i> User Details
+            </h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('admin_dashboard') }}">Admin</a></li>
+                    <li class="breadcrumb-item active">{{ user.name }}</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <!-- User Information -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-id-card"></i> User Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-3">User ID:</dt>
+                        <dd class="col-sm-9">{{ user.id }}</dd>
+                        
+                        <dt class="col-sm-3">Name:</dt>
+                        <dd class="col-sm-9">{{ user.name }}</dd>
+                        
+                        <dt class="col-sm-3">Email:</dt>
+                        <dd class="col-sm-9">{{ user.email }}</dd>
+                        
+                        <dt class="col-sm-3">Total Predictions:</dt>
+                        <dd class="col-sm-9">
+                            <span class="badge bg-primary fs-6">{{ histories|length }}</span>
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-light">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fas fa-chart-bar"></i> Activity Summary
+                    </h6>
+                </div>
+                <div class="card-body">
+                    {% if histories %}
+                    <div class="text-center">
+                        <h4 class="text-primary">{{ histories|length }}</h4>
+                        <p class="mb-2">Total Predictions</p>
+                        <hr>
+                        <small class="text-muted">
+                            Latest: {{ histories[0].date_time.strftime('%Y-%m-%d %H:%M') }}
+                        </small>
+                    </div>
+                    {% else %}
+                    <div class="text-center text-muted">
+                        <i class="fas fa-chart-line fa-2x mb-2"></i>
+                        <p>No predictions yet</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Prediction History -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">
+                <i class="fas fa-history"></i> Prediction History
+            </h5>
+        </div>
+        <div class="card-body">
+            {% if histories %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Date & Time</th>
+                            <th>City</th>
+                            <th>Risk Level</th>
+                            <th>Temperature</th>
+                            <th>Humidity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for history in histories %}
+                        <tr>
+                            <td>{{ history.date_time.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                            <td>{{ history.city_name }}</td>
+                            <td>
+                                {% if history.risk_level == 'High' %}
+                                    <span class="badge bg-danger">{{ history.risk_level }}</span>
+                                {% elif history.risk_level == 'Medium' %}
+                                    <span class="badge bg-warning text-dark">{{ history.risk_level }}</span>
+                                {% else %}
+                                    <span class="badge bg-success">{{ history.risk_level }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if history.temperature %}
+                                    {{ "%.1f"|format(history.temperature) }}°C
+                                {% else %}
+                                    <span class="text-muted">N/A</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if history.humidity %}
+                                    {{ "%.0f"|format(history.humidity) }}%
+                                {% else %}
+                                    <span class="text-muted">N/A</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-4">
+                <i class="fas fa-history fa-3x text-muted mb-3"></i>
+                <p class="text-muted">No prediction history found for this user.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Admin Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    border: none;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(0, 123, 255, 0.1);
+}
+
+.badge.fs-6 {
+    font-size: 1rem !important;
+}
+
+dl.row dt {
+    font-weight: 600;
+}
+
+dl.row dd {
+    margin-bottom: 0.5rem;
+}
+</style>
+{% endblock %}

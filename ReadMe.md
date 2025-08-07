@@ -1,12 +1,67 @@
-# Overview
+# Dengue Detection & Risk Prediction System
 
-This is a Hydro-Climatic Spatio-Temporal Dengue Risk Prediction System built with Flask. The application predicts dengue outbreak risks using multiple assessment methods including weather analysis, symptom checking, location-based alerts, environmental risk calculation, and data visualization. The system integrates real-time weather data with historical dengue case patterns to provide comprehensive risk assessments and prevention guidance.
+A comprehensive Flask web application for predicting dengue outbreak risks using weather data, symptom analysis, and location-based alerts with full admin management capabilities.
 
-**Latest Update (Aug 7, 2025)**: Extended with complete user authentication system using Flask-Login, personalized dashboards, and risk history tracking. All prediction modules now require user login and automatically save assessment history to individual user accounts.
+**Latest Update (Aug 7, 2025)**: Added PostgreSQL database support, comprehensive admin interface, and production deployment configuration for Render.
 
-# User Preferences
+## 🚀 Quick Start
 
-Preferred communication style: Simple, everyday language.
+### Local Development
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/DengueDetect.git
+cd DengueDetect
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Set up environment
+cp .env.example .env
+# Edit .env with your configuration
+
+# Initialize database
+python init_db.py
+
+# Run the application
+python app.py
+```
+
+### 🎯 Admin Access
+- **URL**: http://localhost:5000/admin
+- **Default Credentials**: admin@dengue.com / admin123 (change in production)
+
+## 🌐 Deploy to Render
+
+1. **Fork this repository**
+2. **Create Render account** at https://dashboard.render.com
+3. **Create PostgreSQL database** in Render
+4. **Create Web Service** with these settings:
+   - Build Command: `./build.sh`
+   - Start Command: `gunicorn --bind 0.0.0.0:$PORT app:app`
+5. **Set environment variables** (see RENDER_DEPLOYMENT.md)
+
+## 📊 Features
+
+### For Users
+- Weather-based dengue risk prediction
+- Symptom checker with risk assessment
+- Location-based alerts and warnings
+- Historical data visualization
+- Prevention guidelines and tips
+
+### For Administrators
+- Complete user management dashboard
+- Real-time analytics and statistics
+- Database monitoring and health checks
+- User prediction history tracking
+- System performance metrics
+
+## 🛡️ Security Features
+- User authentication with Flask-Login
+- Admin-only access controls
+- Environment variable management
+- PostgreSQL with SSL support
+- Session security and CSRF protection
 
 # System Architecture
 

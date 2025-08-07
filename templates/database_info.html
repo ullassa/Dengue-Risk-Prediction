@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+
+{% block title %}Database Information{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h2>
+                <i class="fas fa-server"></i> Database Information
+            </h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('admin_dashboard') }}">Admin</a></li>
+                    <li class="breadcrumb-item active">Database Info</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Database Connection Info -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-plug"></i> Connection Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-3">Database Type:</dt>
+                        <dd class="col-sm-9">
+                            <span class="badge bg-{% if db_type == 'PostgreSQL' %}success{% else %}primary{% endif %} fs-6">
+                                {{ db_type }}
+                            </span>
+                        </dd>
+                        
+                        <dt class="col-sm-3">Connection URI:</dt>
+                        <dd class="col-sm-9">
+                            <code class="text-break">{{ db_uri }}</code>
+                        </dd>
+                    </dl>
+                    
+                    {% if db_type == 'PostgreSQL' %}
+                    <div class="alert alert-success" role="alert">
+                        <i class="fas fa-check-circle"></i>
+                        <strong>PostgreSQL Connected!</strong> Your application is using PostgreSQL database for production-ready data storage.
+                    </div>
+                    {% else %}
+                    <div class="alert alert-warning" role="alert">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>SQLite Fallback:</strong> Using SQLite for development. Consider setting up PostgreSQL for production.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table Information -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-table"></i> Database Tables
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for table in tables %}
+                        <div class="col-md-6 mb-3">
+                            <div class="card border-primary">
+                                <div class="card-header bg-primary text-white">
+                                    <h6 class="mb-0">{{ table.name }} Table</h6>
+                                </div>
+                                <div class="card-body">
+                                    <p><strong>Records:</strong> 
+                                        <span class="badge bg-success">{{ table.count }}</span>
+                                    </p>
+                                    {% if table.admin_count is defined %}
+                                    <p><strong>Admins:</strong> 
+                                        <span class="badge bg-danger">{{ table.admin_count }}</span>
+                                    </p>
+                                    {% endif %}
+                                    <p><strong>Columns:</strong></p>
+                                    <ul class="list-unstyled">
+                                        {% for column in table.columns %}
+                                        <li><code>{{ column }}</code></li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Database Setup Instructions -->
+    {% if db_type == 'SQLite' %}
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card border-info">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle"></i> PostgreSQL Setup Instructions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p>To upgrade to PostgreSQL, follow these steps:</p>
+                    <ol>
+                        <li>Install PostgreSQL on your system</li>
+                        <li>Create a database named <code>dengue_detection</code></li>
+                        <li>Update your <code>.env</code> file with PostgreSQL credentials:</li>
+                    </ol>
+                    <pre class="bg-light p-3 rounded"><code>DATABASE_URL=postgresql://username:password@localhost:5432/dengue_detection
+POSTGRES_USER=your_username
+POSTGRES_PASSWORD=your_password
+POSTGRES_HOST=localhost
+POSTGRES_PORT=5432
+POSTGRES_DB=dengue_detection</code></pre>
+                    <p class="mb-0">Restart the application after updating the configuration.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Navigation -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Admin Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    border: none;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.badge.fs-6 {
+    font-size: 1rem !important;
+}
+
+code {
+    background-color: #f8f9fa;
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.25rem;
+    font-size: 0.9em;
+}
+
+pre code {
+    background-color: transparent;
+    padding: 0;
+}
+
+dl.row dt {
+    font-weight: 600;
+}
+
+.text-break {
+    word-break: break-all;
+}
+</style>
+{% endblock %}

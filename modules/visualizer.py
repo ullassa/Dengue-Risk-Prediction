@@ -3,6 +3,7 @@ import matplotlib
 matplotlib.use('Agg')  # Use non-interactive backend
 import matplotlib.pyplot as plt
 import seaborn as sns
+import numpy as np
 import base64
 import io
 import json
@@ -24,17 +25,23 @@ class Visualizer:
             
             if os.path.exists(self.dengue_cases_file):
                 dengue_data = pd.read_csv(self.dengue_cases_file)
-                # Use correct column names from Karnataka data
                 if 'Date' in dengue_data.columns:
                     dengue_data['Date'] = pd.to_datetime(dengue_data['Date'], errors='coerce')
-                    # Create lowercase columns for compatibility
+                    # Standardize column names for consistency
                     dengue_data['date'] = dengue_data['Date'] 
                     dengue_data['cases'] = dengue_data['Cases']
+                    dengue_data['city'] = dengue_data['City']
             
             if os.path.exists(self.weather_history_file):
                 weather_data = pd.read_csv(self.weather_history_file)
-                if 'date' in weather_data.columns:
-                    weather_data['date'] = pd.to_datetime(weather_data['date'], errors='coerce')
+                if 'Date' in weather_data.columns:
+                    weather_data['Date'] = pd.to_datetime(weather_data['Date'], errors='coerce')
+                    # Standardize column names to match your CSV structure
+                    weather_data['date'] = weather_data['Date']
+                    weather_data['temperature'] = weather_data['Temperature(C)']
+                    weather_data['humidity'] = weather_data['Humidity(%)']
+                    weather_data['rainfall'] = weather_data['Rainfall(mm)']
+                    weather_data['city'] = weather_data['City']
             
             return dengue_data, weather_data
         except Exception as e:
@@ -133,57 +140,114 @@ class Visualizer:
             fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(15, 10))
             
             if not dengue_data.empty and not weather_data.empty:
-                # Merge data by date
+                # Merge data by date and city for better correlation
                 if 'date' in dengue_data.columns and 'date' in weather_data.columns:
-                    daily_dengue = dengue_data.groupby('date')['cases'].sum().reset_index()
-                    merged_data = pd.merge(daily_dengue, weather_data, on='date', how='inner')
+                    # Group dengue data by date and city
+                    daily_dengue = dengue_data.groupby(['date', 'city'])['cases'].sum().reset_index()
+                    
+                    # Group weather data by date and city
+                    daily_weather = weather_data.groupby(['date', 'city']).agg({
+                        'temperature': 'mean',
+                        'humidity': 'mean', 
+                        'rainfall': 'mean'
+                    }).reset_index()
+                    
+                    # Merge the datasets
+                    merged_data = pd.merge(daily_dengue, daily_weather, on=['date', 'city'], how='inner')
                     
                     if not merged_data.empty and len(merged_data) > 1:
                         # Temperature vs Cases
                         if 'temperature' in merged_data.columns:
                             ax1.scatter(merged_data['temperature'], merged_data['cases'], 
-                                      alpha=0.6, color='#e74c3c')
+                                      alpha=0.6, color='#e74c3c', s=30)
                             ax1.set_xlabel('Temperature (°C)')
                             ax1.set_ylabel('Dengue Cases')
                             ax1.set_title('Temperature vs Dengue Cases')
                             ax1.grid(True, alpha=0.3)
+                            
+                            # Add trend line
+                            z = np.polyfit(merged_data['temperature'], merged_data['cases'], 1)
+                            p = np.poly1d(z)
+                            ax1.plot(merged_data['temperature'], p(merged_data['temperature']), 
+                                   "r--", alpha=0.8, linewidth=2)
                         
                         # Humidity vs Cases
                         if 'humidity' in merged_data.columns:
                             ax2.scatter(merged_data['humidity'], merged_data['cases'], 
-                                      alpha=0.6, color='#3498db')
+                                      alpha=0.6, color='#3498db', s=30)
                             ax2.set_xlabel('Humidity (%)')
                             ax2.set_ylabel('Dengue Cases')
                             ax2.set_title('Humidity vs Dengue Cases')
                             ax2.grid(True, alpha=0.3)
+                            
+                            # Add trend line
+                            z = np.polyfit(merged_data['humidity'], merged_data['cases'], 1)
+                            p = np.poly1d(z)
+                            ax2.plot(merged_data['humidity'], p(merged_data['humidity']), 
+                                   "r--", alpha=0.8, linewidth=2)
                         
                         # Rainfall vs Cases
                         if 'rainfall' in merged_data.columns:
                             ax3.scatter(merged_data['rainfall'], merged_data['cases'], 
-                                      alpha=0.6, color='#2ecc71')
+                                      alpha=0.6, color='#2ecc71', s=30)
                             ax3.set_xlabel('Rainfall (mm)')
                             ax3.set_ylabel('Dengue Cases')
                             ax3.set_title('Rainfall vs Dengue Cases')
                             ax3.grid(True, alpha=0.3)
+                            
+                            # Add trend line
+                            z = np.polyfit(merged_data['rainfall'], merged_data['cases'], 1)
+                            p = np.poly1d(z)
+                            ax3.plot(merged_data['rainfall'], p(merged_data['rainfall']), 
+                                   "r--", alpha=0.8, linewidth=2)
                         
-                        # Monthly trend
-                        if 'date' in merged_data.columns:
-                            merged_data['month'] = merged_data['date'].dt.month
-                            monthly_cases = merged_data.groupby('month')['cases'].mean()
-                            ax4.bar(monthly_cases.index, monthly_cases.values, 
-                                   color='#f39c12', alpha=0.8)
-                            ax4.set_xlabel('Month')
-                            ax4.set_ylabel('Average Cases')
-                            ax4.set_title('Monthly Dengue Pattern')
-                            ax4.set_xticks(range(1, 13))
+                        # City-wise comparison
+                        if 'city' in merged_data.columns:
+                            city_cases = merged_data.groupby('city')['cases'].sum().sort_values(ascending=False)
+                            bars = ax4.bar(range(len(city_cases)), city_cases.values, 
+                                         color='#f39c12', alpha=0.8)
+                            ax4.set_xlabel('Cities')
+                            ax4.set_ylabel('Total Cases')
+                            ax4.set_title('Cases by City')
+                            ax4.set_xticks(range(len(city_cases)))
+                            ax4.set_xticklabels(city_cases.index, rotation=45)
                             ax4.grid(True, alpha=0.3, axis='y')
-            
-            # Fill empty subplots with messages
-            for ax in [ax1, ax2, ax3, ax4]:
-                if not ax.has_data():
-                    ax.text(0.5, 0.5, 'Insufficient data for correlation analysis', 
+                            
+                            # Add value labels on bars
+                            for i, bar in enumerate(bars):
+                                height = bar.get_height()
+                                ax4.text(bar.get_x() + bar.get_width()/2., height + 0.1,
+                                       f'{int(height)}', ha='center', va='bottom', fontsize=9)
+                    else:
+                        # No merged data available
+                        for i, (ax, title) in enumerate([(ax1, 'Temperature vs Cases'), 
+                                                        (ax2, 'Humidity vs Cases'),
+                                                        (ax3, 'Rainfall vs Cases'), 
+                                                        (ax4, 'City Analysis')]):
+                            ax.text(0.5, 0.5, 'No matching data available\nfor correlation analysis', 
+                                   horizontalalignment='center', verticalalignment='center',
+                                   fontsize=12, transform=ax.transAxes)
+                            ax.set_title(title)
+                else:
+                    # No date columns available
+                    for i, (ax, title) in enumerate([(ax1, 'Temperature vs Cases'), 
+                                                    (ax2, 'Humidity vs Cases'),
+                                                    (ax3, 'Rainfall vs Cases'), 
+                                                    (ax4, 'City Analysis')]):
+                        ax.text(0.5, 0.5, 'Date information missing\nfor correlation analysis', 
+                               horizontalalignment='center', verticalalignment='center',
+                               fontsize=12, transform=ax.transAxes)
+                        ax.set_title(title)
+            else:
+                # No data available
+                for i, (ax, title) in enumerate([(ax1, 'Temperature vs Cases'), 
+                                                (ax2, 'Humidity vs Cases'),
+                                                (ax3, 'Rainfall vs Cases'), 
+                                                (ax4, 'City Analysis')]):
+                    ax.text(0.5, 0.5, 'No data available\nfor analysis', 
                            horizontalalignment='center', verticalalignment='center',
                            fontsize=12, transform=ax.transAxes)
+                    ax.set_title(title)
             
             plt.tight_layout()
             
@@ -192,6 +256,12 @@ class Visualizer:
             plt.savefig(buffer, format='png', dpi=150, bbox_inches='tight')
             buffer.seek(0)
             image_base64 = base64.b64encode(buffer.getvalue()).decode()
+            plt.close(fig)
+            
+            return image_base64
+        except Exception as e:
+            logging.error(f"Weather correlation chart error: {str(e)}")
+            return None
             plt.close(fig)
             
             return image_base64

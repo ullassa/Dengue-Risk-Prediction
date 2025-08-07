@@ -11,6 +11,14 @@ from modules.local_alert import LocalAlert
 from modules.risk_calculator import RiskCalculator
 from modules.visualizer import Visualizer
 
+# Load environment variables
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    # dotenv not available, continue without it
+    pass
+
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 
@@ -19,7 +27,14 @@ app = Flask(__name__)
 app.secret_key = os.environ.get("SESSION_SECRET", "dengue_prediction_secret_key")
 
 # Database configuration
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///dengue_users.db'
+# Try PostgreSQL first, fallback to SQLite
+database_url = os.environ.get("DATABASE_URL")
+if database_url:
+    app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+else:
+    # Fallback to SQLite for development
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///dengue_users.db'
+    
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize SQLAlchemy
@@ -38,6 +53,7 @@ class User(UserMixin, db.Model):
     name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(256), nullable=False)
+    is_admin = db.Column(db.Boolean, default=False, nullable=False)
     histories = db.relationship('History', backref='user', lazy=True, cascade='all, delete-orphan')
 
 class History(db.Model):
@@ -52,6 +68,24 @@ class History(db.Model):
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
+# Admin-only decorator
+def admin_required(f):
+    """Decorator to require admin privileges for accessing a route"""
+    from functools import wraps
+    
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not current_user.is_authenticated:
+            flash('Please log in to access this page.', 'error')
+            return redirect(url_for('login'))
+        
+        if not current_user.is_admin:
+            flash('You do not have permission to access this page.', 'error')
+            return redirect(url_for('dashboard'))
+        
+        return f(*args, **kwargs)
+    return decorated_function
 
 # Initialize modules
 weather_predictor = WeatherPredictor()
@@ -343,6 +377,95 @@ def map_data():
     except Exception as e:
         logging.error(f"Map data error: {str(e)}")
         return jsonify({'error': 'Failed to load map data'}), 500
+
+# Database Admin Interface
+@app.route('/admin')
+@admin_required
+def admin_dashboard():
+    """Admin dashboard to view and manage user data"""
+    try:
+        # Get all users with their history counts
+        users = db.session.query(User).all()
+        user_data = []
+        
+        for user in users:
+            user_info = {
+                'id': user.id,
+                'name': user.name,
+                'email': user.email,
+                'is_admin': user.is_admin,
+                'history_count': len(user.histories),
+                'latest_activity': max([h.date_time for h in user.histories]) if user.histories else None
+            }
+            user_data.append(user_info)
+        
+        # Get total statistics
+        total_users = len(users)
+        total_predictions = db.session.query(History).count()
+        
+        return render_template('admin_dashboard.html', 
+                             users=user_data, 
+                             total_users=total_users,
+                             total_predictions=total_predictions)
+    except Exception as e:
+        logging.error(f"Admin dashboard error: {str(e)}")
+        flash(f'Error loading admin dashboard: {str(e)}', 'error')
+        return redirect(url_for('dashboard'))
+
+@app.route('/admin/user/<int:user_id>')
+@admin_required
+def admin_user_detail(user_id):
+    """View detailed information for a specific user"""
+    try:
+        user = User.query.get_or_404(user_id)
+        histories = History.query.filter_by(user_id=user_id).order_by(History.date_time.desc()).all()
+        
+        return render_template('admin_user_detail.html', 
+                             user=user, 
+                             histories=histories)
+    except Exception as e:
+        logging.error(f"Admin user detail error: {str(e)}")
+        flash(f'Error loading user details: {str(e)}', 'error')
+        return redirect(url_for('admin_dashboard'))
+
+@app.route('/admin/database-info')
+@admin_required
+def database_info():
+    """Display database connection and table information"""
+    try:
+        # Get database connection info
+        db_uri = app.config['SQLALCHEMY_DATABASE_URI']
+        db_type = "PostgreSQL" if "postgresql" in db_uri else "SQLite"
+        
+        # Get table information
+        tables_info = []
+        
+        # User table info
+        user_count = User.query.count()
+        admin_count = User.query.filter_by(is_admin=True).count()
+        tables_info.append({
+            'name': 'Users',
+            'count': user_count,
+            'admin_count': admin_count,
+            'columns': ['id', 'name', 'email', 'password_hash', 'is_admin']
+        })
+        
+        # History table info  
+        history_count = History.query.count()
+        tables_info.append({
+            'name': 'History',
+            'count': history_count,
+            'columns': ['id', 'user_id', 'city_name', 'risk_level', 'temperature', 'humidity', 'date_time']
+        })
+        
+        return render_template('database_info.html', 
+                             db_type=db_type,
+                             db_uri=db_uri,
+                             tables=tables_info)
+    except Exception as e:
+        logging.error(f"Database info error: {str(e)}")
+        flash(f'Error loading database information: {str(e)}', 'error')
+        return redirect(url_for('admin_dashboard'))
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
