@@ -1,0 +1,390 @@
+{% extends "base.html" %}
+
+{% block title %}Prevention & Awareness - Dengue Risk System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Header -->
+    <div class="card mb-4">
+        <div class="card-header bg-danger text-white">
+            <h2 class="card-title mb-0">
+                <i class="fas fa-shield-alt me-3"></i>
+                Dengue Prevention & Awareness Hub
+            </h2>
+        </div>
+        <div class="card-body">
+            <p class="card-text">
+                Comprehensive prevention guidelines, educational resources, and community awareness materials to help protect against dengue fever.
+            </p>
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>
+                <strong>Prevention is better than cure:</strong> Following these guidelines can significantly reduce your risk of dengue infection.
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Action Cards -->
+    <div class="row mb-5">
+        <div class="col-md-3">
+            <div class="card text-center h-100 border-primary">
+                <div class="card-body">
+                    <i class="fas fa-tint fa-3x text-primary mb-3"></i>
+                    <h5 class="card-title">Remove Standing Water</h5>
+                    <p class="card-text small">Eliminate mosquito breeding sites</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center h-100 border-success">
+                <div class="card-body">
+                    <i class="fas fa-spray-can fa-3x text-success mb-3"></i>
+                    <h5 class="card-title">Use Repellents</h5>
+                    <p class="card-text small">Apply mosquito repellents regularly</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center h-100 border-warning">
+                <div class="card-body">
+                    <i class="fas fa-bed fa-3x text-warning mb-3"></i>
+                    <h5 class="card-title">Sleep Protected</h5>
+                    <p class="card-text small">Use mosquito nets and screens</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center h-100 border-info">
+                <div class="card-body">
+                    <i class="fas fa-user-md fa-3x text-info mb-3"></i>
+                    <h5 class="card-title">Seek Early Care</h5>
+                    <p class="card-text small">Get medical help for fever</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detailed Prevention Guide -->
+    <div class="row">
+        <!-- Water Management -->
+        <div class="col-lg-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-water me-2"></i>
+                        Water Management
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <h6 class="text-danger">Remove Standing Water:</h6>
+                    <ul class="mb-3">
+                        <li>Empty flower pots, buckets, and containers weekly</li>
+                        <li>Clean bird baths and pet water dishes regularly</li>
+                        <li>Fix leaky pipes and faucets immediately</li>
+                        <li>Clear blocked drains and gutters</li>
+                        <li>Remove water from air conditioner drip pans</li>
+                    </ul>
+                    
+                    <h6 class="text-warning">Proper Water Storage:</h6>
+                    <ul>
+                        <li>Cover all water storage tanks tightly</li>
+                        <li>Use tight-fitting lids on water containers</li>
+                        <li>Store water containers upside down when not in use</li>
+                        <li>Change water in vases every 2-3 days</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Personal Protection -->
+        <div class="col-lg-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-success text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-shield-virus me-2"></i>
+                        Personal Protection
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <h6 class="text-danger">Clothing & Repellents:</h6>
+                    <ul class="mb-3">
+                        <li>Wear long-sleeved shirts and pants</li>
+                        <li>Use EPA-approved mosquito repellents</li>
+                        <li>Apply repellent every 4-6 hours</li>
+                        <li>Choose light-colored clothing</li>
+                        <li>Treat clothing with permethrin</li>
+                    </ul>
+                    
+                    <h6 class="text-warning">Indoor Protection:</h6>
+                    <ul>
+                        <li>Sleep under mosquito nets</li>
+                        <li>Install window and door screens</li>
+                        <li>Use fans to create air circulation</li>
+                        <li>Apply mosquito coils or electric repellents</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Home Environment -->
+        <div class="col-lg-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-home me-2"></i>
+                        Home Environment
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <h6 class="text-danger">Indoor Measures:</h6>
+                    <ul class="mb-3">
+                        <li>Keep surroundings clean and dry</li>
+                        <li>Maintain proper ventilation</li>
+                        <li>Seal cracks and crevices</li>
+                        <li>Store garbage in covered bins</li>
+                        <li>Regular house cleaning and dusting</li>
+                    </ul>
+                    
+                    <h6 class="text-warning">Outdoor Areas:</h6>
+                    <ul>
+                        <li>Trim overgrown vegetation</li>
+                        <li>Clean swimming pools regularly</li>
+                        <li>Maintain good drainage systems</li>
+                        <li>Remove debris and clutter</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Community Action -->
+        <div class="col-lg-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-info text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-users me-2"></i>
+                        Community Action
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <h6 class="text-danger">Neighborhood Efforts:</h6>
+                    <ul class="mb-3">
+                        <li>Organize community clean-up drives</li>
+                        <li>Report stagnant water to authorities</li>
+                        <li>Share prevention knowledge with neighbors</li>
+                        <li>Support local health initiatives</li>
+                        <li>Coordinate pest control activities</li>
+                    </ul>
+                    
+                    <h6 class="text-warning">Awareness Activities:</h6>
+                    <ul>
+                        <li>Distribute educational materials</li>
+                        <li>Conduct awareness workshops</li>
+                        <li>Use social media for prevention messages</li>
+                        <li>Engage schools and workplaces</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Warning Signs -->
+    <div class="card mb-4 border-danger">
+        <div class="card-header bg-danger text-white">
+            <h5 class="card-title mb-0">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                Dengue Warning Signs - Seek Immediate Medical Attention
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h6 class="text-danger">Emergency Symptoms:</h6>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-circle text-danger me-2"></i>Severe abdominal pain</li>
+                        <li><i class="fas fa-circle text-danger me-2"></i>Persistent vomiting</li>
+                        <li><i class="fas fa-circle text-danger me-2"></i>Rapid breathing</li>
+                        <li><i class="fas fa-circle text-danger me-2"></i>Bleeding gums or nose</li>
+                        <li><i class="fas fa-circle text-danger me-2"></i>Blood in vomit or stool</li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <h6 class="text-warning">Other Warning Signs:</h6>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-circle text-warning me-2"></i>Skin pallor or coldness</li>
+                        <li><i class="fas fa-circle text-warning me-2"></i>Excessive sweating</li>
+                        <li><i class="fas fa-circle text-warning me-2"></i>Restlessness or irritability</li>
+                        <li><i class="fas fa-circle text-warning me-2"></i>Difficulty breathing</li>
+                        <li><i class="fas fa-circle text-warning me-2"></i>Severe weakness</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Treatment Guidelines -->
+    <div class="card mb-4">
+        <div class="card-header bg-secondary text-white">
+            <h5 class="card-title mb-0">
+                <i class="fas fa-pills me-2"></i>
+                Treatment & Care Guidelines
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="alert alert-success">
+                        <h6 class="alert-heading">
+                            <i class="fas fa-check-circle me-2"></i>DO
+                        </h6>
+                        <ul class="small mb-0">
+                            <li>Take paracetamol for fever</li>
+                            <li>Drink plenty of fluids</li>
+                            <li>Get adequate rest</li>
+                            <li>Monitor symptoms closely</li>
+                            <li>Seek medical advice early</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="alert alert-danger">
+                        <h6 class="alert-heading">
+                            <i class="fas fa-times-circle me-2"></i>DON'T
+                        </h6>
+                        <ul class="small mb-0">
+                            <li>Take aspirin or ibuprofen</li>
+                            <li>Ignore persistent symptoms</li>
+                            <li>Self-medicate with antibiotics</li>
+                            <li>Apply ice directly on skin</li>
+                            <li>Exercise during fever</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="alert alert-info">
+                        <h6 class="alert-heading">
+                            <i class="fas fa-tint me-2"></i>Hydration
+                        </h6>
+                        <ul class="small mb-0">
+                            <li>Water and ORS solutions</li>
+                            <li>Fresh fruit juices</li>
+                            <li>Coconut water</li>
+                            <li>Herbal teas</li>
+                            <li>Avoid alcohol and caffeine</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FAQ Section -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="card-title mb-0">
+                <i class="fas fa-question-circle me-2"></i>
+                Frequently Asked Questions
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="accordion" id="faqAccordion">
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                            How does dengue spread?
+                        </button>
+                    </h2>
+                    <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Dengue spreads through the bite of infected Aedes aegypti mosquitoes. It does not spread directly from person to person. The mosquitoes become infected when they bite a person with dengue virus in their blood.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                            What is the incubation period for dengue?
+                        </button>
+                    </h2>
+                    <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            The incubation period is typically 4-6 days after being bitten by an infected mosquito, but can range from 3-14 days. Symptoms usually last 3-7 days.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                            Can dengue be prevented with vaccination?
+                        </button>
+                    </h2>
+                    <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            There is a dengue vaccine available in some countries, but it's only recommended for people living in areas with high dengue incidence and with laboratory-confirmed previous dengue infection. Consult your healthcare provider for guidance.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+                            How long do mosquitoes live and when are they most active?
+                        </button>
+                    </h2>
+                    <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Aedes aegypti mosquitoes typically live 2-4 weeks. They are most active during dawn and dusk hours, but can bite throughout the day, especially in shaded areas.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Emergency Contacts -->
+    <div class="card mb-4 border-danger">
+        <div class="card-header bg-danger text-white">
+            <h5 class="card-title mb-0">
+                <i class="fas fa-phone me-2"></i>
+                Emergency Contacts & Resources
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="row text-center">
+                <div class="col-md-3">
+                    <i class="fas fa-ambulance fa-3x text-danger mb-2"></i>
+                    <h6>Emergency Services</h6>
+                    <strong class="h4">108</strong>
+                    <p class="small">24/7 Emergency Response</p>
+                </div>
+                <div class="col-md-3">
+                    <i class="fas fa-hospital fa-3x text-primary mb-2"></i>
+                    <h6>Health Helpline</h6>
+                    <strong class="h4">104</strong>
+                    <p class="small">National Health Portal</p>
+                </div>
+                <div class="col-md-3">
+                    <i class="fas fa-virus fa-3x text-warning mb-2"></i>
+                    <h6>Disease Control</h6>
+                    <strong class="h4">1075</strong>
+                    <p class="small">Integrated Disease Surveillance</p>
+                </div>
+                <div class="col-md-3">
+                    <i class="fas fa-map-marker-alt fa-3x text-success mb-2"></i>
+                    <h6>Local Health Office</h6>
+                    <strong class="small">Contact your district health department</strong>
+                    <p class="small">Area-specific guidance</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Back Navigation -->
+    <div class="text-center">
+        <a href="{{ url_for('index') }}" class="btn btn-outline-secondary btn-lg">
+            <i class="fas fa-arrow-left me-2"></i>
+            Back to Dashboard
+        </a>
+    </div>
+</div>
+{% endblock %}

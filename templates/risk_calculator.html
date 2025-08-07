@@ -1,0 +1,269 @@
+{% extends "base.html" %}
+
+{% block title %}Risk Calculator - Dengue Risk System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Header -->
+            <div class="card mb-4">
+                <div class="card-header bg-info text-white">
+                    <h2 class="card-title mb-0">
+                        <i class="fas fa-calculator me-3"></i>
+                        Environmental Risk Calculator
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">
+                        Assess your personal dengue risk based on environmental and behavioral factors around your living area. Each factor contributes to your overall risk score.
+                    </p>
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>How it works:</strong> Answer yes/no questions about your environment. Each "yes" adds points to your risk score, helping identify areas for improvement.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Risk Assessment Form -->
+            <div class="card">
+                <div class="card-body">
+                    <form method="POST">
+                        <h5 class="mb-4">
+                            <i class="fas fa-clipboard-check me-2"></i>
+                            Environmental Risk Factors Assessment
+                        </h5>
+
+                        <div class="row">
+                            <!-- High-Risk Factors -->
+                            <div class="col-md-6">
+                                <h6 class="text-danger mb-3">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                    High-Risk Factors (3 points each)
+                                </h6>
+                                
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" name="stagnant_water" id="stagnant_water">
+                                    <label class="form-check-label fw-bold" for="stagnant_water">
+                                        <i class="fas fa-tint text-primary me-2"></i>
+                                        Stagnant Water Near Home
+                                    </label>
+                                    <div class="form-text">Pools, containers, or areas with standing water</div>
+                                </div>
+                            </div>
+
+                            <!-- Medium-Risk Factors -->
+                            <div class="col-md-6">
+                                <h6 class="text-warning mb-3">
+                                    <i class="fas fa-exclamation-circle me-2"></i>
+                                    Medium-Risk Factors (2 points each)
+                                </h6>
+                                
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" name="mosquito_increase" id="mosquito_increase">
+                                    <label class="form-check-label" for="mosquito_increase">
+                                        <i class="fas fa-bug text-warning me-2"></i>
+                                        Increased Mosquito Activity
+                                    </label>
+                                    <div class="form-text">Noticed more mosquitoes than usual</div>
+                                </div>
+
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" name="recent_travel" id="recent_travel">
+                                    <label class="form-check-label" for="recent_travel">
+                                        <i class="fas fa-plane text-info me-2"></i>
+                                        Recent Travel to Affected Areas
+                                    </label>
+                                    <div class="form-text">Traveled to dengue-endemic regions recently</div>
+                                </div>
+
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" name="sick_contacts" id="sick_contacts">
+                                    <label class="form-check-label" for="sick_contacts">
+                                        <i class="fas fa-user-friends text-danger me-2"></i>
+                                        Contact with Dengue Patients
+                                    </label>
+                                    <div class="form-text">Been around people with dengue</div>
+                                </div>
+
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" name="poor_drainage" id="poor_drainage">
+                                    <label class="form-check-label" for="poor_drainage">
+                                        <i class="fas fa-water text-primary me-2"></i>
+                                        Poor Drainage in Area
+                                    </label>
+                                    <div class="form-text">Water logging or poor drainage system</div>
+                                </div>
+
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" name="water_storage" id="water_storage">
+                                    <label class="form-check-label" for="water_storage">
+                                        <i class="fas fa-bucket text-info me-2"></i>
+                                        Uncovered Water Storage
+                                    </label>
+                                    <div class="form-text">Open tanks, buckets, or containers</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <!-- Low-Risk Factors -->
+                        <h6 class="text-info mb-3">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Additional Risk Factors (1 point each)
+                        </h6>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" name="garden_plants" id="garden_plants">
+                                    <label class="form-check-label" for="garden_plants">
+                                        <i class="fas fa-seedling text-success me-2"></i>
+                                        Many Potted Plants/Garden
+                                    </label>
+                                    <div class="form-text">Plants with water collection points</div>
+                                </div>
+
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" name="construction_nearby" id="construction_nearby">
+                                    <label class="form-check-label" for="construction_nearby">
+                                        <i class="fas fa-hard-hat text-warning me-2"></i>
+                                        Construction Activity Nearby
+                                    </label>
+                                    <div class="form-text">Building work that creates water pools</div>
+                                </div>
+
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" name="ac_cooler" id="ac_cooler">
+                                    <label class="form-check-label" for="ac_cooler">
+                                        <i class="fas fa-snowflake text-info me-2"></i>
+                                        Air Cooler/AC Water Collection
+                                    </label>
+                                    <div class="form-text">Cooling systems with standing water</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" name="garbage_collection" id="garbage_collection">
+                                    <label class="form-check-label" for="garbage_collection">
+                                        <i class="fas fa-trash text-secondary me-2"></i>
+                                        Irregular Garbage Collection
+                                    </label>
+                                    <div class="form-text">Poor waste management in area</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-info btn-lg">
+                                <i class="fas fa-calculator me-2"></i>
+                                Calculate My Risk Score
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Scoring Guide -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-bar me-2"></i>
+                        Risk Score Interpretation
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 col-lg-3">
+                            <div class="alert alert-success text-center">
+                                <h6 class="alert-heading">0-1 Points</h6>
+                                <strong>LOW RISK</strong>
+                                <div class="small">Good practices!</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <div class="alert alert-primary text-center">
+                                <h6 class="alert-heading">2-4 Points</h6>
+                                <strong>LOW-MEDIUM</strong>
+                                <div class="small">Some improvements needed</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <div class="alert alert-info text-center">
+                                <h6 class="alert-heading">5-7 Points</h6>
+                                <strong>MEDIUM RISK</strong>
+                                <div class="small">Take preventive action</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <div class="alert alert-warning text-center">
+                                <h6 class="alert-heading">8-11 Points</h6>
+                                <strong>HIGH RISK</strong>
+                                <div class="small">Immediate action needed</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-md-6 col-lg-3">
+                            <div class="alert alert-danger text-center">
+                                <h6 class="alert-heading">12+ Points</h6>
+                                <strong>VERY HIGH RISK</strong>
+                                <div class="small">Urgent intervention</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Prevention Tips -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-lightbulb me-2"></i>
+                        Quick Prevention Tips
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <h6><i class="fas fa-tint text-primary me-2"></i>Water Management</h6>
+                            <ul class="small">
+                                <li>Empty standing water weekly</li>
+                                <li>Cover water storage containers</li>
+                                <li>Fix leaky pipes promptly</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-4">
+                            <h6><i class="fas fa-shield-alt text-success me-2"></i>Personal Protection</h6>
+                            <ul class="small">
+                                <li>Use mosquito repellents</li>
+                                <li>Sleep under mosquito nets</li>
+                                <li>Wear protective clothing</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-4">
+                            <h6><i class="fas fa-home text-warning me-2"></i>Home Environment</h6>
+                            <ul class="small">
+                                <li>Install window screens</li>
+                                <li>Maintain clean surroundings</li>
+                                <li>Regular pest control</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Back Navigation -->
+            <div class="text-center mt-4">
+                <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>
+                    Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

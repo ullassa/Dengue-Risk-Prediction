@@ -1,0 +1,196 @@
+{% extends "base.html" %}
+
+{% block title %}Local Alert System - Dengue Risk System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Header -->
+            <div class="card mb-4">
+                <div class="card-header bg-warning text-dark">
+                    <h2 class="card-title mb-0">
+                        <i class="fas fa-map-marker-alt me-3"></i>
+                        Local Dengue Alert System
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">
+                        Get location-specific dengue outbreak information and alerts for your area. Our system tracks reported cases and provides community-level risk assessment.
+                    </p>
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Real-time Data:</strong> Information is based on reported dengue cases from health authorities and surveillance data.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Location Form -->
+            <div class="card">
+                <div class="card-body">
+                    <form method="POST" class="needs-validation" novalidate>
+                        <div class="mb-4">
+                            <label for="location" class="form-label fw-bold">
+                                <i class="fas fa-search-location me-2"></i>
+                                Enter Your Location
+                            </label>
+                            <input type="text" 
+                                   class="form-control form-control-lg" 
+                                   id="location" 
+                                   name="location" 
+                                   placeholder="e.g., Mumbai, Delhi, Kolkata, Bangalore"
+                                   required>
+                            <div class="invalid-feedback">
+                                Please enter a valid location name.
+                            </div>
+                            <div class="form-text">
+                                <i class="fas fa-lightbulb me-1"></i>
+                                You can enter city name, district, or state
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-warning btn-lg text-dark">
+                                <i class="fas fa-search me-2"></i>
+                                Check Local Dengue Risk
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Alert Level Guide -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-traffic-light me-2"></i>
+                        Alert Level Guide
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="alert alert-success text-center">
+                                <i class="fas fa-check-circle fa-2x mb-2"></i>
+                                <h6 class="alert-heading">LOW RISK</h6>
+                                <small>Few or no recent cases</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="alert alert-info text-center">
+                                <i class="fas fa-info-circle fa-2x mb-2"></i>
+                                <h6 class="alert-heading">WATCH</h6>
+                                <small>5-19 cases in area</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="alert alert-warning text-center">
+                                <i class="fas fa-exclamation-triangle fa-2x mb-2"></i>
+                                <h6 class="alert-heading">MODERATE</h6>
+                                <small>20-49 cases in area</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="alert alert-danger text-center">
+                                <i class="fas fa-exclamation-circle fa-2x mb-2"></i>
+                                <h6 class="alert-heading">HIGH ALERT</h6>
+                                <small>50+ cases in area</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Updates -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-newspaper me-2"></i>
+                        What We Track
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-chart-line text-primary me-2"></i>Case Trends</h6>
+                            <ul class="list-unstyled">
+                                <li>• Daily reported cases</li>
+                                <li>• Weekly case patterns</li>
+                                <li>• Monthly trends</li>
+                                <li>• Seasonal variations</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-map-marked text-success me-2"></i>Geographic Data</h6>
+                            <ul class="list-unstyled">
+                                <li>• City-wise case distribution</li>
+                                <li>• District-level alerts</li>
+                                <li>• State-wide surveillance</li>
+                                <li>• Hotspot identification</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Emergency Contacts -->
+            <div class="card mt-4 border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-phone me-2"></i>
+                        Emergency Contacts
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 text-center">
+                            <i class="fas fa-ambulance fa-2x text-danger mb-2"></i>
+                            <h6>Medical Emergency</h6>
+                            <strong>108</strong>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <i class="fas fa-hospital fa-2x text-primary mb-2"></i>
+                            <h6>Health Helpline</h6>
+                            <strong>104</strong>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <i class="fas fa-phone-alt fa-2x text-success mb-2"></i>
+                            <h6>Local Health Dept.</h6>
+                            <strong>Contact your district office</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Back Navigation -->
+            <div class="text-center mt-4">
+                <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>
+                    Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Form validation
+(function() {
+    'use strict';
+    window.addEventListener('load', function() {
+        var forms = document.getElementsByClassName('needs-validation');
+        var validation = Array.prototype.filter.call(forms, function(form) {
+            form.addEventListener('submit', function(event) {
+                if (form.checkValidity() === false) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    }, false);
+})();
+</script>
+{% endblock %}

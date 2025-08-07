@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+
+{% block title %}Symptom Checker - Dengue Risk System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Header -->
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <h2 class="card-title mb-0">
+                        <i class="fas fa-stethoscope me-3"></i>
+                        Dengue Symptom Checker
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">
+                        Answer the following questions about your current symptoms. Our assessment is based on WHO guidelines for dengue diagnosis.
+                    </p>
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Disclaimer:</strong> This tool is for informational purposes only and does not replace professional medical diagnosis. Seek immediate medical attention if you have severe symptoms.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Symptom Form -->
+            <div class="card">
+                <div class="card-body">
+                    <form method="POST">
+                        <h5 class="mb-4">
+                            <i class="fas fa-clipboard-list me-2"></i>
+                            Please select all symptoms you are currently experiencing:
+                        </h5>
+
+                        <div class="row">
+                            <!-- Primary Symptoms -->
+                            <div class="col-md-6">
+                                <h6 class="text-danger mb-3">
+                                    <i class="fas fa-exclamation-circle me-2"></i>
+                                    Primary Symptoms
+                                </h6>
+                                
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" name="fever" id="fever">
+                                    <label class="form-check-label fw-bold" for="fever">
+                                        <i class="fas fa-thermometer-full text-danger me-2"></i>
+                                        Fever (High temperature)
+                                    </label>
+                                    <div class="form-text">Sudden onset of high fever (38°C or above)</div>
+                                </div>
+
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" name="headache" id="headache">
+                                    <label class="form-check-label" for="headache">
+                                        <i class="fas fa-head-side-cough text-warning me-2"></i>
+                                        Severe Headache
+                                    </label>
+                                    <div class="form-text">Intense headache, often behind the eyes</div>
+                                </div>
+
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" name="joint_pain" id="joint_pain">
+                                    <label class="form-check-label" for="joint_pain">
+                                        <i class="fas fa-bone text-info me-2"></i>
+                                        Joint and Bone Pain
+                                    </label>
+                                    <div class="form-text">Severe joint, bone, and muscle pain</div>
+                                </div>
+
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" name="muscle_pain" id="muscle_pain">
+                                    <label class="form-check-label" for="muscle_pain">
+                                        <i class="fas fa-dumbbell text-secondary me-2"></i>
+                                        Muscle Pain
+                                    </label>
+                                    <div class="form-text">General body aches and muscle soreness</div>
+                                </div>
+                            </div>
+
+                            <!-- Secondary Symptoms -->
+                            <div class="col-md-6">
+                                <h6 class="text-warning mb-3">
+                                    <i class="fas fa-list-ul me-2"></i>
+                                    Secondary Symptoms
+                                </h6>
+
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" name="rash" id="rash">
+                                    <label class="form-check-label" for="rash">
+                                        <i class="fas fa-allergies text-danger me-2"></i>
+                                        Skin Rash
+                                    </label>
+                                    <div class="form-text">Red spots or patches on skin</div>
+                                </div>
+
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" name="nausea" id="nausea">
+                                    <label class="form-check-label" for="nausea">
+                                        <i class="fas fa-dizzy text-success me-2"></i>
+                                        Nausea
+                                    </label>
+                                    <div class="form-text">Feeling sick to your stomach</div>
+                                </div>
+
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" name="vomiting" id="vomiting">
+                                    <label class="form-check-label" for="vomiting">
+                                        <i class="fas fa-nauseated text-warning me-2"></i>
+                                        Vomiting
+                                    </label>
+                                    <div class="form-text">Actual vomiting or retching</div>
+                                </div>
+
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" name="bleeding" id="bleeding">
+                                    <label class="form-check-label fw-bold text-danger" for="bleeding">
+                                        <i class="fas fa-tint text-danger me-2"></i>
+                                        Bleeding (Warning Sign)
+                                    </label>
+                                    <div class="form-text">Any unusual bleeding (nose, gums, bruising)</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-user-md me-2"></i>
+                                Assess Dengue Risk
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- WHO Information -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle me-2"></i>
+                        WHO Dengue Classification
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="alert alert-success">
+                                <h6 class="alert-heading">Probable Dengue</h6>
+                                <small>Fever + 2 or more symptoms</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="alert alert-warning">
+                                <h6 class="alert-heading">Dengue with Warning Signs</h6>
+                                <small>Includes vomiting, bleeding, abdominal pain</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="alert alert-danger">
+                                <h6 class="alert-heading">Severe Dengue</h6>
+                                <small>Severe bleeding, organ involvement, shock</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Back Navigation -->
+            <div class="text-center mt-4">
+                <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>
+                    Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

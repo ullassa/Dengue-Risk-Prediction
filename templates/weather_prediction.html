@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block title %}Weather-Based Prediction - Dengue Risk System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Header -->
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="card-title mb-0">
+                        <i class="fas fa-cloud-rain me-3"></i>
+                        Weather-Based Dengue Risk Prediction
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">
+                        Enter your city name to get real-time weather analysis and dengue outbreak risk assessment based on current climatic conditions.
+                    </p>
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>How it works:</strong> Our system analyzes temperature, humidity, and other weather factors to predict mosquito breeding conditions and dengue transmission risk.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input Form -->
+            <div class="card">
+                <div class="card-body">
+                    <form method="POST" class="needs-validation" novalidate>
+                        <div class="mb-4">
+                            <label for="city" class="form-label fw-bold">
+                                <i class="fas fa-map-marker-alt me-2"></i>
+                                Enter City Name
+                            </label>
+                            <input type="text" 
+                                   class="form-control form-control-lg" 
+                                   id="city" 
+                                   name="city" 
+                                   placeholder="e.g., Mumbai, Delhi, Bangalore"
+                                   required>
+                            <div class="invalid-feedback">
+                                Please enter a valid city name.
+                            </div>
+                            <div class="form-text">
+                                <i class="fas fa-lightbulb me-1"></i>
+                                Enter the name of your city or any city you want to check
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-search me-2"></i>
+                                Analyze Weather Risk
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Information Cards -->
+            <div class="row mt-4">
+                <div class="col-md-4">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <i class="fas fa-thermometer-half fa-3x text-danger mb-3"></i>
+                            <h5 class="card-title">Temperature</h5>
+                            <p class="card-text small">Optimal range: 25-30°C for mosquito breeding</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <i class="fas fa-tint fa-3x text-info mb-3"></i>
+                            <h5 class="card-title">Humidity</h5>
+                            <p class="card-text small">High humidity (>70%) increases dengue risk</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <i class="fas fa-cloud-rain fa-3x text-primary mb-3"></i>
+                            <h5 class="card-title">Weather Pattern</h5>
+                            <p class="card-text small">Monsoon and post-monsoon periods are high-risk</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Back Navigation -->
+            <div class="text-center mt-4">
+                <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>
+                    Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Form validation
+(function() {
+    'use strict';
+    window.addEventListener('load', function() {
+        var forms = document.getElementsByClassName('needs-validation');
+        var validation = Array.prototype.filter.call(forms, function(form) {
+            form.addEventListener('submit', function(event) {
+                if (form.checkValidity() === false) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    }, false);
+})();
+</script>
+{% endblock %}

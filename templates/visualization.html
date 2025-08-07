@@ -1,0 +1,273 @@
+{% extends "base.html" %}
+
+{% block title %}Analytics & Visualization - Dengue Risk System{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <!-- Header -->
+            <div class="card mb-4">
+                <div class="card-header bg-secondary text-white">
+                    <h2 class="card-title mb-0">
+                        <i class="fas fa-chart-line me-3"></i>
+                        Spatio-Temporal Dengue Analytics
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">
+                        Interactive visualizations and data analytics showing dengue spread patterns, temporal trends, and geographic hotspots.
+                    </p>
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Data Sources:</strong> Historical dengue cases, weather patterns, and geographical distribution data.
+                    </div>
+                </div>
+            </div>
+
+            {% if charts_data %}
+                <!-- Time Series Chart -->
+                {% if charts_data.time_series %}
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-chart-line me-2"></i>
+                                Dengue Cases Over Time
+                            </h5>
+                        </div>
+                        <div class="card-body text-center">
+                            <img src="data:image/png;base64,{{ charts_data.time_series }}" 
+                                 class="img-fluid" 
+                                 alt="Time Series Chart"
+                                 style="max-height: 400px;">
+                        </div>
+                    </div>
+                {% endif %}
+
+                <!-- Location Chart -->
+                {% if charts_data.location %}
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-map-marker-alt me-2"></i>
+                                Cases by Location
+                            </h5>
+                        </div>
+                        <div class="card-body text-center">
+                            <img src="data:image/png;base64,{{ charts_data.location }}" 
+                                 class="img-fluid" 
+                                 alt="Location Chart"
+                                 style="max-height: 400px;">
+                        </div>
+                    </div>
+                {% endif %}
+
+                <!-- Weather Correlation Chart -->
+                {% if charts_data.weather_correlation %}
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-cloud-rain me-2"></i>
+                                Weather vs Dengue Correlation
+                            </h5>
+                        </div>
+                        <div class="card-body text-center">
+                            <img src="data:image/png;base64,{{ charts_data.weather_correlation }}" 
+                                 class="img-fluid" 
+                                 alt="Weather Correlation Chart"
+                                 style="max-height: 500px;">
+                        </div>
+                    </div>
+                {% endif %}
+            {% else %}
+                <!-- No Data Available -->
+                <div class="card">
+                    <div class="card-body text-center py-5">
+                        <i class="fas fa-chart-line fa-5x text-muted mb-4"></i>
+                        <h4 class="text-muted">No Visualization Data Available</h4>
+                        <p class="text-muted">
+                            Charts will be displayed here when dengue case data and weather history become available.
+                        </p>
+                        <div class="alert alert-warning mt-4">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            To see visualizations, ensure that dengue case data files are properly loaded in the datasets folder.
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+            <!-- Interactive Map -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-globe me-2"></i>
+                        Geographic Distribution Map
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div id="map" style="height: 400px; width: 100%;"></div>
+                    <div class="mt-3">
+                        <small class="text-muted">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Click on markers to view detailed information about dengue cases in that location.
+                        </small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Summary -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-chart-bar fa-3x text-primary mb-3"></i>
+                            <h5 class="card-title">Data Analysis</h5>
+                            <p class="card-text small">Statistical analysis of dengue trends and patterns</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-map fa-3x text-success mb-3"></i>
+                            <h5 class="card-title">Spatial Mapping</h5>
+                            <p class="card-text small">Geographic visualization of dengue hotspots</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-clock fa-3x text-warning mb-3"></i>
+                            <h5 class="card-title">Temporal Analysis</h5>
+                            <p class="card-text small">Time-based patterns and seasonal trends</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-cloud-sun fa-3x text-info mb-3"></i>
+                            <h5 class="card-title">Climate Correlation</h5>
+                            <p class="card-text small">Weather-dengue relationship analysis</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Key Insights -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-lightbulb me-2"></i>
+                        Key Insights & Patterns
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <h6><i class="fas fa-calendar text-primary me-2"></i>Seasonal Patterns</h6>
+                            <ul class="small">
+                                <li>Peak cases during monsoon months</li>
+                                <li>Post-monsoon secondary peaks</li>
+                                <li>Lower incidence in winter</li>
+                                <li>Pre-monsoon preparation period</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-4">
+                            <h6><i class="fas fa-thermometer text-danger me-2"></i>Climate Factors</h6>
+                            <ul class="small">
+                                <li>Temperature range: 25-30°C optimal</li>
+                                <li>Humidity >70% increases risk</li>
+                                <li>Rainfall creates breeding sites</li>
+                                <li>Urban heat islands effect</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-4">
+                            <h6><i class="fas fa-city text-success me-2"></i>Geographic Trends</h6>
+                            <ul class="small">
+                                <li>Higher cases in urban areas</li>
+                                <li>Coastal regions more affected</li>
+                                <li>Poor drainage areas at risk</li>
+                                <li>Construction zones vulnerable</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Back Navigation -->
+            <div class="text-center mt-4">
+                <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>
+                    Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Initialize map
+function initMap() {
+    // Default center on India
+    var map = L.map('map').setView([20.5937, 78.9629], 5);
+    
+    // Add tile layer
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+    
+    // Load map data
+    fetch('/api/map-data')
+        .then(response => response.json())
+        .then(data => {
+            if (data.locations && data.locations.length > 0) {
+                data.locations.forEach(location => {
+                    // Determine marker color based on cases
+                    var color = 'green';
+                    if (location.cases > 100) color = 'red';
+                    else if (location.cases > 50) color = 'orange';
+                    else if (location.cases > 20) color = 'yellow';
+                    
+                    // Create marker
+                    var marker = L.marker([location.lat, location.lng]).addTo(map);
+                    
+                    // Create popup content
+                    var popupContent = `
+                        <div>
+                            <h6>${location.name}</h6>
+                            <p><strong>Cases:</strong> ${location.cases}</p>
+                            <p><strong>State:</strong> ${location.state}</p>
+                            <span class="badge bg-${color === 'red' ? 'danger' : color === 'orange' ? 'warning' : color === 'yellow' ? 'info' : 'success'}">
+                                ${location.cases > 100 ? 'High Risk' : location.cases > 50 ? 'Medium Risk' : location.cases > 20 ? 'Watch' : 'Low Risk'}
+                            </span>
+                        </div>
+                    `;
+                    
+                    marker.bindPopup(popupContent);
+                });
+                
+                // Show message
+                document.getElementById('map-message').innerHTML = data.message;
+            } else {
+                // No data available
+                var noDataMarker = L.marker([20.5937, 78.9629]).addTo(map);
+                noDataMarker.bindPopup('<div class="text-center"><h6>No Map Data Available</h6><p>Map will show dengue case locations when data is available.</p></div>').openPopup();
+            }
+        })
+        .catch(error => {
+            console.error('Error loading map data:', error);
+            var errorMarker = L.marker([20.5937, 78.9629]).addTo(map);
+            errorMarker.bindPopup('<div class="text-center text-danger"><h6>Error Loading Data</h6><p>Unable to load map data at this time.</p></div>').openPopup();
+        });
+}
+
+// Initialize map when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    initMap();
+});
+</script>
+{% endblock %}
