@@ -8,6 +8,7 @@ pip install --upgrade pip
 pip install -r requirements.txt
 
 # Initialize database and create admin user
+python init_db.py
 echo "Initializing database..."
 python init_db.py
 
