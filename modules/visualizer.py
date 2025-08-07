@@ -24,8 +24,12 @@ class Visualizer:
             
             if os.path.exists(self.dengue_cases_file):
                 dengue_data = pd.read_csv(self.dengue_cases_file)
-                if 'date' in dengue_data.columns:
-                    dengue_data['date'] = pd.to_datetime(dengue_data['date'], errors='coerce')
+                # Use correct column names from Karnataka data
+                if 'Date' in dengue_data.columns:
+                    dengue_data['Date'] = pd.to_datetime(dengue_data['Date'], errors='coerce')
+                    # Create lowercase columns for compatibility
+                    dengue_data['date'] = dengue_data['Date'] 
+                    dengue_data['cases'] = dengue_data['Cases']
             
             if os.path.exists(self.weather_history_file):
                 weather_data = pd.read_csv(self.weather_history_file)
@@ -42,10 +46,11 @@ class Visualizer:
         try:
             fig, ax = plt.subplots(figsize=(12, 6))
             
-            if not dengue_data.empty and 'date' in dengue_data.columns and 'cases' in dengue_data.columns:
-                # Group by date and sum cases
-                daily_cases = dengue_data.groupby('date')['cases'].sum().reset_index()
-                daily_cases = daily_cases.sort_values('date')
+            if not dengue_data.empty and 'Date' in dengue_data.columns and 'Cases' in dengue_data.columns:
+                # Group by date and sum cases - use correct column names
+                daily_cases = dengue_data.groupby('Date')['Cases'].sum().reset_index()
+                daily_cases = daily_cases.sort_values('Date')
+                daily_cases.columns = ['date', 'cases']  # Rename for consistency
                 
                 ax.plot(daily_cases['date'], daily_cases['cases'], 
                        marker='o', linewidth=2, markersize=4, color='#e74c3c')
@@ -83,9 +88,9 @@ class Visualizer:
         try:
             fig, ax = plt.subplots(figsize=(12, 8))
             
-            if not dengue_data.empty and 'location' in dengue_data.columns and 'cases' in dengue_data.columns:
-                # Group by location and sum cases
-                location_cases = dengue_data.groupby('location')['cases'].sum().sort_values(ascending=False).head(10)
+            if not dengue_data.empty and 'City' in dengue_data.columns and 'Cases' in dengue_data.columns:
+                # Group by city and sum cases - use correct column names
+                location_cases = dengue_data.groupby('City')['Cases'].sum().sort_values(ascending=False).head(10)
                 
                 bars = ax.bar(range(len(location_cases)), location_cases.values, 
                             color='#3498db', alpha=0.8)
@@ -221,10 +226,12 @@ class Visualizer:
             # Group by location and get coordinates (mock data for demonstration)
             location_data = []
             
-            if 'location' in dengue_data.columns and 'cases' in dengue_data.columns:
-                location_summary = dengue_data.groupby('location').agg({
-                    'cases': 'sum',
-                    'state': 'first'
+            if 'City' in dengue_data.columns and 'Cases' in dengue_data.columns:
+                location_summary = dengue_data.groupby('City').agg({
+                    'Cases': 'sum',
+                    'State': 'first',
+                    'Latitude': 'first',
+                    'Longitude': 'first'
                 }).reset_index()
                 
                 # Mock coordinates for demonstration (in a real app, you'd have a geocoding service)
@@ -240,24 +247,13 @@ class Visualizer:
                 }
                 
                 for _, row in location_summary.iterrows():
-                    location = row['location'].lower()
-                    cases = row['cases']
-                    
-                    # Try to find coordinates
-                    coords = None
-                    for city, coord in mock_coordinates.items():
-                        if city in location:
-                            coords = coord
-                            break
-                    
-                    if coords:
-                        location_data.append({
-                            'name': row['location'],
-                            'cases': int(cases),
-                            'lat': coords[0],
-                            'lng': coords[1],
-                            'state': row.get('state', 'Unknown')
-                        })
+                    location_data.append({
+                        'name': row['City'],
+                        'cases': int(row['Cases']),
+                        'lat': float(row['Latitude']) if pd.notna(row['Latitude']) else 12.9716,
+                        'lng': float(row['Longitude']) if pd.notna(row['Longitude']) else 77.5946,
+                        'state': row['State']
+                    })
             
             return {
                 'locations': location_data,

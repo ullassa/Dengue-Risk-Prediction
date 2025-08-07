@@ -40,7 +40,7 @@ def weather_prediction():
             return render_template('result.html', 
                                  result=result, 
                                  module='Weather Prediction',
-                                 back_url='weather-prediction')
+                                 back_url=url_for('weather_prediction'))
         except Exception as e:
             logging.error(f"Weather prediction error: {str(e)}")
             flash(f'Error getting weather data: {str(e)}', 'error')
@@ -68,7 +68,7 @@ def symptom_checker_route():
             return render_template('result.html', 
                                  result=result, 
                                  module='Symptom Checker',
-                                 back_url='symptom-checker')
+                                 back_url=url_for('symptom_checker_route'))
         except Exception as e:
             logging.error(f"Symptom checker error: {str(e)}")
             flash(f'Error processing symptoms: {str(e)}', 'error')
@@ -90,7 +90,7 @@ def local_alert_route():
             return render_template('result.html', 
                                  result=result, 
                                  module='Local Alert',
-                                 back_url='local-alert')
+                                 back_url=url_for('local_alert_route'))
         except Exception as e:
             logging.error(f"Local alert error: {str(e)}")
             flash(f'Error checking local alerts: {str(e)}', 'error')
@@ -120,7 +120,7 @@ def risk_calculator_route():
             return render_template('result.html', 
                                  result=result, 
                                  module='Risk Calculator',
-                                 back_url='risk-calculator')
+                                 back_url=url_for('risk_calculator_route'))
         except Exception as e:
             logging.error(f"Risk calculator error: {str(e)}")
             flash(f'Error calculating risk: {str(e)}', 'error')

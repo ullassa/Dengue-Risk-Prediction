@@ -96,6 +96,7 @@ class LocalAlert:
                 risk_level = "Unknown"
                 risk_color = "secondary"
                 alert_message = "No dengue surveillance data available"
+                risk_description = "Data unavailable"
                 total_cases = 0
             
             # Generate location-specific recommendations based on your case thresholds
