@@ -1,0 +1,101 @@
+Date,City,District,State,Temperature(C),Humidity(%),Rainfall(mm),Latitude,Longitude
+8/1/2025,Belgaum,Belagavi,Karnataka,25.3,83,10.2,15.8497,74.4977
+8/2/2025,Belgaum,Belagavi,Karnataka,24.3,86,11,15.8497,74.4977
+8/3/2025,Hubli,Dharwad,Karnataka,25.2,91,8.4,15.3647,75.124
+8/4/2025,Mysore,Mysore,Karnataka,27.6,75,6,12.2958,76.6394
+8/5/2025,Bangalore,Bangalore Urban,Karnataka,29.3,83,14.6,12.9716,77.5946
+8/6/2025,Mangalore,Dakshina Kannada,Karnataka,25.8,79,16.1,12.9141,74.856
+8/7/2025,Mangalore,Dakshina Kannada,Karnataka,28.5,79,12.7,12.9141,74.856
+8/8/2025,Bangalore,Bangalore Urban,Karnataka,26.4,62,14.3,12.9716,77.5946
+8/9/2025,Mangalore,Dakshina Kannada,Karnataka,25.9,65,18.4,12.9141,74.856
+8/10/2025,Bangalore,Bangalore Urban,Karnataka,31.2,90,0.8,12.9716,77.5946
+8/11/2025,Mysore,Mysore,Karnataka,28.1,71,0.3,12.2958,76.6394
+8/12/2025,Bangalore,Bangalore Urban,Karnataka,29.9,72,14,12.9716,77.5946
+8/13/2025,Mangalore,Dakshina Kannada,Karnataka,31.2,73,8.9,12.9141,74.856
+8/14/2025,Bangalore,Bangalore Urban,Karnataka,27,81,19.9,12.9716,77.5946
+8/15/2025,Belgaum,Belagavi,Karnataka,30.1,61,1.2,15.8497,74.4977
+8/16/2025,Mysore,Mysore,Karnataka,28.5,70,17.5,12.2958,76.6394
+8/17/2025,Shimoga,Shivamogga,Karnataka,28.8,87,5.1,13.9299,75.5681
+8/18/2025,Mangalore,Dakshina Kannada,Karnataka,29.6,91,11.6,12.9141,74.856
+8/19/2025,Mysore,Mysore,Karnataka,31.7,84,5.6,12.2958,76.6394
+8/20/2025,Mysore,Mysore,Karnataka,29.9,63,10.8,12.2958,76.6394
+8/21/2025,Mangalore,Dakshina Kannada,Karnataka,29.1,75,18.2,12.9141,74.856
+8/22/2025,Mysore,Mysore,Karnataka,27.7,81,5.6,12.2958,76.6394
+8/23/2025,Mangalore,Dakshina Kannada,Karnataka,30,65,16.9,12.9141,74.856
+8/24/2025,Hubli,Dharwad,Karnataka,25.9,68,2.3,15.3647,75.124
+8/25/2025,Shimoga,Shivamogga,Karnataka,30,81,9.2,13.9299,75.5681
+8/26/2025,Belgaum,Belagavi,Karnataka,24.1,72,10.4,15.8497,74.4977
+8/27/2025,Bangalore,Bangalore Urban,Karnataka,26.3,70,16.9,12.9716,77.5946
+8/28/2025,Mangalore,Dakshina Kannada,Karnataka,26.3,61,0.4,12.9141,74.856
+8/29/2025,Shimoga,Shivamogga,Karnataka,30.4,95,4.8,13.9299,75.5681
+8/30/2025,Belgaum,Belagavi,Karnataka,25.5,92,2.3,15.8497,74.4977
+8/1/2025,Shimoga,Shivamogga,Karnataka,30.8,63,5,13.9299,75.5681
+8/2/2025,Belgaum,Belagavi,Karnataka,25,85,11.8,15.8497,74.4977
+8/3/2025,Hubli,Dharwad,Karnataka,27.8,91,6.8,15.3647,75.124
+8/4/2025,Belgaum,Belagavi,Karnataka,28.1,66,14.8,15.8497,74.4977
+8/5/2025,Mysore,Mysore,Karnataka,26.8,68,12.2,12.2958,76.6394
+8/6/2025,Mangalore,Dakshina Kannada,Karnataka,24.3,61,9.9,12.9141,74.856
+8/7/2025,Hubli,Dharwad,Karnataka,29.8,62,2.6,15.3647,75.124
+8/8/2025,Belgaum,Belagavi,Karnataka,28.2,91,12.9,15.8497,74.4977
+8/9/2025,Hubli,Dharwad,Karnataka,29.2,69,2.2,15.3647,75.124
+8/10/2025,Hubli,Dharwad,Karnataka,25.7,82,11.5,15.3647,75.124
+8/11/2025,Mysore,Mysore,Karnataka,29.7,87,2.9,12.2958,76.6394
+8/12/2025,Hubli,Dharwad,Karnataka,24,73,8.6,15.3647,75.124
+8/13/2025,Hubli,Dharwad,Karnataka,24.2,89,7.4,15.3647,75.124
+8/14/2025,Belgaum,Belagavi,Karnataka,24.5,71,0.8,15.8497,74.4977
+8/15/2025,Bangalore,Bangalore Urban,Karnataka,28.9,87,9.7,12.9716,77.5946
+8/16/2025,Belgaum,Belagavi,Karnataka,29.6,70,6.8,15.8497,74.4977
+8/17/2025,Bangalore,Bangalore Urban,Karnataka,29.6,72,14.2,12.9716,77.5946
+8/18/2025,Mysore,Mysore,Karnataka,29.6,74,2.4,12.2958,76.6394
+8/19/2025,Hubli,Dharwad,Karnataka,28.8,92,16.8,15.3647,75.124
+8/20/2025,Belgaum,Belagavi,Karnataka,30.6,80,5.8,15.8497,74.4977
+8/21/2025,Shimoga,Shivamogga,Karnataka,29.2,67,11.9,13.9299,75.5681
+8/22/2025,Shimoga,Shivamogga,Karnataka,31.1,66,9.7,13.9299,75.5681
+8/23/2025,Belgaum,Belagavi,Karnataka,30.3,84,11.6,15.8497,74.4977
+8/24/2025,Mangalore,Dakshina Kannada,Karnataka,25.6,92,12.6,12.9141,74.856
+8/25/2025,Shimoga,Shivamogga,Karnataka,24.7,70,7.5,13.9299,75.5681
+8/26/2025,Mangalore,Dakshina Kannada,Karnataka,24.5,91,19.7,12.9141,74.856
+8/27/2025,Bangalore,Bangalore Urban,Karnataka,26.8,67,0.7,12.9716,77.5946
+8/28/2025,Belgaum,Belagavi,Karnataka,30,91,7.8,15.8497,74.4977
+8/29/2025,Belgaum,Belagavi,Karnataka,24.6,75,5.7,15.8497,74.4977
+8/30/2025,Hubli,Dharwad,Karnataka,27,85,14.8,15.3647,75.124
+8/1/2025,Belgaum,Belagavi,Karnataka,29.4,67,0.7,15.8497,74.4977
+8/2/2025,Bangalore,Bangalore Urban,Karnataka,24.1,77,3.8,12.9716,77.5946
+8/3/2025,Mysore,Mysore,Karnataka,29.9,67,17.6,12.2958,76.6394
+8/4/2025,Bangalore,Bangalore Urban,Karnataka,29.1,80,10.6,12.9716,77.5946
+8/5/2025,Mangalore,Dakshina Kannada,Karnataka,25.2,74,14.7,12.9141,74.856
+8/6/2025,Hubli,Dharwad,Karnataka,25.3,75,3.4,15.3647,75.124
+8/7/2025,Shimoga,Shivamogga,Karnataka,26.4,71,14.3,13.9299,75.5681
+8/8/2025,Bangalore,Bangalore Urban,Karnataka,31.3,76,14.4,12.9716,77.5946
+8/9/2025,Bangalore,Bangalore Urban,Karnataka,26.4,93,14.6,12.9716,77.5946
+8/10/2025,Mangalore,Dakshina Kannada,Karnataka,27.6,62,7,12.9141,74.856
+8/11/2025,Mysore,Mysore,Karnataka,24.7,87,12.2,12.2958,76.6394
+8/12/2025,Mangalore,Dakshina Kannada,Karnataka,29.3,68,17.4,12.9141,74.856
+8/13/2025,Shimoga,Shivamogga,Karnataka,27.3,82,2.5,13.9299,75.5681
+8/14/2025,Hubli,Dharwad,Karnataka,29.5,74,12.8,15.3647,75.124
+8/15/2025,Shimoga,Shivamogga,Karnataka,25.4,92,5.1,13.9299,75.5681
+8/16/2025,Mysore,Mysore,Karnataka,31.2,63,7.1,12.2958,76.6394
+8/17/2025,Mangalore,Dakshina Kannada,Karnataka,28,89,7.7,12.9141,74.856
+8/18/2025,Mysore,Mysore,Karnataka,24.7,79,8.8,12.2958,76.6394
+8/19/2025,Bangalore,Bangalore Urban,Karnataka,28.6,90,11.4,12.9716,77.5946
+8/20/2025,Hubli,Dharwad,Karnataka,25.4,73,10,15.3647,75.124
+8/21/2025,Hubli,Dharwad,Karnataka,25,87,10.7,15.3647,75.124
+8/22/2025,Bangalore,Bangalore Urban,Karnataka,30.4,86,19.1,12.9716,77.5946
+8/23/2025,Belgaum,Belagavi,Karnataka,30.1,78,11.4,15.8497,74.4977
+8/24/2025,Belgaum,Belagavi,Karnataka,28.2,88,6.6,15.8497,74.4977
+8/25/2025,Belgaum,Belagavi,Karnataka,25.7,89,7.2,15.8497,74.4977
+8/26/2025,Mysore,Mysore,Karnataka,28.1,88,8,12.2958,76.6394
+8/27/2025,Belgaum,Belagavi,Karnataka,27.4,68,8.9,15.8497,74.4977
+8/28/2025,Belgaum,Belagavi,Karnataka,26.9,94,14.3,15.8497,74.4977
+8/29/2025,Bangalore,Bangalore Urban,Karnataka,27.8,95,1.5,12.9716,77.5946
+8/30/2025,Mysore,Mysore,Karnataka,29.5,79,14.3,12.2958,76.6394
+8/1/2025,Bangalore,Bangalore Urban,Karnataka,28.1,85,4.4,12.9716,77.5946
+8/2/2025,Mangalore,Dakshina Kannada,Karnataka,24.8,73,19.3,12.9141,74.856
+8/3/2025,Shimoga,Shivamogga,Karnataka,25.3,78,3.2,13.9299,75.5681
+8/4/2025,Shimoga,Shivamogga,Karnataka,31.8,93,18.5,13.9299,75.5681
+8/5/2025,Mangalore,Dakshina Kannada,Karnataka,25.3,76,18.4,12.9141,74.856
+8/6/2025,Shimoga,Shivamogga,Karnataka,26.2,69,6.5,13.9299,75.5681
+8/7/2025,Bangalore,Bangalore Urban,Karnataka,27.8,82,17.1,12.9716,77.5946
+8/8/2025,Mysore,Mysore,Karnataka,27.9,78,15.7,12.2958,76.6394
+8/9/2025,Belgaum,Belagavi,Karnataka,30.6,91,3.3,15.8497,74.4977
+8/10/2025,Mangalore,Dakshina Kannada,Karnataka,31.3,94,19.3,12.9141,74.856

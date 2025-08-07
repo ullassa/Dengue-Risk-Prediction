@@ -60,25 +60,29 @@ class LocalAlert:
                     else:
                         recent_cases = location_matches
                     
-                    total_cases = recent_cases['cases'].sum() if 'cases' in recent_cases.columns else len(recent_cases)
+                    total_cases = recent_cases['Cases'].sum() if 'Cases' in recent_cases.columns else len(recent_cases)
                     
-                    # Determine risk level based on case count
+                    # Determine risk level based on your specific case count thresholds
                     if total_cases >= 50:
-                        risk_level = "High"
+                        risk_level = "HIGH ALERT"
                         risk_color = "danger"
-                        alert_message = f"⚠️ HIGH ALERT: {total_cases} dengue cases reported in {location} in the last 30 days"
+                        alert_message = f"🚨 HIGH ALERT: {total_cases} dengue cases reported in {location} (50+ cases threshold)"
+                        risk_description = "Immediate action required - outbreak conditions"
                     elif total_cases >= 20:
-                        risk_level = "Medium"
+                        risk_level = "MODERATE"
                         risk_color = "warning"
-                        alert_message = f"⚠️ MODERATE ALERT: {total_cases} dengue cases reported in {location} in the last 30 days"
+                        alert_message = f"⚠️ MODERATE RISK: {total_cases} dengue cases reported in {location} (20-49 cases)"
+                        risk_description = "Enhanced surveillance and prevention needed"
                     elif total_cases >= 5:
-                        risk_level = "Low-Medium"
+                        risk_level = "WATCH"
                         risk_color = "info"
-                        alert_message = f"ℹ️ WATCH: {total_cases} dengue cases reported in {location} in the last 30 days"
+                        alert_message = f"👀 WATCH LEVEL: {total_cases} dengue cases reported in {location} (5-19 cases)"
+                        risk_description = "Monitor closely and maintain preventive measures"
                     else:
-                        risk_level = "Low"
+                        risk_level = "LOW"
                         risk_color = "success"
-                        alert_message = f"✓ LOW RISK: Few or no recent dengue cases in {location}"
+                        alert_message = f"✅ LOW RISK: {total_cases} dengue cases reported in {location} (<5 cases)"
+                        risk_description = "Continue normal preventive measures"
                 else:
                     # No data available for this location
                     risk_level = "Unknown"
@@ -92,40 +96,49 @@ class LocalAlert:
                 alert_message = "No dengue surveillance data available"
                 total_cases = 0
             
-            # Generate location-specific recommendations
-            if risk_level == "High":
+            # Generate location-specific recommendations based on your case thresholds
+            if risk_level == "HIGH ALERT":
                 recommendations = [
                     "🚨 URGENT: Take immediate preventive action",
-                    "Remove ALL stagnant water sources",
-                    "Use mosquito nets and repellents consistently",
-                    "Avoid outdoor activities during dawn and dusk",
-                    "Seek immediate medical attention for any fever",
-                    "Alert neighbors about the dengue situation",
-                    "Report suspected cases to health authorities"
+                    "🏥 Contact local health authorities immediately",
+                    "🚫 Remove ALL stagnant water sources within 24 hours",
+                    "🦟 Use mosquito nets and repellents consistently",
+                    "🌅 Avoid outdoor activities during dawn and dusk",
+                    "🤒 Seek immediate medical attention for any fever",
+                    "📢 Alert neighbors and community about outbreak risk"
                 ]
-            elif risk_level == "Medium":
+            elif risk_level == "MODERATE":
                 recommendations = [
-                    "⚠️ CAUTION: Increase preventive measures",
-                    "Weekly inspection for stagnant water",
-                    "Use mosquito repellents regularly",
-                    "Keep windows and doors screened",
-                    "Monitor for dengue symptoms daily",
-                    "Educate family about dengue prevention"
+                    "⚠️ CAUTION: Enhanced preventive measures required",
+                    "🔍 Daily inspection for stagnant water sources",
+                    "🦟 Use mosquito repellents during peak hours",
+                    "🏠 Keep windows and doors screened",
+                    "🌡️ Monitor family for dengue symptoms daily",
+                    "📚 Educate household about dengue prevention"
                 ]
-            elif risk_level in ["Low-Medium", "Low"]:
+            elif risk_level == "WATCH":
                 recommendations = [
-                    "✓ PREVENTION: Continue protective measures",
-                    "Regular cleaning of water storage",
-                    "Proper waste management",
-                    "Community awareness participation",
-                    "Stay updated on local health bulletins"
+                    "👀 MONITORING: Stay vigilant and prepared",
+                    "🧹 Weekly cleaning of water storage areas",
+                    "🦟 Use mosquito repellents as needed",
+                    "📰 Stay updated on local dengue alerts",
+                    "🏥 Know early dengue symptoms",
+                    "🤝 Participate in community prevention activities"
+                ]
+            elif risk_level == "LOW":
+                recommendations = [
+                    "✅ PREVENTION: Continue protective measures",
+                    "🧹 Regular cleaning of water storage containers",
+                    "🗑️ Proper waste management practices",
+                    "📱 Stay informed through health bulletins",
+                    "🤝 Support community dengue awareness"
                 ]
             else:
                 recommendations = [
-                    "Stay informed about dengue in your area",
-                    "Follow general dengue prevention guidelines",
-                    "Report any dengue-like symptoms to authorities",
-                    "Maintain good sanitation practices"
+                    "📊 Limited data available for your area",
+                    "📋 Follow general dengue prevention guidelines",
+                    "🏥 Report any dengue-like symptoms to health authorities",
+                    "🧹 Maintain good sanitation practices"
                 ]
             
             # Additional local information
@@ -140,15 +153,23 @@ class LocalAlert:
             return {
                 'risk_level': risk_level,
                 'risk_color': risk_color,
-                'location': location,
-                'total_cases': total_cases,
                 'alert_message': alert_message,
+                'risk_description': risk_description,
+                'total_cases': total_cases,
                 'recommendations': recommendations,
                 'local_info': local_info,
-                'data_period': "Last 30 days",
+                'data_source': 'Karnataka dengue surveillance data',
                 'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             }
-            
         except Exception as e:
             logging.error(f"Local alert error: {str(e)}")
-            raise e
+            return {
+                'risk_level': 'Unknown',
+                'risk_color': 'secondary',
+                'alert_message': f'Error retrieving dengue data for {location}',
+                'risk_description': 'Data unavailable',
+                'total_cases': 0,
+                'recommendations': ['Contact local health authorities for current dengue information'],
+                'local_info': [],
+                'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            }

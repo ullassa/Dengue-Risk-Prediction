@@ -1,0 +1,97 @@
+# 🧪 MODULE 1: Weather-Based Dengue Risk Predictor (Forecasting)
+
+**Goal:** Predict dengue outbreak risk based on current weather and climatic conditions of a city.
+
+✔️ User Input:
+- City Name (e.g., Delhi, Mumbai, Bangalore)
+
+✔️ Features:
+- Fetch live weather data using **OpenWeatherMap API**
+- Consider the following factors:
+  - Temperature (°C) → Ideal: 25–30°C
+  - Humidity (%) → High risk if >70%
+  - Rainfall (mm) → High risk if >50mm/week
+  - Season (e.g., Monsoon, Post-monsoon → higher risk)
+  - Wind speed (affects mosquito spread)
+  - Mosquito lifecycle duration (affects transmission risk)
+
+✔️ Risk Logic (Example – can be improved with ML later):
+```python
+risk_score = 0
+
+if 25 <= temperature <= 30:
+    risk_score += 2
+if humidity > 70:
+    risk_score += 2
+if rainfall > 50:
+    risk_score += 2
+if season in ['Monsoon', 'Post-Monsoon']:
+    risk_score += 2
+if 1 <= wind_speed <= 10:
+    risk_score += 1  # mosquitoes thrive
+
+# Risk Levels
+if risk_score >= 7:
+    risk = "High Risk"
+elif 4 <= risk_score < 7:
+    risk = "Moderate Risk"
+else:
+    risk = "Low Risk"
+✔️ Output:
+
+Show weather data with icons 🌡️💧🌧️🌪️
+
+Show Dengue Risk: Low, Moderate, or High
+
+Show explanation for each risk factor
+
+✔️ UI Theme:
+
+Use cool colors (green/blue), mosquito icon 🦟
+
+Header: "Weather-Based Dengue Risk Predictor"
+
+🚨 MODULE 2: Local Dengue Alert System (Case-Based Tracking)
+Goal: Show current outbreak alerts based on real dengue case reports.
+
+✔️ User Input:
+
+City / District / State Name
+
+✔️ Features:
+
+Load data from a CSV (e.g., dengue_cases.csv) with columns:
+
+City, District, State, Reported_Cases, Week, Month
+
+Analyze trends:
+
+Daily/Weekly/Monthly rise in cases
+
+Identify hotspots (if >50 cases in a city)
+
+Show community-level alert level:
+
+Low Risk (0–4 cases)
+
+Watch (5–19 cases)
+
+Moderate (20–49 cases)
+
+High Alert (50+ cases)
+
+✔️ Output:
+
+Alert level badge 🔴🟠🟡🟢
+
+Safety recommendations
+
+Trend chart (optional with matplotlib or chart.js)
+
+Emergency contact section (108, 104, local health)
+
+✔️ UI Theme:
+
+Use red/orange theme, siren icon 🚨
+
+Header: "Local Dengue Alert System"
