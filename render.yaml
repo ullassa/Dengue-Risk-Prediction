@@ -10,3 +10,5 @@ services:
         value: production
       - key: FLASK_APP
         value: app.py
+      - key: OPENWEATHER_API_KEY
+        sync: false  # This will use the environment variable you set in Render dashboard

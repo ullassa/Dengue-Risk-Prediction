@@ -1,0 +1,16 @@
+name: dengue-risk-prediction
+services:
+- name: web
+  source_dir: /
+  github:
+    repo: ullassa/Dengue-Risk-Prediction
+    branch: main
+  run_command: gunicorn --bind 0.0.0.0:$PORT app:app
+  environment_slug: python
+  instance_count: 1
+  instance_size_slug: basic-xxs
+  envs:
+  - key: FLASK_ENV
+    value: production
+  - key: FLASK_APP
+    value: app.py
