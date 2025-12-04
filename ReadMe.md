@@ -3,7 +3,7 @@
 A comprehensive Flask web application for predicting dengue outbreak risks using weather data, symptom analysis, and location-based alerts with full admin management capabilities.
 
 **Latest Update (Aug 7, 2025)**: Added PostgreSQL database support, comprehensive admin interface, and production deployment configuration for Render.
-
+.
 ## 🚀 Quick Start
 
 ### Local Development
