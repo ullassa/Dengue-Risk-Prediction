@@ -11,6 +11,7 @@ from modules.local_alert import LocalAlert
 from modules.risk_calculator import RiskCalculator
 from modules.ai_predictor import DengueOutbreakPredictor
 from modules.visualizer import Visualizer
+from modules.doctor_consultation import doctor_bp, doctor_consultation
 
 # Load environment variables
 try:
@@ -52,6 +53,9 @@ login_manager.init_app(app)
 login_manager.login_view = 'login'
 login_manager.login_message = 'Please log in to access this page.'
 login_manager.login_message_category = 'info'
+
+# Register blueprints
+app.register_blueprint(doctor_bp, url_prefix='/doctor')
 
 # Custom Jinja2 filters
 @app.template_filter('from_json')
@@ -1506,6 +1510,22 @@ def handle_exception(e):
     return render_template('error.html', 
                          error_code=500, 
                          error_message="An unexpected error occurred"), 500
+
+@app.route('/consultation')
+@login_required
+def consultation_redirect():
+    """Redirect to doctor consultation with current user context"""
+    from modules.doctor_consultation import doctor_consultation
+    
+    # Get user's recent risk assessment if available
+    city = session.get('last_city', 'Bangalore')
+    risk_level = session.get('last_risk_level', 'Medium')
+    symptoms_count = session.get('last_symptoms_count', 0)
+    
+    return redirect(url_for('doctor.book_consultation', 
+                          city=city, 
+                          risk_level=risk_level, 
+                          symptoms_count=symptoms_count))
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

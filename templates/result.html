@@ -582,6 +582,85 @@
                 </div>
             {% endif %}
 
+            <!-- Doctor Consultation Recommendation -->
+            {% if result.risk_level in ['High', 'Very High', 'Medium'] or (result.present_symptoms and result.present_symptoms|length >= 2) %}
+                <div class="card mb-4 border-warning">
+                    <div class="card-header bg-warning text-dark">
+                        <h5 class="mb-0">
+                            <i class="fas fa-user-md me-2"></i>
+                            Doctor Consultation Recommended
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        {% if result.risk_level in ['High', 'Very High'] or (result.present_symptoms and result.present_symptoms|length >= 4) %}
+                            <div class="alert alert-danger" role="alert">
+                                <h6 class="alert-heading">🚨 Immediate Medical Attention Required</h6>
+                                <p class="mb-2">Your risk assessment indicates the need for immediate medical consultation.</p>
+                                <div class="d-flex gap-2 flex-wrap">
+                                    <a href="tel:108" class="btn btn-danger btn-sm">
+                                        <i class="fas fa-phone"></i> Emergency: 108
+                                    </a>
+                                    <a href="tel:104" class="btn btn-warning btn-sm text-dark">
+                                        <i class="fas fa-phone"></i> Health Helpline: 104
+                                    </a>
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="alert alert-warning text-dark" role="alert">
+                                <h6 class="alert-heading">⚠️ Medical Consultation Recommended</h6>
+                                <p class="mb-0">Consider consulting a doctor within 24-48 hours for proper evaluation.</p>
+                            </div>
+                        {% endif %}
+                        
+                        <div class="row mt-3">
+                            <div class="col-md-8">
+                                <h6>Available Options:</h6>
+                                <ul class="list-unstyled">
+                                    <li class="mb-2">
+                                        <i class="fas fa-hospital text-info me-2"></i>
+                                        <strong>Local Doctors:</strong> Find specialists in your city
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="fas fa-video text-success me-2"></i>
+                                        <strong>Telemedicine:</strong> Online consultation available 24/7
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="fas fa-phone text-primary me-2"></i>
+                                        <strong>Emergency Services:</strong> Immediate help when needed
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <a href="/doctor/book-consultation?city={{ result.weather_data.city if result.weather_data else 'Bangalore' }}&risk_level={{ result.risk_level }}&symptoms_count={{ result.present_symptoms|length if result.present_symptoms else 0 }}" 
+                                   class="btn btn-primary btn-lg">
+                                    <i class="fas fa-calendar-check me-2"></i>
+                                    Book Consultation
+                                </a>
+                                <p class="small text-muted mt-2">View doctors & telemedicine options</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Quick Actions -->
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <h6>Quick Actions:</h6>
+                                <div class="d-flex gap-2 flex-wrap">
+                                    <a href="https://www.practo.com/online-doctor-consultation" target="_blank" class="btn btn-outline-primary btn-sm">
+                                        <i class="fas fa-external-link-alt me-1"></i> Practo Online
+                                    </a>
+                                    <a href="https://www.apollo247.com/consult-online" target="_blank" class="btn btn-outline-success btn-sm">
+                                        <i class="fas fa-external-link-alt me-1"></i> Apollo 24/7
+                                    </a>
+                                    <a href="https://www.1mg.com/online-doctor-consultation" target="_blank" class="btn btn-outline-info btn-sm">
+                                        <i class="fas fa-external-link-alt me-1"></i> 1mg Consult
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
             <!-- Next Steps -->
             <div class="card mb-4">
                 <div class="card-header">

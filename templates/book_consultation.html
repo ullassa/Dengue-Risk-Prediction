@@ -1,0 +1,270 @@
+{% extends "base.html" %}
+
+{% block title %}Doctor Consultation - Dengue Risk Predictor{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Header Section -->
+    <div class="row justify-content-center">
+        <div class="col-md-12">
+            <div class="text-center mb-4">
+                <h2 class="text-light mb-3">
+                    <i class="fas fa-user-md text-info me-2"></i>
+                    Doctor Consultation Recommended
+                </h2>
+                <p class="text-light">Based on your risk level: <strong class="text-warning">{{ risk_level }}</strong> in {{ city }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Urgency Alert -->
+    <div class="row justify-content-center mb-4">
+        <div class="col-md-10">
+            {% if recommendation.urgency == 'immediate' %}
+            <div class="alert alert-danger" role="alert">
+                <h5 class="alert-heading">🚨 Immediate Medical Attention Required!</h5>
+                {{ recommendation.message }}
+            </div>
+            {% elif recommendation.urgency == 'within_24_hours' %}
+            <div class="alert alert-warning" role="alert">
+                <h5 class="alert-heading">⚠️ Consult Doctor Within 24 Hours</h5>
+                {{ recommendation.message }}
+            </div>
+            {% else %}
+            <div class="alert alert-info" role="alert">
+                <h5 class="alert-heading">💡 Preventive Consultation Recommended</h5>
+                {{ recommendation.message }}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Emergency Contacts (for immediate cases) -->
+    {% if recommendation.urgency == 'immediate' %}
+    <div class="row justify-content-center mb-4">
+        <div class="col-md-10">
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0"><i class="fas fa-phone-alt"></i> Emergency Contacts</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for contact, number in recommendation.emergency_contacts.items() %}
+                        <div class="col-md-6 mb-2">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <strong>{{ contact }}:</strong>
+                                <a href="tel:{{ number }}" class="btn btn-danger btn-sm">
+                                    <i class="fas fa-phone"></i> {{ number }}
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Local Doctors in Your City -->
+    {% if recommendation.doctors %}
+    <div class="row justify-content-center mb-4">
+        <div class="col-md-10">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-hospital"></i> 
+                        Recommended Doctors in {{ city }}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for doctor in recommendation.doctors %}
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100 border-info">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <h6 class="card-title text-info mb-0">{{ doctor.name }}</h6>
+                                        <span class="badge bg-warning text-dark">
+                                            ⭐ {{ doctor.rating }}
+                                        </span>
+                                    </div>
+                                    <p class="card-text">
+                                        <small class="text-muted">{{ doctor.specialization }}</small><br>
+                                        <i class="fas fa-hospital-alt"></i> {{ doctor.hospital }}<br>
+                                        <i class="fas fa-clock"></i> {{ doctor.availability }}
+                                    </p>
+                                    <div class="d-flex gap-2 flex-wrap">
+                                        <a href="tel:{{ doctor.phone }}" class="btn btn-success btn-sm flex-fill">
+                                            <i class="fas fa-phone"></i> Call
+                                        </a>
+                                        <a href="{{ doctor.online_booking }}" target="_blank" class="btn btn-primary btn-sm flex-fill">
+                                            <i class="fas fa-calendar-check"></i> Book Online
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Telemedicine Options -->
+    <div class="row justify-content-center mb-4">
+        <div class="col-md-10">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-video"></i> 
+                        Online Telemedicine Consultation
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-3">Consult with doctors online from the comfort of your home</p>
+                    <div class="row">
+                        {% for platform in recommendation.telemedicine %}
+                        <div class="col-md-4 mb-3">
+                            <div class="card border-success h-100">
+                                <div class="card-body text-center">
+                                    <h6 class="card-title text-success">{{ platform.name }}</h6>
+                                    <p class="card-text small">{{ platform.description }}</p>
+                                    <p class="text-muted small">
+                                        <i class="fas fa-clock"></i> Available {{ platform.available }}
+                                    </p>
+                                    <a href="{{ platform.url }}" target="_blank" class="btn btn-success btn-sm">
+                                        <i class="fas fa-external-link-alt"></i> Consult Now
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Next Steps Recommendations -->
+    <div class="row justify-content-center mb-4">
+        <div class="col-md-10">
+            <div class="card">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">
+                        <i class="fas fa-list-check"></i> 
+                        Recommended Next Steps
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        {% for step in recommendation.next_steps %}
+                        <li class="list-group-item d-flex align-items-center">
+                            <i class="fas fa-check-circle text-success me-3"></i>
+                            {{ step }}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Important Medical Disclaimer -->
+    <div class="row justify-content-center mb-4">
+        <div class="col-md-10">
+            <div class="alert alert-secondary" role="alert">
+                <h6 class="alert-heading">
+                    <i class="fas fa-info-circle"></i> Medical Disclaimer
+                </h6>
+                <p class="mb-0 small">
+                    This consultation recommendation is based on risk assessment algorithms and should not replace professional medical advice. 
+                    Always consult with qualified healthcare professionals for proper diagnosis and treatment. 
+                    In case of emergency, immediately contact emergency services or visit the nearest hospital.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="row justify-content-center mb-4">
+        <div class="col-md-10 text-center">
+            <a href="{{ url_for('dashboard') }}" class="btn btn-outline-info me-2">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+            <a href="{{ url_for('symptom_checker') }}" class="btn btn-outline-warning me-2">
+                <i class="fas fa-stethoscope"></i> Check Symptoms Again
+            </a>
+            <button onclick="window.print()" class="btn btn-outline-secondary">
+                <i class="fas fa-print"></i> Print Recommendations
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Additional JavaScript for enhanced UX -->
+<script>
+// Auto-scroll to urgency alert for better visibility
+document.addEventListener('DOMContentLoaded', function() {
+    const urgencyAlert = document.querySelector('.alert');
+    if (urgencyAlert && urgencyAlert.classList.contains('alert-danger')) {
+        urgencyAlert.scrollIntoView({ behavior: 'smooth' });
+    }
+});
+
+// Add click tracking for analytics
+function trackConsultationClick(platform) {
+    console.log('Consultation clicked:', platform);
+    // You can add analytics tracking here
+}
+
+// Add event listeners to consultation links
+document.querySelectorAll('a[href*="practo"], a[href*="apollo"], a[href*="1mg"]').forEach(link => {
+    link.addEventListener('click', function() {
+        const platform = this.href.includes('practo') ? 'Practo' : 
+                        this.href.includes('apollo') ? 'Apollo' : '1mg';
+        trackConsultationClick(platform);
+    });
+});
+</script>
+
+<style>
+/* Custom styles for consultation page */
+.card {
+    transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+.btn-sm {
+    font-size: 0.8rem;
+}
+
+.alert {
+    border-left: 5px solid;
+}
+
+.alert-danger {
+    border-left-color: #dc3545;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.8; }
+    100% { opacity: 1; }
+}
+
+/* Print styles */
+@media print {
+    .btn, .alert, .card-header {
+        background: white !important;
+        color: black !important;
+    }
+}
+</style>
+{% endblock %}
