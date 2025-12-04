@@ -1,6 +1,7 @@
-from flask import Blueprint, render_template, request, jsonify
+from flask import Blueprint, render_template, request, jsonify, redirect, url_for
 from datetime import datetime
 import json
+import logging
 
 # Create a blueprint for doctor consultation
 doctor_bp = Blueprint('doctor', __name__)
@@ -195,6 +196,11 @@ class DoctorConsultation:
 # Global instance
 doctor_consultation = DoctorConsultation()
 
+@doctor_bp.route('/test')
+def test_consultation():
+    """Simple test route"""
+    return "<h1>Doctor Consultation Module Working!</h1><p>Blueprint is properly registered.</p>"
+
 @doctor_bp.route('/consultation-data')
 def get_consultation_data():
     """API endpoint to get consultation data"""
@@ -211,15 +217,34 @@ def get_consultation_data():
 @doctor_bp.route('/book-consultation')
 def book_consultation():
     """Render consultation booking page"""
-    city = request.args.get('city', 'Bangalore')
-    risk_level = request.args.get('risk_level', 'High')
-    symptoms_count = int(request.args.get('symptoms_count', 0))
-    
-    recommendation = doctor_consultation.generate_consultation_recommendation(
-        risk_level, city, symptoms_count
-    )
-    
-    return render_template('book_consultation.html', 
-                         recommendation=recommendation,
-                         city=city,
-                         risk_level=risk_level)
+    try:
+        city = request.args.get('city', 'Bangalore')
+        risk_level = request.args.get('risk_level', 'High')
+        symptoms_count = int(request.args.get('symptoms_count', 0))
+        
+        recommendation = doctor_consultation.generate_consultation_recommendation(
+            risk_level, city, symptoms_count
+        )
+        
+        return render_template('book_consultation.html', 
+                             recommendation=recommendation,
+                             city=city,
+                             risk_level=risk_level)
+    except Exception as e:
+        logging.error(f"Doctor consultation error: {str(e)}")
+        # Fallback to a simple page if there's an error
+        return f"""
+        <html><body style="font-family: Arial; padding: 20px; background: #1a1a2e;">
+            <div style="background: white; padding: 20px; border-radius: 10px;">
+                <h2>🩺 Doctor Consultation</h2>
+                <p><strong>City:</strong> {city}</p>
+                <p><strong>Risk Level:</strong> {risk_level}</p>
+                <h3>Quick Options:</h3>
+                <a href="https://www.practo.com" target="_blank" style="display:inline-block; background:#007bff; color:white; padding:10px; text-decoration:none; margin:5px;">Practo Online</a>
+                <a href="https://www.apollo247.com" target="_blank" style="display:inline-block; background:#28a745; color:white; padding:10px; text-decoration:none; margin:5px;">Apollo 24/7</a>
+                <a href="tel:108" style="display:inline-block; background:#dc3545; color:white; padding:10px; text-decoration:none; margin:5px;">Emergency: 108</a>
+                <br><br>
+                <a href="/" style="display:inline-block; background:#6c757d; color:white; padding:10px; text-decoration:none;">Back to Dashboard</a>
+            </div>
+        </body></html>
+        """

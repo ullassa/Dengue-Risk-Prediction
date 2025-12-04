@@ -1512,20 +1512,14 @@ def handle_exception(e):
                          error_message="An unexpected error occurred"), 500
 
 @app.route('/consultation')
-@login_required
 def consultation_redirect():
-    """Redirect to doctor consultation with current user context"""
-    from modules.doctor_consultation import doctor_consultation
+    """Redirect to doctor consultation with default parameters"""
+    # Get parameters from URL or use defaults
+    city = request.args.get('city', 'Bangalore')
+    risk_level = request.args.get('risk_level', 'Medium')
+    symptoms_count = request.args.get('symptoms_count', 0)
     
-    # Get user's recent risk assessment if available
-    city = session.get('last_city', 'Bangalore')
-    risk_level = session.get('last_risk_level', 'Medium')
-    symptoms_count = session.get('last_symptoms_count', 0)
-    
-    return redirect(url_for('doctor.book_consultation', 
-                          city=city, 
-                          risk_level=risk_level, 
-                          symptoms_count=symptoms_count))
+    return redirect(f'/doctor/book-consultation?city={city}&risk_level={risk_level}&symptoms_count={symptoms_count}')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
