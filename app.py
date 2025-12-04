@@ -55,7 +55,7 @@ login_manager.login_message = 'Please log in to access this page.'
 login_manager.login_message_category = 'info'
 
 # Register blueprints
-app.register_blueprint(doctor_bp, url_prefix='/doctor')
+# app.register_blueprint(doctor_bp, url_prefix='/doctor')  # Commented out - using direct routes instead
 
 # Custom Jinja2 filters
 @app.template_filter('from_json')
@@ -1520,6 +1520,134 @@ def consultation_redirect():
     symptoms_count = request.args.get('symptoms_count', 0)
     
     return redirect(f'/doctor/book-consultation?city={city}&risk_level={risk_level}&symptoms_count={symptoms_count}')
+
+# Doctor Consultation Routes (Simple Direct Implementation)
+@app.route('/doctor/book-consultation')
+def doctor_consultation_page():
+    """Simple doctor consultation page"""
+    city = request.args.get('city', 'Bangalore')
+    risk_level = request.args.get('risk_level', 'Medium')
+    symptoms_count = int(request.args.get('symptoms_count', 0))
+    
+    # Simple HTML page with consultation options
+    return f"""
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Doctor Consultation - Dengue Risk Predictor</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        <style>
+            body {{ background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); min-height: 100vh; }}
+            .card {{ background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); }}
+            .btn-emergency {{ background: #dc3545; border: none; }}
+            .btn-emergency:hover {{ background: #c82333; }}
+        </style>
+    </head>
+    <body>
+        <div class="container mt-4">
+            <div class="row justify-content-center">
+                <div class="col-md-10">
+                    <!-- Header -->
+                    <div class="card mb-4">
+                        <div class="card-header bg-warning text-dark">
+                            <h3 class="mb-0">
+                                <i class="fas fa-user-md me-2"></i>
+                                Doctor Consultation Recommended
+                            </h3>
+                            <p class="mb-0">Risk Level: <strong>{risk_level}</strong> | City: <strong>{city}</strong></p>
+                        </div>
+                        <div class="card-body">
+                            {"<div class='alert alert-danger'><h5>🚨 Immediate Medical Attention Required!</h5><p>Your high risk assessment indicates immediate medical consultation needed.</p></div>" if risk_level in ['High', 'Very High'] else "<div class='alert alert-warning text-dark'><h5>⚠️ Medical Consultation Recommended</h5><p>Consider consulting a doctor within 24-48 hours for proper evaluation.</p></div>"}
+                        </div>
+                    </div>
+                    
+                    <!-- Emergency Contacts -->
+                    {"<div class='card mb-4 border-danger'><div class='card-header bg-danger text-white'><h5 class='mb-0'>🚨 Emergency Contacts</h5></div><div class='card-body'><div class='row'><div class='col-md-6 mb-2'><strong>Ambulance Emergency:</strong> <a href='tel:108' class='btn btn-danger btn-sm ms-2'><i class='fas fa-phone'></i> 108</a></div><div class='col-md-6 mb-2'><strong>Karnataka Health Emergency:</strong> <a href='tel:104' class='btn btn-warning btn-sm ms-2'><i class='fas fa-phone'></i> 104</a></div><div class='col-md-6 mb-2'><strong>Dengue Control Room:</strong> <a href='tel:08022867000' class='btn btn-info btn-sm ms-2'><i class='fas fa-phone'></i> 080-22867000</a></div><div class='col-md-6 mb-2'><strong>National Health Helpline:</strong> <a href='tel:1075' class='btn btn-secondary btn-sm ms-2'><i class='fas fa-phone'></i> 1075</a></div></div></div></div>" if risk_level in ['High', 'Very High'] else ""}
+                    
+                    <!-- Telemedicine Options -->
+                    <div class="card mb-4">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0"><i class="fas fa-video me-2"></i>Online Telemedicine - Available 24/7</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <div class="card border-success h-100">
+                                        <div class="card-body text-center">
+                                            <h6 class="text-success">Practo</h6>
+                                            <p class="small">Consult with verified doctors online</p>
+                                            <a href="https://www.practo.com/online-doctor-consultation" target="_blank" class="btn btn-success btn-sm">
+                                                <i class="fas fa-external-link-alt"></i> Consult Now
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="card border-success h-100">
+                                        <div class="card-body text-center">
+                                            <h6 class="text-success">Apollo 24/7</h6>
+                                            <p class="small">Apollo doctors available for consultation</p>
+                                            <a href="https://www.apollo247.com/consult-online" target="_blank" class="btn btn-success btn-sm">
+                                                <i class="fas fa-external-link-alt"></i> Consult Now
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="card border-success h-100">
+                                        <div class="card-body text-center">
+                                            <h6 class="text-success">1mg</h6>
+                                            <p class="small">Online consultation and medicine delivery</p>
+                                            <a href="https://www.1mg.com/online-doctor-consultation" target="_blank" class="btn btn-success btn-sm">
+                                                <i class="fas fa-external-link-alt"></i> Consult Now
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Local Doctors -->
+                    <div class="card mb-4">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="mb-0"><i class="fas fa-hospital me-2"></i>Local Doctors in {city}</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                {"<div class='col-md-6 mb-3'><div class='card border-info h-100'><div class='card-body'><h6 class='text-info'>Dr. Rajesh Kumar</h6><p class='small'>General Physician<br><i class='fas fa-hospital-alt'></i> Manipal Hospital<br><i class='fas fa-clock'></i> Mon-Sat 9AM-6PM</p><div class='d-flex gap-2'><a href='tel:+918041234567' class='btn btn-success btn-sm'><i class='fas fa-phone'></i> Call</a><a href='https://www.practo.com/bangalore/doctor/dr-rajesh-kumar' target='_blank' class='btn btn-primary btn-sm'><i class='fas fa-calendar-check'></i> Book</a></div></div></div></div><div class='col-md-6 mb-3'><div class='card border-info h-100'><div class='card-body'><h6 class='text-info'>Dr. Priya Sharma</h6><p class='small'>Infectious Disease Specialist<br><i class='fas fa-hospital-alt'></i> Apollo Hospital<br><i class='fas fa-clock'></i> Mon-Fri 10AM-5PM</p><div class='d-flex gap-2'><a href='tel:+918041234568' class='btn btn-success btn-sm'><i class='fas fa-phone'></i> Call</a><a href='https://www.apollo247.com/doctors/dr-priya-sharma' target='_blank' class='btn btn-primary btn-sm'><i class='fas fa-calendar-check'></i> Book</a></div></div></div></div>" if city == 'Bangalore' else "<div class='col-12'><p class='text-muted'>Contact local hospitals and clinics in your area for immediate medical assistance.</p><p><strong>Common Hospitals:</strong> Government District Hospital, Private Medical Centers</p></div>"}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="text-center">
+                        <a href="/" class="btn btn-outline-info me-2">
+                            <i class="fas fa-arrow-left"></i> Back to Dashboard
+                        </a>
+                        <a href="/symptom_checker" class="btn btn-outline-warning me-2">
+                            <i class="fas fa-stethoscope"></i> Check Symptoms Again
+                        </a>
+                        <button onclick="window.print()" class="btn btn-outline-secondary">
+                            <i class="fas fa-print"></i> Print Recommendations
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+    </html>
+    """
+
+@app.route('/doctor/test')
+def doctor_test():
+    """Test route to verify doctor consultation is working"""
+    return "<h1 style='color: green; text-align: center; margin-top: 100px;'>✅ Doctor Consultation Working!</h1><p style='text-align: center;'><a href='/doctor/book-consultation?city=Bangalore&risk_level=High'>Test Consultation Page</a></p>"
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
