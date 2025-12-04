@@ -7,51 +7,77 @@
     <div class="row justify-content-center">
         <div class="col-lg-8">
             <!-- Header -->
-            <div class="card mb-4">
-                <div class="card-header bg-warning text-dark">
-                    <h2 class="card-title mb-0">
-                        <i class="fas fa-map-marker-alt me-3"></i>
-                        Local Dengue Alert System
+            <div class="card mb-4 border-0 shadow-lg">
+                <div class="card-header text-white" style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); border-radius: 0.5rem 0.5rem 0 0;">
+                    <h2 class="card-title mb-0 fw-bold">
+                        <i class="fas fa-shield-alt me-3"></i>
+                        Local Health Alert System
                     </h2>
                 </div>
                 <div class="card-body">
-                    <p class="card-text">
-                        Get location-specific dengue outbreak information and alerts for your area. Our system tracks reported cases and provides community-level risk assessment.
-                    </p>
-                    <div class="alert alert-info">
-                        <i class="fas fa-info-circle me-2"></i>
-                        <strong>Real-time Data:</strong> Information is based on reported dengue cases from health authorities and surveillance data.
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h5 class="text-primary mb-3">Why use this feature?</h5>
+                            <ul class="list-unstyled">
+                                <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> <strong>Early Warning:</strong> Get alerts before outbreaks peak in your area</li>
+                                <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> <strong>Data-Driven:</strong> Based on real health surveillance data</li>
+                                <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> <strong>Actionable Advice:</strong> Specific prevention steps for your risk level</li>
+                                <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> <strong>Community Safety:</strong> Help protect your family and neighbors</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <div class="bg-light rounded p-3">
+                                <i class="fas fa-chart-line fa-3x text-primary mb-2"></i>
+                                <p class="small text-muted mb-0">Real-time tracking of dengue cases in Karnataka</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- Location Form -->
-            <div class="card">
-                <div class="card-body">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
                     <form method="POST" class="needs-validation" novalidate>
                         <div class="mb-4">
-                            <label for="location" class="form-label fw-bold">
+                            <label for="location" class="form-label fw-bold text-primary">
                                 <i class="fas fa-search-location me-2"></i>
                                 Enter Your Location
                             </label>
                             <input type="text" 
-                                   class="form-control form-control-lg" 
+                                   class="form-control form-control-lg shadow-sm" 
                                    id="location" 
                                    name="location" 
-                                   placeholder="e.g., Mumbai, Delhi, Kolkata, Bangalore"
+                                   placeholder="e.g., Bengaluru, Mysuru, Mangaluru, Hubballi"
+                                   list="karnataka-locations"
+                                   style="border: 2px solid #e2e8f0; border-radius: 0.75rem;"
                                    required>
+                            <datalist id="karnataka-locations">
+                                <option value="Bangalore">Bangalore (Bengaluru)</option>
+                                <option value="Mysore">Mysore (Mysuru)</option>
+                                <option value="Mangalore">Mangalore (Mangaluru)</option>
+                                <option value="Hubli">Hubli (Hubballi)</option>
+                                <option value="Belgaum">Belgaum (Belagavi)</option>
+                                <option value="Tumkur">Tumkur (Tumakuru)</option>
+                                <option value="Shimoga">Shimoga (Shivamogga)</option>
+                                <option value="Davangere">Davangere</option>
+                                <option value="Bellary">Bellary (Ballari)</option>
+                                <option value="Bijapur">Bijapur (Vijayapura)</option>
+                                <option value="Gulbarga">Gulbarga (Kalaburagi)</option>
+                                <option value="Raichur">Raichur</option>
+                            </datalist>
                             <div class="invalid-feedback">
-                                Please enter a valid location name.
+                                Please enter a valid Karnataka location name.
                             </div>
                             <div class="form-text">
-                                <i class="fas fa-lightbulb me-1"></i>
-                                You can enter city name, district, or state
+                                <i class="fas fa-map-pin me-1"></i>
+                                <strong>Karnataka locations only:</strong> Enter city, district, or use local/English names
                             </div>
                         </div>
 
                         <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-warning btn-lg text-dark">
-                                <i class="fas fa-search me-2"></i>
+                            <button type="submit" class="btn btn-lg shadow-lg" style="background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); border: 3px solid #ef4444; color: white; border-radius: 0.75rem; font-weight: 700; transition: all 0.3s ease; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);" onmouseover="this.style.transform='scale(1.02)'; this.style.boxShadow='0 8px 25px rgba(220, 38, 38, 0.6)'" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 6px 20px rgba(220, 38, 38, 0.4)'">
+                                <i class="fas fa-search me-2" style="color: #fecaca;"></i>
                                 Check Local Dengue Risk
                             </button>
                         </div>
@@ -102,9 +128,9 @@
             </div>
 
             <!-- Recent Updates -->
-            <div class="card mt-4">
-                <div class="card-header">
-                    <h5 class="mb-0">
+            <div class="card mt-4 border-0 shadow-sm">
+                <div class="card-header bg-white border-0" style="border-radius: 0.5rem 0.5rem 0 0;">
+                    <h5 class="mb-0 fw-bold text-primary">
                         <i class="fas fa-newspaper me-2"></i>
                         What We Track
                     </h5>
@@ -134,10 +160,10 @@
             </div>
 
             <!-- Emergency Contacts -->
-            <div class="card mt-4 border-danger">
-                <div class="card-header bg-danger text-white">
-                    <h5 class="mb-0">
-                        <i class="fas fa-phone me-2"></i>
+            <div class="card mt-4 border-0 shadow-lg">
+                <div class="card-header text-white" style="background: linear-gradient(135deg, #991b1b 0%, #7f1d1d 100%); border-radius: 0.5rem 0.5rem 0 0; border: 3px solid #dc2626; box-shadow: 0 4px 15px rgba(153, 27, 27, 0.4);">
+                    <h5 class="mb-0 fw-bold" style="color: #ffffff; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">
+                        <i class="fas fa-phone me-2" style="color: #fecaca;"></i>
                         Emergency Contacts
                     </h5>
                 </div>

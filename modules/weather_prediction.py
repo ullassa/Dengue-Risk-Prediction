@@ -3,12 +3,16 @@ import requests
 import logging
 from datetime import datetime
 import pandas as pd
+from .location_validator import KarnatakaLocationValidator
 
 class WeatherPredictor:
     def __init__(self):
         # Try to load from environment variable or config file
         self.api_key = self._load_api_key()
         self.base_url = "http://api.openweathermap.org/data/2.5/weather"
+        
+        # Initialize Karnataka location validator
+        self.location_validator = KarnatakaLocationValidator()
         
         # Check if API key is properly configured
         if self.api_key in ['demo_key', 'your_actual_api_key_here', None]:
@@ -142,9 +146,34 @@ class WeatherPredictor:
         }
     
     def predict_risk(self, city):
-        """Predict dengue risk based on weather conditions using your specific rules"""
+        """Predict dengue risk based on weather conditions (Karnataka cities only)"""
         try:
-            weather_data = self.get_weather_data(city)
+            # Validate that the city is in Karnataka
+            is_valid, normalized_city, suggestions = self.location_validator.validate_and_normalize(city)
+            
+            if not is_valid:
+                logging.warning(f"Invalid Karnataka city: {city}")
+                return {
+                    'city': city,
+                    'risk_level': 'Invalid Location',
+                    'risk_color': 'secondary', 
+                    'risk_score': 0,
+                    'temperature': 0,
+                    'humidity': 0,
+                    'rainfall': 0,
+                    'risk_factors': [],
+                    'recommendations': [
+                        f"📍 This system only provides weather-based dengue risk for Karnataka cities",
+                        f"🏠 Suggested Karnataka cities: {', '.join(suggestions)}" if suggestions else "🏠 Try cities like Bangalore, Mysore, Mangalore",
+                        f"📋 Available cities: {', '.join(self.location_validator.get_karnataka_cities_list()[:6])}...",
+                        f"🔍 Please enter a valid Karnataka city name"
+                    ],
+                    'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    'data_source': 'Karnataka weather data only',
+                    'suggestions': suggestions
+                }
+            
+            weather_data = self.get_weather_data(normalized_city)
             
             temperature = weather_data['temperature']
             humidity = weather_data['humidity']

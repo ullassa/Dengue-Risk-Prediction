@@ -147,33 +147,302 @@
             {% endif %}
 
             <!-- Location Information (for local alert module) -->
-            {% if result.location %}
+            {% if result.alert_message %}
                 <div class="card mb-4">
-                    <div class="card-header">
+                    <div class="card-header bg-{{ result.risk_color }} {% if result.risk_color == 'warning' %}text-dark{% else %}text-white{% endif %}">
                         <h5 class="mb-0">
                             <i class="fas fa-map-marker-alt me-2"></i>
-                            Location-Based Risk Assessment - {{ result.location }}
+                            Local Dengue Alert System
                         </h5>
                     </div>
                     <div class="card-body">
-                        <div class="alert alert-{{ result.risk_color }} {% if result.risk_color == 'warning' %}text-dark{% endif %}">
-                            <h6 class="alert-heading">{{ result.alert_message }}</h6>
+                        <!-- Main Alert Message -->
+                        <div class="alert alert-{{ result.risk_color }} {% if result.risk_color == 'warning' %}text-dark{% endif %} mb-4">
+                            <h4 class="alert-heading">{{ result.alert_message }}</h4>
+                            <p class="mb-0">{{ result.risk_description }}</p>
                         </div>
-                        {% if result.local_info %}
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <h6>Location Details:</h6>
-                                    {% for info in result.local_info %}
-                                        <p class="mb-1">{{ info }}</p>
-                                    {% endfor %}
-                                </div>
-                                <div class="col-md-6">
-                                    <h6>Data Period:</h6>
-                                    <p class="mb-1">{{ result.data_period }}</p>
-                                    <h6>Total Cases:</h6>
-                                    <p class="mb-1">{{ result.total_cases }} reported cases</p>
+
+                        <!-- Modern Analytics Dashboard -->
+                        {% if result.analytics %}
+                        <div class="row mb-4">
+                            <!-- Total Cases Card -->
+                            <div class="col-md-3 mb-3">
+                                <div class="card h-100 shadow-sm border-0" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                    <div class="card-body text-white text-center">
+                                        <div class="d-flex align-items-center justify-content-center mb-2">
+                                            <i class="fas fa-virus fa-2x me-2"></i>
+                                            <div>
+                                                <h3 class="mb-0 fw-bold">{{ result.total_cases }}</h3>
+                                                <small class="opacity-75">Total Cases</small>
+                                            </div>
+                                        </div>
+                                        <div class="progress mt-2" style="height: 4px;">
+                                            <div class="progress-bar bg-white" role="progressbar" style="width: 100%; opacity: 0.3;"></div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
+
+                            <!-- Daily Average Card -->
+                            <div class="col-md-3 mb-3">
+                                <div class="card h-100 shadow-sm border-0" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                                    <div class="card-body text-white text-center">
+                                        <div class="d-flex align-items-center justify-content-center mb-2">
+                                            <i class="fas fa-chart-line fa-2x me-2"></i>
+                                            <div>
+                                                <h3 class="mb-0 fw-bold">{{ result.analytics.daily_average }}</h3>
+                                                <small class="opacity-75">Daily Average</small>
+                                            </div>
+                                        </div>
+                                        <div class="progress mt-2" style="height: 4px;">
+                                            <div class="progress-bar bg-white" role="progressbar" style="width: {{ (result.analytics.daily_average / result.analytics.max_single_day * 100)|round|int }}%; opacity: 0.3;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Peak Day Cases Card -->
+                            <div class="col-md-3 mb-3">
+                                <div class="card h-100 shadow-sm border-0" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                                    <div class="card-body text-white text-center">
+                                        <div class="d-flex align-items-center justify-content-center mb-2">
+                                            <i class="fas fa-exclamation-triangle fa-2x me-2"></i>
+                                            <div>
+                                                <h3 class="mb-0 fw-bold">{{ result.analytics.max_single_day }}</h3>
+                                                <small class="opacity-75">Peak Day Cases</small>
+                                            </div>
+                                        </div>
+                                        <div class="progress mt-2" style="height: 4px;">
+                                            <div class="progress-bar bg-white" role="progressbar" style="width: 100%; opacity: 0.3;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Trend Status Card -->
+                            <div class="col-md-3 mb-3">
+                                <div class="card h-100 shadow-sm border-0 bg-light">
+                                    <div class="card-body text-center">
+                                        <div class="d-flex align-items-center justify-content-center mb-2">
+                                            {% if result.analytics.trend_icon == 'up-fast' %}
+                                                <i class="fas fa-arrow-up text-danger fa-2x me-2"></i>
+                                            {% elif result.analytics.trend_icon == 'up' %}
+                                                <i class="fas fa-arrow-up text-warning fa-2x me-2"></i>
+                                            {% elif result.analytics.trend_icon == 'down-fast' %}
+                                                <i class="fas fa-arrow-down text-success fa-2x me-2"></i>
+                                            {% elif result.analytics.trend_icon == 'down' %}
+                                                <i class="fas fa-arrow-down text-info fa-2x me-2"></i>
+                                            {% elif result.analytics.trend_icon == 'stable' %}
+                                                <i class="fas fa-minus text-secondary fa-2x me-2"></i>
+                                            {% else %}
+                                                <i class="fas fa-chart-line text-muted fa-2x me-2"></i>
+                                            {% endif %}
+                                            <div>
+                                                <h6 class="mb-0 fw-bold text-dark">{{ "%.1f"|format(result.analytics.trend_change) }}%</h6>
+                                                <small class="text-muted">Weekly Change</small>
+                                            </div>
+                                        </div>
+                                        <small class="d-block mt-2 text-muted">{{ result.analytics.trend_status }}</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Enhanced Trend Analysis -->
+                        <div class="card shadow-sm border-0 mb-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                            <div class="card-header bg-transparent border-0 text-white">
+                                <h5 class="mb-0"><i class="fas fa-chart-area me-2"></i>Advanced Analytics & Insights</h5>
+                            </div>
+                            <div class="card-body bg-white">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="d-flex align-items-center mb-3">
+                                            <div class="bg-primary rounded-circle p-3 me-3">
+                                                <i class="fas fa-trending-up text-white"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="mb-0 text-dark">7-Day Trend Analysis</h6>
+                                                <p class="text-muted mb-0">{{ result.analytics.trend_status }}</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex align-items-center mb-3">
+                                            <div class="bg-info rounded-circle p-3 me-3">
+                                                <i class="fas fa-calendar-week text-white"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="mb-0 text-dark">Peak Activity Day</h6>
+                                                <p class="text-muted mb-0">{{ result.analytics.peak_day }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-6">
+                                        <div class="d-flex align-items-center mb-3">
+                                            <div class="bg-warning rounded-circle p-3 me-3">
+                                                <i class="fas fa-database text-white"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="mb-0 text-dark">Data Coverage</h6>
+                                                <p class="text-muted mb-0">{{ result.analytics.data_points }} records analyzed</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex align-items-center mb-3">
+                                            <div class="bg-success rounded-circle p-3 me-3">
+                                                <i class="fas fa-clock text-white"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="mb-0 text-dark">Analysis Period</h6>
+                                                <p class="text-muted mb-0">{{ result.analytics.date_range }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {% if result.analytics.trend_change != 0 %}
+                                <div class="mt-4">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="fw-bold text-dark">Weekly Change Indicator</span>
+                                        <span class="badge {% if result.analytics.trend_change > 0 %}bg-danger{% else %}bg-success{% endif %} fs-6">
+                                            {{ result.analytics.trend_change }}% 
+                                            {% if result.analytics.trend_change > 0 %}↗️{% else %}↘️{% endif %}
+                                        </span>
+                                    </div>
+                                    <div class="progress" style="height: 8px;">
+                                        <div class="progress-bar {% if result.analytics.trend_change > 0 %}bg-danger{% else %}bg-success{% endif %}" 
+                                             role="progressbar"
+                                             style="width: {% if result.analytics.trend_change|abs > 100 %}100{% else %}{{ result.analytics.trend_change|abs }}{% endif %}%">
+                                        </div>
+                                    </div>
+                                    <div class="text-center mt-2">
+                                        <small class="text-muted">
+                                            {% if result.analytics.trend_change > 20 %}
+                                                🚨 Rapid increase detected - Immediate action required
+                                            {% elif result.analytics.trend_change > 5 %}
+                                                ⚠️ Cases are rising - Enhanced monitoring needed
+                                            {% elif result.analytics.trend_change < -20 %}
+                                                ✅ Significant decrease - Interventions effective
+                                            {% elif result.analytics.trend_change < -5 %}
+                                                📉 Cases declining - Continue current measures
+                                            {% else %}
+                                                ➡️ Stable trend - Maintain vigilance
+                                            {% endif %}
+                                        </small>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Enhanced Recent Cases Data -->
+                        {% if result.recent_data %}
+                        <div class="card shadow-sm border-0 mb-4">
+                            <div class="card-header" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); border: none;">
+                                <h6 class="mb-0 text-white"><i class="fas fa-calendar-alt me-2"></i>Daily Case Breakdown</h6>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-hover mb-0">
+                                        <thead class="bg-light">
+                                            <tr>
+                                                <th class="border-0 py-3 px-4">Date</th>
+                                                <th class="border-0 py-3 px-4">Day</th>
+                                                <th class="border-0 py-3 px-4">Cases</th>
+                                                <th class="border-0 py-3 px-4">Visual</th>
+                                                <th class="border-0 py-3 px-4">Risk Level</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for day_data in result.recent_data %}
+                                            <tr class="border-bottom">
+                                                <td class="px-4 py-3">
+                                                    <span class="fw-bold text-dark">{{ day_data.date[:10] }}</span>
+                                                </td>
+                                                <td class="px-4 py-3">
+                                                    <span class="badge bg-light text-dark">{{ day_data.day }}</span>
+                                                </td>
+                                                <td class="px-4 py-3">
+                                                    <div class="d-flex align-items-center">
+                                                        <span class="badge fs-6 me-2
+                                                            {% if day_data.cases >= 40 %}bg-danger
+                                                            {% elif day_data.cases >= 25 %}bg-warning text-dark
+                                                            {% elif day_data.cases >= 15 %}bg-info
+                                                            {% else %}bg-success{% endif %}">
+                                                            {{ day_data.cases }}
+                                                        </span>
+                                                    </div>
+                                                </td>
+                                                <td class="px-4 py-3">
+                                                    <div class="progress" style="height: 8px; width: 80px;">
+                                                        <div class="progress-bar 
+                                                            {% if day_data.cases >= 40 %}bg-danger
+                                                            {% elif day_data.cases >= 25 %}bg-warning
+                                                            {% elif day_data.cases >= 15 %}bg-info
+                                                            {% else %}bg-success{% endif %}" 
+                                                             role="progressbar" 
+                                                             style="width: {{ (day_data.cases / result.analytics.max_single_day * 100)|round|int }}%">
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="px-4 py-3">
+                                                    {% if day_data.cases >= 40 %}
+                                                        <span class="text-danger fw-bold">Critical</span>
+                                                    {% elif day_data.cases >= 25 %}
+                                                        <span class="text-warning fw-bold">High</span>
+                                                    {% elif day_data.cases >= 15 %}
+                                                        <span class="text-info fw-bold">Moderate</span>
+                                                    {% else %}
+                                                        <span class="text-success fw-bold">Low</span>
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                
+                                <!-- Summary Statistics -->
+                                <div class="card-footer bg-light border-0">
+                                    <div class="row text-center">
+                                        <div class="col-md-3">
+                                            <small class="text-muted d-block">Highest Day</small>
+                                            <span class="fw-bold text-danger">{{ result.analytics.max_single_day }} cases</span>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <small class="text-muted d-block">Lowest Day</small>
+                                            <span class="fw-bold text-success">{{ result.analytics.min_single_day }} cases</span>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <small class="text-muted d-block">Average</small>
+                                            <span class="fw-bold text-info">{{ result.analytics.daily_average }} cases/day</span>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <small class="text-muted d-block">Total Period</small>
+                                            <span class="fw-bold text-primary">{{ result.analytics.data_points }} days</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% endif %}
+
+                        <!-- Location Information -->
+                        {% if result.local_info %}
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <h6><i class="fas fa-map-marker-alt me-2"></i>Location Details:</h6>
+                                {% for info in result.local_info %}
+                                    <p class="mb-1">{{ info }}</p>
+                                {% endfor %}
+                            </div>
+                            <div class="col-md-6">
+                                <h6><i class="fas fa-database me-2"></i>Data Source:</h6>
+                                <p class="mb-1">{{ result.data_source }}</p>
+                                <small class="text-muted">Last updated: {{ result.timestamp }}</small>
+                            </div>
+                        </div>
                         {% endif %}
                     </div>
                 </div>

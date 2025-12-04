@@ -16,11 +16,11 @@
                 </div>
                 <div class="card-body">
                     <p class="card-text">
-                        Enter your city name to get real-time weather analysis and dengue outbreak risk assessment based on current climatic conditions.
+                        Enter your city name to get real-time weather analysis and dengue outbreak risk assessment based on current live weather conditions.
                     </p>
-                    <div class="alert alert-info">
-                        <i class="fas fa-info-circle me-2"></i>
-                        <strong>How it works:</strong> Our system analyzes temperature, humidity, and other weather factors to predict mosquito breeding conditions and dengue transmission risk.
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <strong>Live Weather Data:</strong> Connected to OpenWeatherMap API for real-time weather analysis and dengue risk assessment.
                     </div>
                 </div>
             </div>
@@ -38,14 +38,29 @@
                                    class="form-control form-control-lg" 
                                    id="city" 
                                    name="city" 
-                                   placeholder="e.g., Mumbai, Delhi, Bangalore"
+                                   placeholder="e.g., Bangalore, Mysore, Mangalore, Hubli"
+                                   list="karnataka-cities"
                                    required>
+                            <datalist id="karnataka-cities">
+                                <option value="Bangalore">
+                                <option value="Mysore">
+                                <option value="Mangalore">
+                                <option value="Hubli">
+                                <option value="Belgaum">
+                                <option value="Tumkur">
+                                <option value="Shimoga">
+                                <option value="Davangere">
+                                <option value="Bellary">
+                                <option value="Bijapur">
+                                <option value="Gulbarga">
+                                <option value="Raichur">
+                            </datalist>
                             <div class="invalid-feedback">
-                                Please enter a valid city name.
+                                Please enter a valid Karnataka city name.
                             </div>
                             <div class="form-text">
-                                <i class="fas fa-lightbulb me-1"></i>
-                                Enter the name of your city or any city you want to check
+                                <i class="fas fa-map-pin me-1"></i>
+                                <strong>Karnataka cities only:</strong> Bangalore, Mysore, Mangalore, Hubli, Belgaum, etc.
                             </div>
                         </div>
 

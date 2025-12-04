@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+
+{% block title %}Update Experience - Dengue Journey{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4" style="background: linear-gradient(135deg, #0a2c5c, #499aa8); min-height: 100vh;">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Header -->
+            <div class="text-center mb-4">
+                <h1 class="display-6 text-white mb-3">
+                    <i class="fas fa-edit me-3"></i>Update Your Experience
+                </h1>
+                <p class="text-light">
+                    Update your recovery progress and share new insights
+                </p>
+            </div>
+
+            <!-- Form Card -->
+            <div class="card" style="background: rgba(16, 90, 165, 0.3); border: 1px solid rgba(73, 154, 168, 0.5); box-shadow: 0 8px 32px rgba(0,0,0,0.3);">
+                <div class="card-header" style="background: linear-gradient(135deg, #105aa5, #499aa8); color: white;">
+                    <h4 class="mb-0">
+                        <i class="fas fa-heartbeat me-2"></i>Update Experience Progress
+                    </h4>
+                </div>
+                <div class="card-body text-light">
+                    <form method="POST">
+                        <!-- Current Status Update -->
+                        <div class="mb-4">
+                            <label class="form-label">
+                                <i class="fas fa-heartbeat me-2"></i>Current Status
+                            </label>
+                            <select name="status" class="form-select" required>
+                                <option value="active" {{ 'selected' if experience.status == 'active' }}>Currently Sick</option>
+                                <option value="recovering" {{ 'selected' if experience.status == 'recovering' }}>Recovering</option>
+                                <option value="recovered" {{ 'selected' if experience.status == 'recovered' }}>Fully Recovered</option>
+                            </select>
+                        </div>
+
+                        <!-- Recovery Date -->
+                        <div class="mb-4">
+                            <label class="form-label">
+                                <i class="fas fa-check-circle me-2"></i>Recovery Date (if recovered)
+                            </label>
+                            <input type="date" name="recovery_date" class="form-control" 
+                                   value="{{ experience.recovery_date.strftime('%Y-%m-%d') if experience.recovery_date else '' }}">
+                        </div>
+
+                        <!-- Recovery Progress Notes -->
+                        <div class="mb-4">
+                            <label class="form-label">
+                                <i class="fas fa-notes-medical me-2"></i>Recovery Progress Update
+                            </label>
+                            <textarea name="recovery_notes" class="form-control" rows="4"
+                                      placeholder="How are you feeling now? What's improving? Any new symptoms or concerns?">{{ experience.recovery_notes or '' }}</textarea>
+                        </div>
+
+                        <!-- Additional Treatments -->
+                        <div class="mb-4">
+                            <label class="form-label">
+                                <i class="fas fa-pills me-2"></i>Additional Treatments Used
+                            </label>
+                            <div class="row">
+                                {% set treatments_list = experience.treatments_used|from_json if experience.treatments_used else [] %}
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input type="checkbox" name="paracetamol" class="form-check-input" 
+                                               {{ 'checked' if 'paracetamol' in treatments_list }}>
+                                        <label class="form-check-label">💊 Paracetamol</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input type="checkbox" name="rest" class="form-check-input"
+                                               {{ 'checked' if 'rest' in treatments_list }}>
+                                        <label class="form-check-label">🛏️ More Rest</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input type="checkbox" name="fluids" class="form-check-input"
+                                               {{ 'checked' if 'fluids' in treatments_list }}>
+                                        <label class="form-check-label">💧 Increased Fluids</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input type="checkbox" name="hospital_care" class="form-check-input"
+                                               {{ 'checked' if 'hospital_care' in treatments_list }}>
+                                        <label class="form-check-label">🏥 Hospital Care</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input type="checkbox" name="traditional_medicine" class="form-check-input"
+                                               {{ 'checked' if 'traditional_medicine' in treatments_list }}>
+                                        <label class="form-check-label">🌿 Traditional Medicine</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input type="checkbox" name="iv_fluids" class="form-check-input"
+                                               {{ 'checked' if 'iv_fluids' in treatments_list }}>
+                                        <label class="form-check-label">💉 IV Fluids</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Medical Updates -->
+                        <div class="row mb-4">
+                            <div class="col-md-4">
+                                <label class="form-label">
+                                    <i class="fas fa-user-md me-2"></i>Total Doctor Visits
+                                </label>
+                                <input type="number" name="doctor_visits" class="form-control" 
+                                       value="{{ experience.doctor_visits or 0 }}" min="0" max="20">
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check mt-4">
+                                    <input type="checkbox" name="hospitalization" class="form-check-input"
+                                           {{ 'checked' if experience.hospitalization }}>
+                                    <label class="form-check-label">
+                                        <i class="fas fa-hospital me-2"></i>Required Hospitalization
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">
+                                    <i class="fas fa-clock me-2"></i>Hospitalization Days
+                                </label>
+                                <input type="number" name="hospitalization_days" class="form-control" 
+                                       value="{{ experience.hospitalization_days or '' }}" min="0" max="30">
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">
+                                <i class="fas fa-prescription-bottle me-2"></i>New Medications
+                            </label>
+                            <textarea name="medications" class="form-control" rows="2"
+                                      placeholder="Any new medications prescribed...">{{ experience.medications or '' }}</textarea>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">
+                                <i class="fas fa-leaf me-2"></i>Home Remedies Tried
+                            </label>
+                            <textarea name="home_remedies" class="form-control" rows="2"
+                                      placeholder="Any new home remedies you tried...">{{ experience.home_remedies or '' }}</textarea>
+                        </div>
+
+                        <!-- New Insights -->
+                        <div class="mb-4">
+                            <label class="form-label">
+                                <i class="fas fa-lightbulb me-2"></i>New Lessons Learned
+                            </label>
+                            <textarea name="lessons_learned" class="form-control" rows="3"
+                                      placeholder="What new insights have you gained during recovery?">{{ experience.lessons_learned or '' }}</textarea>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">
+                                <i class="fas fa-comments me-2"></i>Updated Advice for Others
+                            </label>
+                            <textarea name="advice_for_others" class="form-control" rows="3"
+                                      placeholder="Based on your recovery experience, what would you tell others?">{{ experience.advice_for_others or '' }}</textarea>
+                        </div>
+
+                        <!-- Privacy Settings Update -->
+                        <div class="card mb-4" style="background: rgba(23, 162, 184, 0.2); border-left: 4px solid #17a2b8;">
+                            <div class="card-body text-light">
+                                <h6><i class="fas fa-user-secret me-2"></i>Privacy & Sharing Settings</h6>
+                                <div class="form-check mb-2">
+                                    <input type="checkbox" name="share_anonymously" class="form-check-input" 
+                                           {{ 'checked' if experience.share_anonymously }}>
+                                    <label class="form-check-label">
+                                        Share data anonymously for health research
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" name="public_story" class="form-check-input"
+                                           {{ 'checked' if experience.public_story }}>
+                                    <label class="form-check-label">
+                                        Make my story publicly visible (anonymized)
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Buttons -->
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('view_experience', experience_id=experience.id) }}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-save me-2"></i>Update Experience
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

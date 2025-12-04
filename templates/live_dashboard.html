@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+
+{% block title %}Live Outbreak Dashboard - Dengue Risk System{% endblock %}
+
+{% block content %}
+<div class="container-fluid" style="background: linear-gradient(135deg, #0f172a, #1e293b); min-height: 100vh; padding: 20px;">
+    <div class="row">
+        <div class="col-12">
+            <!-- Header -->
+            <div class="text-center mb-4">
+                <h1 class="display-5 fw-bold text-light mb-3">
+                    <i class="fas fa-satellite-dish me-3 text-danger"></i>Live Outbreak Dashboard
+                </h1>
+                <p class="lead text-light mb-4">Real-time monitoring of dengue outbreak patterns across Karnataka</p>
+                <div class="alert alert-warning d-inline-block">
+                    <i class="fas fa-clock me-2"></i>
+                    <strong>Last Updated:</strong> <span id="lastUpdate"></span>
+                </div>
+            </div>
+
+            <!-- Key Metrics -->
+            <div class="row mb-4">
+                <div class="col-md-3 mb-3">
+                    <div class="card text-center" style="background: linear-gradient(135deg, #dc2626, #b91c1c);">
+                        <div class="card-body text-white">
+                            <i class="fas fa-exclamation-triangle fa-2x mb-2"></i>
+                            <h3 class="fw-bold" id="highRiskCities">0</h3>
+                            <small>High Risk Cities</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card text-center" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+                        <div class="card-body text-white">
+                            <i class="fas fa-chart-line fa-2x mb-2"></i>
+                            <h3 class="fw-bold" id="totalCases">0</h3>
+                            <small>Total Cases (7 days)</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card text-center" style="background: linear-gradient(135deg, #059669, #047857);">
+                        <div class="card-body text-white">
+                            <i class="fas fa-shield-alt fa-2x mb-2"></i>
+                            <h3 class="fw-bold" id="safeCities">0</h3>
+                            <small>Safe Cities</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card text-center" style="background: linear-gradient(135deg, #3b82f6, #2563eb);">
+                        <div class="card-body text-white">
+                            <i class="fas fa-eye fa-2x mb-2"></i>
+                            <h3 class="fw-bold" id="underWatch">0</h3>
+                            <small>Under Surveillance</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Live Feed -->
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card" style="background: linear-gradient(135deg, #374151, #4b5563);">
+                        <div class="card-header" style="background: linear-gradient(135deg, #1f2937, #374151);">
+                            <h5 class="text-light mb-0">
+                                <i class="fas fa-broadcast-tower me-2 text-success"></i>Live Activity Feed
+                            </h5>
+                        </div>
+                        <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+                            <div id="liveFeed">
+                                <!-- Live updates will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card" style="background: linear-gradient(135deg, #374151, #4b5563);">
+                        <div class="card-header" style="background: linear-gradient(135deg, #1f2937, #374151);">
+                            <h5 class="text-light mb-0">
+                                <i class="fas fa-thermometer-half me-2 text-info"></i>Weather Impact
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="weatherImpact">
+                                <div class="d-flex justify-content-between text-light mb-2">
+                                    <span>High Humidity Cities:</span>
+                                    <span class="badge bg-danger" id="humidCities">0</span>
+                                </div>
+                                <div class="d-flex justify-content-between text-light mb-2">
+                                    <span>Recent Rainfall:</span>
+                                    <span class="badge bg-info" id="rainfallCities">0</span>
+                                </div>
+                                <div class="d-flex justify-content-between text-light mb-2">
+                                    <span>Temperature Alerts:</span>
+                                    <span class="badge bg-warning" id="tempAlerts">0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mt-3" style="background: linear-gradient(135deg, #374151, #4b5563);">
+                        <div class="card-header" style="background: linear-gradient(135deg, #1f2937, #374151);">
+                            <h5 class="text-light mb-0">
+                                <i class="fas fa-bell me-2 text-warning"></i>Quick Alerts
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="quickAlerts">
+                                <!-- Quick alerts will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Simulate real-time updates
+function updateDashboard() {
+    // Update timestamp
+    document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString();
+    
+    // Update metrics (simulate random data)
+    document.getElementById('highRiskCities').textContent = Math.floor(Math.random() * 5) + 1;
+    document.getElementById('totalCases').textContent = Math.floor(Math.random() * 200) + 50;
+    document.getElementById('safeCities').textContent = Math.floor(Math.random() * 8) + 4;
+    document.getElementById('underWatch').textContent = Math.floor(Math.random() * 3) + 2;
+    
+    // Weather impact
+    document.getElementById('humidCities').textContent = Math.floor(Math.random() * 4) + 1;
+    document.getElementById('rainfallCities').textContent = Math.floor(Math.random() * 6) + 2;
+    document.getElementById('tempAlerts').textContent = Math.floor(Math.random() * 3);
+    
+    // Add new activity to feed
+    addLiveActivity();
+}
+
+function addLiveActivity() {
+    const cities = ['Bangalore', 'Mysore', 'Mangalore', 'Hubli', 'Belgaum', 'Davangere'];
+    const activities = [
+        'New cases reported',
+        'Weather condition changed',
+        'Surveillance increased',
+        'Prevention measures activated',
+        'AI prediction updated'
+    ];
+    
+    const city = cities[Math.floor(Math.random() * cities.length)];
+    const activity = activities[Math.floor(Math.random() * activities.length)];
+    const time = new Date().toLocaleTimeString();
+    
+    const feedDiv = document.getElementById('liveFeed');
+    const newActivity = document.createElement('div');
+    newActivity.className = 'alert alert-dark mb-2';
+    newActivity.innerHTML = `
+        <div class="d-flex justify-content-between">
+            <span class="text-light">
+                <i class="fas fa-map-marker-alt me-2 text-primary"></i>
+                <strong>${city}:</strong> ${activity}
+            </span>
+            <small class="text-muted">${time}</small>
+        </div>
+    `;
+    
+    feedDiv.insertBefore(newActivity, feedDiv.firstChild);
+    
+    // Keep only last 10 activities
+    while (feedDiv.children.length > 10) {
+        feedDiv.removeChild(feedDiv.lastChild);
+    }
+}
+
+function addQuickAlert() {
+    const alerts = [
+        'Monsoon season approaching - Increased surveillance recommended',
+        'Temperature spike detected in coastal regions',
+        'Water stagnation reports from multiple areas',
+        'Vector control operations scheduled'
+    ];
+    
+    const alertsDiv = document.getElementById('quickAlerts');
+    const alert = alerts[Math.floor(Math.random() * alerts.length)];
+    
+    alertsDiv.innerHTML = `
+        <div class="alert alert-warning alert-sm">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            ${alert}
+        </div>
+    `;
+}
+
+// Initialize dashboard
+updateDashboard();
+addQuickAlert();
+
+// Update every 5 seconds
+setInterval(updateDashboard, 5000);
+
+// Update alerts every 15 seconds
+setInterval(addQuickAlert, 15000);
+</script>
+{% endblock %}

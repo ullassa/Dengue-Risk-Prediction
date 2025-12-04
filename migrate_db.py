@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Database migration script to add admin functionality
-This script adds the is_admin column to existing databases
+Database migration script to add user profile functionality
+This script adds the profile columns to existing databases
 """
 
 import os
@@ -13,7 +13,7 @@ from datetime import datetime
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 def migrate_sqlite_database():
-    """Add is_admin column to existing SQLite database"""
+    """Add profile columns to existing SQLite database"""
     db_paths = ['dengue_users.db', 'instance/dengue_users.db']
     
     # Find the actual database file
@@ -24,7 +24,7 @@ def migrate_sqlite_database():
             break
     
     if not db_path:
-        print("✅ No existing database found - will create new one with admin support")
+        print("✅ No existing database found - will create new one with profile support")
         return True
     
     print(f"📍 Found database at: {db_path}")
@@ -33,19 +33,53 @@ def migrate_sqlite_database():
         conn = sqlite3.connect(db_path)
         cursor = conn.cursor()
         
-        # Check if is_admin column already exists
+        # Check existing columns
         cursor.execute("PRAGMA table_info(user)")
-        columns = [column[1] for column in cursor.fetchall()]
+        existing_columns = [column[1] for column in cursor.fetchall()]
         
-        if 'is_admin' in columns:
-            print("✅ Database already has admin support")
-            conn.close()
-            return True
+        # Profile columns to add
+        profile_columns = [
+            ('is_admin', 'BOOLEAN DEFAULT FALSE'),
+            ('age', 'INTEGER'),
+            ('gender', 'VARCHAR(20)'),
+            ('phone', 'VARCHAR(20)'),
+            ('city', 'VARCHAR(100)'),
+            ('state', 'VARCHAR(100) DEFAULT "Karnataka"'),
+            ('occupation', 'VARCHAR(100)'),
+            ('medical_conditions', 'TEXT'),
+            ('emergency_contact', 'TEXT'),
+            ('emergency_phone', 'VARCHAR(20)'),
+            ('notification_preferences', 'TEXT'),
+            ('profile_visibility', 'BOOLEAN DEFAULT TRUE'),
+            ('date_joined', 'DATETIME DEFAULT CURRENT_TIMESTAMP'),
+            ('last_updated', 'DATETIME DEFAULT CURRENT_TIMESTAMP'),
+            ('total_predictions', 'INTEGER DEFAULT 0'),
+            ('risk_assessments', 'INTEGER DEFAULT 0'),
+            ('alerts_received', 'INTEGER DEFAULT 0'),
+            ('created_at', 'DATETIME DEFAULT CURRENT_TIMESTAMP')
+        ]
         
-        print("🔧 Adding admin support to existing database...")
+        # Add missing columns
+        columns_added = 0
+        for col_name, col_definition in profile_columns:
+            if col_name not in existing_columns:
+                try:
+                    cursor.execute(f"ALTER TABLE user ADD COLUMN {col_name} {col_definition}")
+                    print(f"✅ Added column: {col_name}")
+                    columns_added += 1
+                except sqlite3.Error as e:
+                    print(f"❌ Error adding column {col_name}: {e}")
         
-        # Add is_admin column with default value False
-        cursor.execute("ALTER TABLE user ADD COLUMN is_admin BOOLEAN DEFAULT FALSE")
+        if columns_added == 0:
+            print("✅ Database already has complete profile support")
+        else:
+            print(f"✅ Added {columns_added} profile columns")
+        
+        # Update existing users with default values
+        cursor.execute("UPDATE user SET date_joined = CURRENT_TIMESTAMP WHERE date_joined IS NULL")
+        cursor.execute("UPDATE user SET last_updated = CURRENT_TIMESTAMP WHERE last_updated IS NULL")
+        cursor.execute("UPDATE user SET created_at = CURRENT_TIMESTAMP WHERE created_at IS NULL")
+        cursor.execute("UPDATE user SET state = 'Karnataka' WHERE state IS NULL")
         
         # Update any existing admin@dengue.com user to be admin
         cursor.execute("UPDATE user SET is_admin = TRUE WHERE email = ?", ('admin@dengue.com',))

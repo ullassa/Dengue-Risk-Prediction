@@ -1,0 +1,250 @@
+{% extends "base.html" %}
+
+{% block title %}My Profile - {{ current_user.name }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Profile Header -->
+            <div class="card mb-4 bg-gradient">
+                <div class="card-body p-4">
+                    <div class="row align-items-center">
+                        <div class="col-auto">
+                            <div class="avatar-circle bg-primary text-white d-flex align-items-center justify-content-center" 
+                                 style="width: 80px; height: 80px; border-radius: 50%; font-size: 2rem; font-weight: bold;">
+                                {{ current_user.name[0].upper() if current_user.name else 'U' }}
+                            </div>
+                        </div>
+                        <div class="col">
+                            <h2 class="card-title mb-1">{{ current_user.name or 'User' }}</h2>
+                            <p class="text-muted mb-2">
+                                <i class="fas fa-envelope me-2"></i>{{ current_user.email }}
+                            </p>
+                            <div class="d-flex flex-wrap gap-2">
+                                {% if current_user.age %}
+                                <span class="badge bg-info">
+                                    <i class="fas fa-birthday-cake me-1"></i>{{ current_user.age }} years old
+                                </span>
+                                {% endif %}
+                                {% if current_user.city %}
+                                <span class="badge bg-success">
+                                    <i class="fas fa-map-marker-alt me-1"></i>{{ current_user.city }}
+                                </span>
+                                {% endif %}
+                                <span class="badge bg-secondary">
+                                    <i class="fas fa-calendar me-1"></i>Joined {% if current_user.date_joined %}{{ current_user.date_joined.strftime('%B %Y') }}{% else %}Recently{% endif %}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <a href="{{ url_for('edit_profile') }}" class="btn btn-primary">
+                                <i class="fas fa-edit me-2"></i>Edit Profile
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Personal Information -->
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="card-title mb-0">
+                                <i class="fas fa-user me-2"></i>Personal Information
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-6 mb-3">
+                                    <strong class="text-muted">Full Name</strong>
+                                    <p class="mb-0">{{ current_user.name or 'Not provided' }}</p>
+                                </div>
+                                <div class="col-sm-6 mb-3">
+                                    <strong class="text-muted">Age</strong>
+                                    <p class="mb-0">
+                                        {% if current_user.age %}
+                                            {{ current_user.age }} years
+                                            <small class="text-muted">({{ current_user.get_age_group() }})</small>
+                                        {% else %}
+                                            Not provided
+                                        {% endif %}
+                                    </p>
+                                </div>
+                                <div class="col-sm-6 mb-3">
+                                    <strong class="text-muted">Gender</strong>
+                                    <p class="mb-0">
+                                        {% if current_user.gender %}
+                                            {{ current_user.gender.replace('_', ' ').title() }}
+                                        {% else %}
+                                            Not provided
+                                        {% endif %}
+                                    </p>
+                                </div>
+                                <div class="col-sm-6 mb-3">
+                                    <strong class="text-muted">Occupation</strong>
+                                    <p class="mb-0">{{ current_user.occupation or 'Not provided' }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Information -->
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="card-title mb-0">
+                                <i class="fas fa-address-book me-2"></i>Contact Information
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <strong class="text-muted">Email Address</strong>
+                                <p class="mb-0">{{ current_user.email }}</p>
+                            </div>
+                            <div class="mb-3">
+                                <strong class="text-muted">Phone Number</strong>
+                                <p class="mb-0">{{ current_user.phone or 'Not provided' }}</p>
+                            </div>
+                            <div class="mb-3">
+                                <strong class="text-muted">City</strong>
+                                <p class="mb-0">{{ current_user.city or 'Not provided' }}</p>
+                            </div>
+                            {% if current_user.emergency_contact %}
+                            <div class="mb-3">
+                                <strong class="text-muted">
+                                    <i class="fas fa-first-aid me-1"></i>Emergency Contact
+                                </strong>
+                                <p class="mb-0">{{ current_user.get_emergency_contact().get('name', 'Not provided') }}</p>
+                                {% if current_user.get_emergency_contact().get('phone') %}
+                                <small class="text-muted">{{ current_user.get_emergency_contact().get('phone') }}</small>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Medical Information -->
+            {% if current_user.medical_conditions and current_user.get_medical_conditions() %}
+            <div class="card mb-4">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-stethoscope me-2"></i>Medical Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <strong class="text-muted">Pre-existing Medical Conditions</strong>
+                    <div class="mt-2">
+                        {% for condition in current_user.get_medical_conditions() %}
+                        <span class="badge bg-warning text-dark me-2 mb-2">
+                            <i class="fas fa-heartbeat me-1"></i>{{ condition.replace('_', ' ').title() }}
+                        </span>
+                        {% endfor %}
+                    </div>
+                    <small class="text-muted">
+                        <i class="fas fa-info-circle me-1"></i>
+                        This information helps provide more accurate dengue risk assessments.
+                    </small>
+                </div>
+            </div>
+            {% endif %}
+
+
+
+            <!-- Profile Actions -->
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-cogs me-2"></i>Profile Settings
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-muted">Notification Preferences</h6>
+                            {% set notifications = current_user.get_notification_preferences() %}
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" disabled 
+                                       {{ 'checked' if notifications.get('dengue_alerts', True) }}>
+                                <label class="form-check-label">Dengue Alerts</label>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" disabled 
+                                       {{ 'checked' if notifications.get('risk_updates', True) }}>
+                                <label class="form-check-label">Risk Updates</label>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" disabled 
+                                       {{ 'checked' if notifications.get('health_tips', False) }}>
+                                <label class="form-check-label">Health Tips</label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-muted">Quick Actions</h6>
+                            <div class="d-grid gap-2">
+                                <a href="{{ url_for('edit_profile') }}" class="btn btn-outline-primary">
+                                    <i class="fas fa-user-edit me-2"></i>Edit Profile
+                                </a>
+                                <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary">
+                                    <i class="fas fa-tachometer-alt me-2"></i>View Dashboard
+                                </a>
+                                <a href="{{ url_for('ai_prediction') }}" class="btn btn-outline-success">
+                                    <i class="fas fa-brain me-2"></i>AI Prediction
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+.bg-gradient {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.avatar-circle {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    transition: transform 0.2s;
+}
+
+.avatar-circle:hover {
+    transform: scale(1.05);
+}
+
+.card {
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.badge {
+    font-size: 0.75rem;
+}
+
+.form-check-input:disabled {
+    opacity: 0.7;
+}
+
+@media (max-width: 768px) {
+    .avatar-circle {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+    }
+}
+</style>
+{% endblock %}

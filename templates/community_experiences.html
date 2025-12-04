@@ -1,0 +1,234 @@
+{% extends "base.html" %}
+
+{% block title %}Community Experiences - Dengue Stories{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4" style="background: linear-gradient(135deg, #0a2c5c, #499aa8); min-height: 100vh;">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Header -->
+            <div class="text-center mb-5">
+                <h1 class="display-5 text-white mb-3">
+                    <i class="fas fa-users me-3"></i>Community Dengue Experiences
+                </h1>
+                <p class="lead text-light">
+                    Real stories from community members to help others understand and prepare for dengue
+                </p>
+                <p class="text-light small">
+                    <i class="fas fa-user-secret me-1"></i>All stories are anonymized to protect privacy
+                </p>
+            </div>
+
+            {% if experiences %}
+                <div class="row">
+                    {% for experience in experiences %}
+                    <div class="col-lg-6 mb-4">
+                        <div class="card h-100" style="background: rgba(16, 90, 165, 0.3); border: 1px solid rgba(73, 154, 168, 0.5); box-shadow: 0 4px 16px rgba(0,0,0,0.2);">
+                            <div class="card-header" style="background: linear-gradient(135deg, #105aa5, #499aa8); color: white;">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h6 class="mb-0">
+                                        {% if experience.experience_type == 'infection' %}
+                                            <i class="fas fa-virus me-2"></i>Infection Story
+                                        {% elif experience.experience_type == 'recovery' %}
+                                            <i class="fas fa-heart me-2"></i>Recovery Journey
+                                        {% else %}
+                                            <i class="fas fa-edit me-2"></i>Experience Update
+                                        {% endif %}
+                                    </h6>
+                                    <span class="badge 
+                                        {% if experience.status == 'recovered' %}bg-success
+                                        {% elif experience.status == 'active' %}bg-danger
+                                        {% else %}bg-warning{% endif %}">
+                                        {{ experience.status.title() }}
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <div class="card-body text-light">
+                                <!-- Timeline -->
+                                <div class="row text-center mb-3">
+                                    <div class="col-4">
+                                        <small class="text-muted">Reported</small>
+                                        <p class="small mb-0">{{ experience.report_date.strftime('%b %Y') }}</p>
+                                    </div>
+                                    {% if experience.infection_date %}
+                                    <div class="col-4">
+                                        <small class="text-muted">Infected</small>
+                                        <p class="small mb-0">{{ experience.infection_date.strftime('%b %Y') }}</p>
+                                    </div>
+                                    {% endif %}
+                                    {% if experience.recovery_date %}
+                                    <div class="col-4">
+                                        <small class="text-success">Recovered</small>
+                                        <p class="small mb-0">{{ experience.recovery_date.strftime('%b %Y') }}</p>
+                                    </div>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Severity and Location -->
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    {% if experience.severity_level %}
+                                    <span class="badge 
+                                        {% if experience.severity_level == 'mild' %}bg-success
+                                        {% elif experience.severity_level == 'moderate' %}bg-warning
+                                        {% elif experience.severity_level == 'severe' %}bg-danger
+                                        {% else %}bg-dark{% endif %}">
+                                        {{ experience.severity_level.title() }} Severity
+                                    </span>
+                                    {% endif %}
+                                    
+                                    {% if experience.location_infected %}
+                                    <small class="text-muted">
+                                        <i class="fas fa-map-marker-alt me-1"></i>{{ experience.location_infected }}
+                                    </small>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Key Stats -->
+                                <div class="row text-center mb-3">
+                                    <div class="col-4">
+                                        <i class="fas fa-user-md text-primary"></i>
+                                        <p class="small mb-0">{{ experience.doctor_visits or 0 }} visits</p>
+                                    </div>
+                                    {% if experience.max_fever_temp %}
+                                    <div class="col-4">
+                                        <i class="fas fa-thermometer-half text-danger"></i>
+                                        <p class="small mb-0">{{ experience.max_fever_temp }}°F</p>
+                                    </div>
+                                    {% endif %}
+                                    <div class="col-4">
+                                        <i class="fas fa-hospital {{ 'text-danger' if experience.hospitalization else 'text-success' }}"></i>
+                                        <p class="small mb-0">
+                                            {% if experience.hospitalization %}
+                                                {% if experience.hospitalization_days %}{{ experience.hospitalization_days }}{% else %}1+{% endif %} days
+                                            {% else %}
+                                                No stay
+                                            {% endif %}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <!-- Symptoms -->
+                                {% if experience.symptoms %}
+                                    {% set symptoms_list = experience.symptoms|from_json %}
+                                    {% if symptoms_list %}
+                                    <div class="mb-3">
+                                        <h6 class="small text-muted mb-2">Symptoms:</h6>
+                                        <div class="d-flex flex-wrap">
+                                            {% for symptom in symptoms_list[:5] %}
+                                            <span class="badge bg-secondary me-1 mb-1 small">{{ symptom.replace('_', ' ').title() }}</span>
+                                            {% endfor %}
+                                            {% if symptoms_list|length > 5 %}
+                                            <span class="badge bg-light text-dark me-1 mb-1 small">+{{ symptoms_list|length - 5 }} more</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                {% endif %}
+
+                                <!-- Circumstances -->
+                                {% if experience.circumstances %}
+                                <div class="mb-3">
+                                    <h6 class="small text-muted mb-1">What happened:</h6>
+                                    <p class="small text-muted fst-italic">
+                                        "{{ experience.circumstances[:120] }}{% if experience.circumstances|length > 120 %}...{% endif %}"
+                                    </p>
+                                </div>
+                                {% endif %}
+
+                                <!-- Key Advice -->
+                                {% if experience.advice_for_others %}
+                                <div class="alert alert-info py-2 mb-2">
+                                    <h6 class="small mb-1">
+                                        <i class="fas fa-lightbulb me-1"></i>Advice from this person:
+                                    </h6>
+                                    <p class="small mb-0 fst-italic">
+                                        "{{ experience.advice_for_others[:150] }}{% if experience.advice_for_others|length > 150 %}...{% endif %}"
+                                    </p>
+                                </div>
+                                {% endif %}
+
+                                <!-- Lessons Learned -->
+                                {% if experience.lessons_learned %}
+                                <div class="mb-2">
+                                    <h6 class="small text-muted mb-1">
+                                        <i class="fas fa-graduation-cap me-1"></i>Key Learning:
+                                    </h6>
+                                    <p class="small">
+                                        "{{ experience.lessons_learned[:120] }}{% if experience.lessons_learned|length > 120 %}...{% endif %}"
+                                    </p>
+                                </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="card-footer bg-transparent">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">
+                                        <i class="fas fa-clock me-1"></i>
+                                        Updated {{ experience.last_updated.strftime('%b %d, %Y') }}
+                                    </small>
+                                    <div>
+                                        <span class="badge bg-light text-dark small">
+                                            <i class="fas fa-eye me-1"></i>Community Story
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Pagination would go here if needed -->
+                <div class="text-center mt-4">
+                    <p class="text-light">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Showing {{ experiences|length }} community experiences
+                    </p>
+                </div>
+
+            {% else %}
+                <!-- No experiences -->
+                <div class="text-center py-5">
+                    <div class="card" style="background: rgba(16, 90, 165, 0.3); border: 1px solid rgba(73, 154, 168, 0.5);">
+                        <div class="card-body text-light">
+                            <i class="fas fa-users fa-3x text-light mb-3"></i>
+                            <h5 class="text-light">No Community Stories Yet</h5>
+                            <p class="text-light">
+                                Be the first to share your dengue experience with the community!
+                            </p>
+                            {% if current_user.is_authenticated %}
+                            <a href="{{ url_for('add_experience') }}" class="btn btn-primary">
+                                <i class="fas fa-plus me-2"></i>Share Your Experience
+                            </a>
+                            {% else %}
+                            <a href="{{ url_for('login') }}" class="btn btn-primary">
+                                <i class="fas fa-sign-in-alt me-2"></i>Login to Share
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+            <!-- Call to Action -->
+            {% if current_user.is_authenticated %}
+            <div class="text-center mt-5">
+                <div class="card" style="background: rgba(16, 90, 165, 0.4); border: 1px solid rgba(73, 154, 168, 0.6);">
+                    <div class="card-body text-white">
+                        <h5><i class="fas fa-heartbeat me-2"></i>Share Your Story</h5>
+                        <p>Help others by sharing your dengue experience. Your story could save lives and provide comfort to others going through similar experiences.</p>
+                        <a href="{{ url_for('add_experience') }}" class="btn btn-warning">
+                            <i class="fas fa-plus me-2"></i>Add Your Experience
+                        </a>
+                        <a href="{{ url_for('dengue_experience') }}" class="btn btn-info ms-2">
+                            <i class="fas fa-eye me-2"></i>View Your Experiences
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

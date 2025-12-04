@@ -1,0 +1,337 @@
+{% extends "base.html" %}
+
+{% block title %}Add Dengue Experience - Share Your Journey{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4" style="background: linear-gradient(135deg, #0a2c5c, #499aa8); min-height: 100vh;">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Header -->
+            <div class="text-center mb-4">
+                <h1 class="display-6 text-white mb-3">
+                    <i class="fas fa-plus-circle me-3"></i>Share Your Dengue Experience
+                </h1>
+                <p class="lead text-light">
+                    Your story helps build community awareness and support others
+                </p>
+            </div>
+
+            <!-- Form Card -->
+            <div class="card" style="background: rgba(16, 90, 165, 0.3); border: 1px solid rgba(73, 154, 168, 0.5); box-shadow: 0 8px 32px rgba(0,0,0,0.3);">
+                <div class="card-header" style="background: linear-gradient(135deg, #105aa5, #499aa8); color: white;">
+                    <h4 class="mb-0">
+                        <i class="fas fa-heartbeat me-2"></i>Dengue Experience Form
+                    </h4>
+                </div>
+                <div class="card-body text-light">
+                    <form method="POST" id="experienceForm">
+                        <!-- Experience Type and Status -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label">
+                                    <i class="fas fa-tag me-2"></i>Experience Type
+                                </label>
+                                <select name="experience_type" class="form-select" required>
+                                    <option value="infection">New Infection Report</option>
+                                    <option value="recovery">Recovery Update</option>
+                                    <option value="update">Experience Update</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">
+                                    <i class="fas fa-heartbeat me-2"></i>Current Status
+                                </label>
+                                <select name="status" class="form-select" required>
+                                    <option value="active">Currently Sick</option>
+                                    <option value="recovering">Recovering</option>
+                                    <option value="recovered">Fully Recovered</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Dates -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label">
+                                    <i class="fas fa-calendar-alt me-2"></i>Infection Date (if known)
+                                </label>
+                                <input type="date" name="infection_date" class="form-control" max="{{ today }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">
+                                    <i class="fas fa-check-circle me-2"></i>Recovery Date (if recovered)
+                                </label>
+                                <input type="date" name="recovery_date" class="form-control" max="{{ today }}">
+                            </div>
+                        </div>
+
+                        <!-- Symptoms -->
+                        <div class="mb-4">
+                            <label class="form-label">
+                                <i class="fas fa-stethoscope me-2"></i>Symptoms Experienced
+                            </label>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-check">
+                                        <input type="checkbox" name="fever" class="form-check-input">
+                                        <label class="form-check-label">🌡️ Fever</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input type="checkbox" name="headache" class="form-check-input">
+                                        <label class="form-check-label">🤕 Headache</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-check">
+                                        <input type="checkbox" name="joint_pain" class="form-check-input">
+                                        <label class="form-check-label">🦴 Joint Pain</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input type="checkbox" name="muscle_pain" class="form-check-input">
+                                        <label class="form-check-label">💪 Muscle Pain</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-check">
+                                        <input type="checkbox" name="rash" class="form-check-input">
+                                        <label class="form-check-label">🔴 Skin Rash</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input type="checkbox" name="nausea" class="form-check-input">
+                                        <label class="form-check-label">🤢 Nausea</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-check">
+                                        <input type="checkbox" name="vomiting" class="form-check-input">
+                                        <label class="form-check-label">🤮 Vomiting</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input type="checkbox" name="fatigue" class="form-check-input">
+                                        <label class="form-check-label">😴 Fatigue</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Severity and Fever -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>Severity Level
+                                </label>
+                                <select name="severity_level" class="form-select">
+                                    <option value="">Select severity...</option>
+                                    <option value="mild">Mild</option>
+                                    <option value="moderate">Moderate</option>
+                                    <option value="severe">Severe</option>
+                                    <option value="critical">Critical</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">
+                                    <i class="fas fa-thermometer-half me-2"></i>Highest Fever Temperature (°F)
+                                </label>
+                                <input type="number" name="max_fever_temp" class="form-control" 
+                                       step="0.1" min="98" max="110" placeholder="e.g., 103.5">
+                            </div>
+                        </div>
+
+                        <!-- Location and Circumstances -->
+                        <div class="mb-4">
+                            <label class="form-label">
+                                <i class="fas fa-map-marker-alt me-2"></i>Where do you think you got infected?
+                            </label>
+                            <input type="text" name="location_infected" class="form-control" 
+                                   placeholder="e.g., Bengaluru, near lake area">
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">
+                                <i class="fas fa-question-circle me-2"></i>What circumstances led to the infection?
+                            </label>
+                            <textarea name="circumstances" class="form-control" rows="3"
+                                      placeholder="Describe what you think caused the infection - travel, stagnant water, monsoon season, etc."></textarea>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">
+                                <i class="fas fa-shield-alt me-2"></i>What prevention measures were you using?
+                            </label>
+                            <textarea name="prevention_used" class="form-control" rows="2"
+                                      placeholder="e.g., mosquito nets, repellents, clean surroundings..."></textarea>
+                        </div>
+
+                        <!-- Treatments -->
+                        <div class="mb-4">
+                            <label class="form-label">
+                                <i class="fas fa-pills me-2"></i>Treatments Used
+                            </label>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input type="checkbox" name="paracetamol" class="form-check-input">
+                                        <label class="form-check-label">💊 Paracetamol</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input type="checkbox" name="rest" class="form-check-input">
+                                        <label class="form-check-label">🛏️ Bed Rest</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input type="checkbox" name="fluids" class="form-check-input">
+                                        <label class="form-check-label">💧 Lots of Fluids</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input type="checkbox" name="hospital_care" class="form-check-input">
+                                        <label class="form-check-label">🏥 Hospital Care</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input type="checkbox" name="traditional_medicine" class="form-check-input">
+                                        <label class="form-check-label">🌿 Traditional Medicine</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input type="checkbox" name="iv_fluids" class="form-check-input">
+                                        <label class="form-check-label">💉 IV Fluids</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Medical Details -->
+                        <div class="row mb-4">
+                            <div class="col-md-4">
+                                <label class="form-label">
+                                    <i class="fas fa-user-md me-2"></i>Doctor Visits
+                                </label>
+                                <input type="number" name="doctor_visits" class="form-control" min="0" max="20" value="0">
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check mt-4">
+                                    <input type="checkbox" name="hospitalization" class="form-check-input">
+                                    <label class="form-check-label">
+                                        <i class="fas fa-hospital me-2"></i>Required Hospitalization
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">
+                                    <i class="fas fa-clock me-2"></i>Hospitalization Days
+                                </label>
+                                <input type="number" name="hospitalization_days" class="form-control" min="0" max="30">
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">
+                                <i class="fas fa-prescription-bottle me-2"></i>Medications Taken
+                            </label>
+                            <textarea name="medications" class="form-control" rows="2"
+                                      placeholder="List specific medications prescribed by doctor..."></textarea>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">
+                                <i class="fas fa-leaf me-2"></i>Home Remedies Used
+                            </label>
+                            <textarea name="home_remedies" class="form-control" rows="2"
+                                      placeholder="Traditional remedies, herbal treatments, dietary changes..."></textarea>
+                        </div>
+
+                        <!-- Recovery and Insights -->
+                        <div class="mb-4">
+                            <label class="form-label">
+                                <i class="fas fa-notes-medical me-2"></i>Recovery Progress Notes
+                            </label>
+                            <textarea name="recovery_notes" class="form-control" rows="3"
+                                      placeholder="Describe your recovery journey, what helped most, timeline..."></textarea>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">
+                                <i class="fas fa-lightbulb me-2"></i>What did you learn from this experience?
+                            </label>
+                            <textarea name="lessons_learned" class="form-control" rows="3"
+                                      placeholder="Key insights, what you'd do differently, warning signs to watch..."></textarea>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">
+                                <i class="fas fa-comments me-2"></i>Advice for Others
+                            </label>
+                            <textarea name="advice_for_others" class="form-control" rows="3"
+                                      placeholder="What advice would you give to others facing dengue?"></textarea>
+                        </div>
+
+                        <!-- Privacy Settings -->
+                        <div class="card mb-4" style="background: rgba(23, 162, 184, 0.2); border-left: 4px solid #17a2b8;">
+                            <div class="card-body text-light">
+                                <h6><i class="fas fa-user-secret me-2"></i>Privacy & Sharing Settings</h6>
+                                <div class="form-check mb-2">
+                                    <input type="checkbox" name="share_anonymously" class="form-check-input" checked>
+                                    <label class="form-check-label">
+                                        Share data anonymously for health research
+                                        <small class="text-muted d-block">Helps improve dengue understanding while protecting your privacy</small>
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" name="public_story" class="form-check-input">
+                                    <label class="form-check-label">
+                                        Make my story publicly visible (anonymized)
+                                        <small class="text-muted d-block">Others can read your experience to learn and feel supported</small>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Buttons -->
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('dengue_experience') }}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Save Experience
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Set today's date as max for date inputs
+document.addEventListener('DOMContentLoaded', function() {
+    const today = new Date().toISOString().split('T')[0];
+    document.querySelectorAll('input[type="date"]').forEach(input => {
+        if (!input.getAttribute('max')) {
+            input.setAttribute('max', today);
+        }
+    });
+});
+
+// Form validation
+document.getElementById('experienceForm').addEventListener('submit', function(e) {
+    const experienceType = this.experience_type.value;
+    const status = this.status.value;
+    
+    if (status === 'recovered' && !this.recovery_date.value) {
+        e.preventDefault();
+        alert('Please provide a recovery date if you have fully recovered.');
+        return;
+    }
+    
+    if (experienceType === 'infection' && !this.infection_date.value) {
+        const confirm = window.confirm('You haven\'t provided an infection date. Continue anyway?');
+        if (!confirm) {
+            e.preventDefault();
+            return;
+        }
+    }
+});
+</script>
+{% endblock %}

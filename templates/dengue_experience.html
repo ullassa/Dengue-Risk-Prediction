@@ -1,0 +1,264 @@
+{% extends "base.html" %}
+
+{% block title %}Dengue Experience Tracker - Share Your Journey{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4" style="background: linear-gradient(135deg, #0a2c5c, #499aa8); min-height: 100vh;">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Header -->
+            <div class="text-center mb-5">
+                <h1 class="display-5 text-white mb-3">
+                    <i class="fas fa-heartbeat me-3"></i>Dengue Experience Tracker
+                </h1>
+                <p class="lead text-light">
+                    Share your dengue journey to help others and contribute to community health awareness
+                </p>
+            </div>
+
+            <!-- Main Action Buttons -->
+            <div class="text-center mb-5">
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <a href="{{ url_for('add_experience') }}" class="btn btn-warning btn-lg me-3 mb-3" style="min-width: 200px;">
+                            <i class="fas fa-plus-circle me-2"></i>Share My Story
+                        </a>
+                        <a href="{{ url_for('community_experiences') }}" class="btn btn-info btn-lg me-3 mb-3" style="min-width: 200px;">
+                            <i class="fas fa-users me-2"></i>Read Stories
+                        </a>
+                        <button class="btn btn-success btn-lg mb-3" onclick="loadStats()" style="min-width: 200px;">
+                            <i class="fas fa-chart-bar me-2"></i>View Stats
+                        </button>
+                    </div>
+                </div>
+                <p class="text-light mt-3">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Help others by sharing your dengue journey. All stories are anonymized for privacy.
+                </p>
+            </div>
+
+            <!-- Your Experiences -->
+            <div class="card" style="background: rgba(16, 90, 165, 0.3); border: 1px solid rgba(73, 154, 168, 0.5); box-shadow: 0 8px 32px rgba(0,0,0,0.3);">
+                <div class="card-header" style="background: linear-gradient(135deg, #105aa5, #499aa8); color: white;">
+                    <h4 class="mb-0">
+                        <i class="fas fa-history me-2"></i>Your Dengue Experiences
+                    </h4>
+                </div>
+                <div class="card-body text-light">
+                    {% if experiences %}
+                        <div class="row">
+                            {% for experience in experiences %}
+                            <div class="col-lg-6 mb-4">
+                                <div class="card h-100" style="background: rgba(73, 154, 168, 0.2); border-left: 4px solid #499aa8;">
+                                    <div class="card-body text-light">
+                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                            <h5 class="card-title">
+                                                {% if experience.experience_type == 'infection' %}
+                                                    <i class="fas fa-virus text-danger me-2"></i>Infection Report
+                                                {% elif experience.experience_type == 'recovery' %}
+                                                    <i class="fas fa-heart text-success me-2"></i>Recovery Update
+                                                {% else %}
+                                                    <i class="fas fa-edit text-info me-2"></i>Experience Update
+                                                {% endif %}
+                                            </h5>
+                                            <span class="badge 
+                                                {% if experience.status == 'recovered' %}badge-success
+                                                {% elif experience.status == 'active' %}badge-danger
+                                                {% else %}badge-warning{% endif %}">
+                                                {{ experience.status.title() }}
+                                            </span>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <small class="text-muted">
+                                                <i class="fas fa-calendar me-1"></i>
+                                                Reported: {{ experience.report_date.strftime('%B %d, %Y') }}
+                                            </small>
+                                            {% if experience.infection_date %}
+                                            <br><small class="text-muted">
+                                                <i class="fas fa-calendar-alt me-1"></i>
+                                                Infection: {{ experience.infection_date.strftime('%B %d, %Y') }}
+                                            </small>
+                                            {% endif %}
+                                            {% if experience.recovery_date %}
+                                            <br><small class="text-success">
+                                                <i class="fas fa-check me-1"></i>
+                                                Recovery: {{ experience.recovery_date.strftime('%B %d, %Y') }}
+                                            </small>
+                                            {% endif %}
+                                        </div>
+
+                                        {% if experience.severity_level %}
+                                        <div class="mb-2">
+                                            <span class="badge 
+                                                {% if experience.severity_level == 'mild' %}badge-success
+                                                {% elif experience.severity_level == 'moderate' %}badge-warning
+                                                {% elif experience.severity_level == 'severe' %}badge-danger
+                                                {% else %}badge-dark{% endif %}">
+                                                {{ experience.severity_level.title() }} Severity
+                                            </span>
+                                            {% if experience.max_fever_temp %}
+                                                <small class="text-muted ms-2">
+                                                    🌡️ Max Fever: {{ experience.max_fever_temp }}°F
+                                                </small>
+                                            {% endif %}
+                                        </div>
+                                        {% endif %}
+
+                                        {% if experience.location_infected %}
+                                        <p class="text-muted small mb-2">
+                                            <i class="fas fa-map-marker-alt me-1"></i>
+                                            Location: {{ experience.location_infected }}
+                                        </p>
+                                        {% endif %}
+
+                                        {% if experience.circumstances %}
+                                        <p class="card-text small">
+                                            "{{ experience.circumstances[:100] }}{% if experience.circumstances|length > 100 %}...{% endif %}"
+                                        </p>
+                                        {% endif %}
+
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <a href="{{ url_for('view_experience', experience_id=experience.id) }}" 
+                                                   class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-eye me-1"></i>View Details
+                                                </a>
+                                                {% if experience.status != 'recovered' %}
+                                                <a href="{{ url_for('update_experience', experience_id=experience.id) }}" 
+                                                   class="btn btn-sm btn-outline-success ms-1">
+                                                    <i class="fas fa-edit me-1"></i>Update
+                                                </a>
+                                                {% endif %}
+                                            </div>
+                                            <small class="text-muted">
+                                                {% if experience.share_anonymously %}
+                                                    <i class="fas fa-user-secret me-1"></i>Anonymous
+                                                {% endif %}
+                                                {% if experience.public_story %}
+                                                    <i class="fas fa-globe me-1"></i>Public
+                                                {% endif %}
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-heartbeat fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No experiences recorded yet</h5>
+                            <p class="text-muted">Start sharing your dengue journey to help build community awareness</p>
+                            <a href="{{ url_for('add_experience') }}" class="btn btn-primary">
+                                <i class="fas fa-plus me-2"></i>Share Your First Experience
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Stats Modal -->
+            <div class="modal fade" id="statsModal" tabindex="-1">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">
+                                <i class="fas fa-chart-bar me-2"></i>Community Experience Statistics
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div id="statsContent">
+                                <div class="text-center">
+                                    <div class="spinner-border" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                    <p class="mt-2">Loading statistics...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function loadStats() {
+    const modal = new bootstrap.Modal(document.getElementById('statsModal'));
+    modal.show();
+    
+    fetch('/api/experiences/stats')
+        .then(response => response.json())
+        .then(data => {
+            const content = document.getElementById('statsContent');
+            content.innerHTML = `
+                <div class="row">
+                    <div class="col-md-3 text-center mb-3">
+                        <h3 class="text-primary">${data.total_experiences}</h3>
+                        <p class="mb-0">Total Experiences</p>
+                    </div>
+                    <div class="col-md-3 text-center mb-3">
+                        <h3 class="text-success">${data.recoveries}</h3>
+                        <p class="mb-0">Recoveries</p>
+                    </div>
+                    <div class="col-md-3 text-center mb-3">
+                        <h3 class="text-warning">${data.active_cases}</h3>
+                        <p class="mb-0">Active Cases</p>
+                    </div>
+                    <div class="col-md-3 text-center mb-3">
+                        <h3 class="text-info">${data.hospitalization_rate}%</h3>
+                        <p class="mb-0">Hospitalization Rate</p>
+                    </div>
+                </div>
+                <hr>
+                <h6>Severity Breakdown:</h6>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <div class="progress mb-2" style="height: 20px;">
+                            <div class="progress-bar bg-success" style="width: ${data.severity_breakdown.mild}%">
+                                Mild (${data.severity_breakdown.mild})
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="progress mb-2" style="height: 20px;">
+                            <div class="progress-bar bg-warning" style="width: ${data.severity_breakdown.moderate}%">
+                                Moderate (${data.severity_breakdown.moderate})
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="progress mb-2" style="height: 20px;">
+                            <div class="progress-bar bg-danger" style="width: ${data.severity_breakdown.severe}%">
+                                Severe (${data.severity_breakdown.severe})
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="progress mb-2" style="height: 20px;">
+                            <div class="progress-bar bg-dark" style="width: ${data.severity_breakdown.critical}%">
+                                Critical (${data.severity_breakdown.critical})
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="alert alert-info mt-3">
+                    <i class="fas fa-info-circle me-2"></i>
+                    All data is anonymized and used for community health awareness only.
+                </div>
+            `;
+        })
+        .catch(error => {
+            document.getElementById('statsContent').innerHTML = `
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    Error loading statistics: ${error.message}
+                </div>
+            `;
+        });
+}
+</script>
+{% endblock %}

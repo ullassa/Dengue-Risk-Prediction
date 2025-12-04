@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block title %}Terms of Service - Dengue Risk Prediction System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            
+            <div class="mb-4">
+                <h1 class="display-6 fw-bold text-primary">
+                    <i class="fas fa-file-contract me-3"></i>
+                    Terms of Service
+                </h1>
+                <p class="lead">Last updated: December 4, 2025</p>
+            </div>
+
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <h2 class="h4 text-primary mb-3">1. Acceptance of Terms</h2>
+                    <p>By accessing and using the Dengue Risk Prediction System ("Service"), you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by the above, please do not use this service.</p>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <h2 class="h4 text-primary mb-3">2. Medical Disclaimer</h2>
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Important:</strong> This system provides informational predictions and risk assessments only. It is not a substitute for professional medical advice, diagnosis, or treatment.
+                    </div>
+                    <ul>
+                        <li>Always seek the advice of qualified health providers with any questions about medical conditions</li>
+                        <li>Never disregard professional medical advice or delay seeking it because of information from this service</li>
+                        <li>In case of medical emergency, contact local emergency services immediately</li>
+                        <li>The predictions and assessments are based on statistical models and historical data</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <h2 class="h4 text-primary mb-3">3. Use License</h2>
+                    <p>Permission is granted to temporarily access the Dengue Risk Prediction System for personal, non-commercial transitory viewing only. This is the grant of a license, not a transfer of title, and under this license you may not:</p>
+                    <ul>
+                        <li>Modify or copy the materials</li>
+                        <li>Use the materials for any commercial purpose or for any public display</li>
+                        <li>Attempt to reverse engineer any software contained on the service</li>
+                        <li>Remove any copyright or other proprietary notations from the materials</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <h2 class="h4 text-primary mb-3">4. Data Usage and Privacy</h2>
+                    <p>We are committed to protecting your privacy and handling data responsibly:</p>
+                    <ul>
+                        <li>Location data is used only for risk assessment purposes</li>
+                        <li>Personal health information is handled according to our Privacy Policy</li>
+                        <li>We do not sell or share personal data with third parties for commercial purposes</li>
+                        <li>Data is stored securely and retained only as long as necessary</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <h2 class="h4 text-primary mb-3">5. Accuracy of Information</h2>
+                    <p>While we strive to provide accurate and up-to-date information:</p>
+                    <ul>
+                        <li>Predictions are based on available data and statistical models</li>
+                        <li>We make no warranties about the completeness, reliability, or accuracy of information</li>
+                        <li>Information may become outdated or inaccurate over time</li>
+                        <li>Users should verify information through official health authorities</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <h2 class="h4 text-primary mb-3">6. Limitation of Liability</h2>
+                    <p>In no event shall the Dengue Risk Prediction System or its suppliers be liable for any damages arising out of the use or inability to use the service, even if authorized representatives have been notified orally or in writing of the possibility of such damage.</p>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <h2 class="h4 text-primary mb-3">7. Prohibited Uses</h2>
+                    <p>You may not use our service:</p>
+                    <ul>
+                        <li>For any unlawful purpose or to solicit others to perform unlawful acts</li>
+                        <li>To violate any international, federal, provincial, or state regulations, rules, laws, or local ordinances</li>
+                        <li>To transmit or procure the sending of any advertising or promotional material</li>
+                        <li>To impersonate or attempt to impersonate the service, service employee, another user, or any other person or entity</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <h2 class="h4 text-primary mb-3">8. Termination</h2>
+                    <p>We may terminate or suspend access to our service immediately, without prior notice or liability, for any reason whatsoever, including without limitation if you breach the Terms.</p>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <h2 class="h4 text-primary mb-3">9. Changes to Terms</h2>
+                    <p>We reserve the right to update or modify these Terms of Service at any time without prior notice. Your continued use of the service after any such changes constitutes your acceptance of the new Terms of Service.</p>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <h2 class="h4 text-primary mb-3">10. Contact Information</h2>
+                    <p>If you have any questions about these Terms of Service, please contact us:</p>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-envelope me-2"></i>Email: support@denguerisk.com</li>
+                        <li><i class="fas fa-globe me-2"></i>Location: Karnataka, India</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <a href="{{ url_for('index') }}" class="btn btn-primary">
+                    <i class="fas fa-home me-2"></i>Back to Home
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

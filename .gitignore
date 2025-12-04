@@ -49,6 +49,9 @@ build/
 dist/
 *.egg-info/
 
+# Attached assets and uploaded files
+attached_assets/
+
 # Node modules (if any)
 node_modules/
 

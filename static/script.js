@@ -11,6 +11,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Initialize application
 function initializeApp() {
+    // Clear any existing error messages first
+    clearErrorMessages();
+    
     // Initialize tooltips
     initializeTooltips();
     
@@ -27,6 +30,16 @@ function initializeApp() {
     detectCurrentPage();
     
     console.log('Dengue Risk Prediction System initialized');
+}
+
+// Clear error messages
+function clearErrorMessages() {
+    const alerts = document.querySelectorAll('.alert-danger');
+    alerts.forEach(alert => {
+        if (alert.textContent.includes('unexpected error')) {
+            alert.remove();
+        }
+    });
 }
 
 // Initialize Bootstrap tooltips
@@ -481,7 +494,12 @@ function logPerformance(action) {
 // Global error handler
 window.addEventListener('error', function(event) {
     console.error('Global error:', event.error);
-    showError('An unexpected error occurred. Please try again.');
+    // Only show error for critical errors, not all errors
+    if (event.error && event.error.message && !event.error.message.includes('ResizeObserver')) {
+        console.log('JavaScript error detected:', event.error.message);
+        // Comment out the automatic error display for debugging
+        // showError('An unexpected error occurred. Please try again.');
+    }
 });
 
 // Prevent form resubmission on page refresh

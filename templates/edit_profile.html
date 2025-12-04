@@ -1,0 +1,473 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Profile - {{ current_user.name }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Page Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="mb-1">
+                        <i class="fas fa-user-edit me-2 text-primary"></i>Edit Profile
+                    </h2>
+                    <p class="text-muted">Update your personal information and preferences</p>
+                </div>
+                <a href="{{ url_for('profile') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Profile
+                </a>
+            </div>
+
+            <form method="POST" action="{{ url_for('edit_profile') }}">
+                <!-- Personal Information -->
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-user me-2"></i>Personal Information
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="name" class="form-label">
+                                    <i class="fas fa-id-card me-1"></i>Full Name <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="name" 
+                                       name="name" 
+                                       required 
+                                       value="{{ request.form.name or current_user.name or '' }}"
+                                       placeholder="Enter your full name">
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="form-label">
+                                    <i class="fas fa-envelope me-1"></i>Email Address <span class="text-danger">*</span>
+                                </label>
+                                <input type="email" 
+                                       class="form-control" 
+                                       id="email" 
+                                       name="email" 
+                                       required 
+                                       value="{{ request.form.email or current_user.email or '' }}"
+                                       placeholder="Enter your email address">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="age" class="form-label">
+                                    <i class="fas fa-birthday-cake me-1"></i>Age
+                                </label>
+                                <input type="number" 
+                                       class="form-control" 
+                                       id="age" 
+                                       name="age" 
+                                       min="5" 
+                                       max="120"
+                                       value="{{ request.form.age or current_user.age or '' }}"
+                                       placeholder="Your age">
+                                <div class="form-text">Age helps us provide more accurate risk assessments</div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="gender" class="form-label">
+                                    <i class="fas fa-venus-mars me-1"></i>Gender
+                                </label>
+                                <select class="form-select" id="gender" name="gender">
+                                    <option value="">Select gender</option>
+                                    <option value="male" {{ 'selected' if (request.form.gender or current_user.gender) == 'male' }}>Male</option>
+                                    <option value="female" {{ 'selected' if (request.form.gender or current_user.gender) == 'female' }}>Female</option>
+                                    <option value="other" {{ 'selected' if (request.form.gender or current_user.gender) == 'other' }}>Other</option>
+                                    <option value="prefer_not_to_say" {{ 'selected' if (request.form.gender or current_user.gender) == 'prefer_not_to_say' }}>Prefer not to say</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="occupation" class="form-label">
+                                <i class="fas fa-briefcase me-1"></i>Occupation
+                            </label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="occupation" 
+                                   name="occupation" 
+                                   value="{{ request.form.occupation or current_user.occupation or '' }}"
+                                   placeholder="Your profession or occupation">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Information -->
+                <div class="card mb-4">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-address-book me-2"></i>Contact Information
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="phone" class="form-label">
+                                    <i class="fas fa-phone me-1"></i>Phone Number
+                                </label>
+                                <input type="tel" 
+                                       class="form-control" 
+                                       id="phone" 
+                                       name="phone" 
+                                       value="{{ request.form.phone or current_user.phone or '' }}"
+                                       placeholder="Your phone number">
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="city" class="form-label">
+                                    <i class="fas fa-map-marker-alt me-1"></i>City
+                                </label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="city" 
+                                       name="city" 
+                                       value="{{ request.form.city or current_user.city or '' }}"
+                                       placeholder="Your city in Karnataka">
+                                <div class="form-text">For location-specific dengue alerts</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Emergency Contact -->
+                <div class="card mb-4">
+                    <div class="card-header bg-warning text-dark">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-first-aid me-2"></i>Emergency Contact
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        {% set emergency = current_user.get_emergency_contact() %}
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="emergency_contact" class="form-label">
+                                    <i class="fas fa-user-friends me-1"></i>Emergency Contact Name
+                                </label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="emergency_contact" 
+                                       name="emergency_contact" 
+                                       value="{{ request.form.emergency_contact or emergency.get('name', '') or '' }}"
+                                       placeholder="Contact person name">
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="emergency_phone" class="form-label">
+                                    <i class="fas fa-phone-alt me-1"></i>Emergency Contact Phone
+                                </label>
+                                <input type="tel" 
+                                       class="form-control" 
+                                       id="emergency_phone" 
+                                       name="emergency_phone" 
+                                       value="{{ request.form.emergency_phone or emergency.get('phone', '') or '' }}"
+                                       placeholder="Emergency contact number">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Medical Information -->
+                <div class="card mb-4">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-stethoscope me-2"></i>Medical Information
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <label class="form-label">
+                                <i class="fas fa-heartbeat me-1"></i>Pre-existing Medical Conditions
+                            </label>
+                            <div class="form-text mb-3">Select any conditions that may affect dengue risk assessment</div>
+                            
+                            {% set user_conditions = current_user.get_medical_conditions() %}
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="diabetes" name="medical_conditions" id="diabetes" 
+                                               {{ 'checked' if 'diabetes' in user_conditions }}>
+                                        <label class="form-check-label" for="diabetes">Diabetes</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="hypertension" name="medical_conditions" id="hypertension" 
+                                               {{ 'checked' if 'hypertension' in user_conditions }}>
+                                        <label class="form-check-label" for="hypertension">Hypertension</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="heart_disease" name="medical_conditions" id="heart_disease" 
+                                               {{ 'checked' if 'heart_disease' in user_conditions }}>
+                                        <label class="form-check-label" for="heart_disease">Heart Disease</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="asthma" name="medical_conditions" id="asthma" 
+                                               {{ 'checked' if 'asthma' in user_conditions }}>
+                                        <label class="form-check-label" for="asthma">Asthma</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="kidney_disease" name="medical_conditions" id="kidney_disease" 
+                                               {{ 'checked' if 'kidney_disease' in user_conditions }}>
+                                        <label class="form-check-label" for="kidney_disease">Kidney Disease</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="liver_disease" name="medical_conditions" id="liver_disease" 
+                                               {{ 'checked' if 'liver_disease' in user_conditions }}>
+                                        <label class="form-check-label" for="liver_disease">Liver Disease</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="immunocompromised" name="medical_conditions" id="immunocompromised" 
+                                               {{ 'checked' if 'immunocompromised' in user_conditions }}>
+                                        <label class="form-check-label" for="immunocompromised">Immunocompromised</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="pregnancy" name="medical_conditions" id="pregnancy" 
+                                               {{ 'checked' if 'pregnancy' in user_conditions }}>
+                                        <label class="form-check-label" for="pregnancy">Pregnancy</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notification Preferences -->
+                <div class="card mb-4">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-bell me-2"></i>Notification Preferences
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        {% set notifications = current_user.get_notification_preferences() %}
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" name="dengue_alerts" id="dengue_alerts" 
+                                           {{ 'checked' if notifications.get('dengue_alerts', True) }}>
+                                    <label class="form-check-label" for="dengue_alerts">
+                                        <i class="fas fa-exclamation-triangle text-danger me-1"></i>
+                                        <strong>Dengue Alerts</strong>
+                                        <small class="d-block text-muted">Receive alerts about dengue outbreaks in your area</small>
+                                    </label>
+                                </div>
+                                
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" name="risk_updates" id="risk_updates" 
+                                           {{ 'checked' if notifications.get('risk_updates', True) }}>
+                                    <label class="form-check-label" for="risk_updates">
+                                        <i class="fas fa-chart-line text-warning me-1"></i>
+                                        <strong>Risk Updates</strong>
+                                        <small class="d-block text-muted">Get notified about changes in dengue risk levels</small>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" name="health_tips" id="health_tips" 
+                                           {{ 'checked' if notifications.get('health_tips', False) }}>
+                                    <label class="form-check-label" for="health_tips">
+                                        <i class="fas fa-lightbulb text-info me-1"></i>
+                                        <strong>Health Tips</strong>
+                                        <small class="d-block text-muted">Receive preventive health tips and recommendations</small>
+                                    </label>
+                                </div>
+                                
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" name="weekly_reports" id="weekly_reports" 
+                                           {{ 'checked' if notifications.get('weekly_reports', False) }}>
+                                    <label class="form-check-label" for="weekly_reports">
+                                        <i class="fas fa-file-alt text-success me-1"></i>
+                                        <strong>Weekly Reports</strong>
+                                        <small class="d-block text-muted">Get weekly health and activity summaries</small>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Privacy Settings -->
+                <div class="card mb-4">
+                    <div class="card-header bg-secondary text-white">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-shield-alt me-2"></i>Privacy Settings
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" name="profile_visibility" id="profile_visibility" 
+                                   {{ 'checked' if notifications.get('profile_visibility', True) }}>
+                            <label class="form-check-label" for="profile_visibility">
+                                <strong>Make profile visible to health officials</strong>
+                                <small class="d-block text-muted">Allow authorized health officials to access your profile for public health purposes</small>
+                            </label>
+                        </div>
+                        
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" name="anonymous_data" id="anonymous_data" 
+                                   {{ 'checked' if notifications.get('anonymous_data', True) }}>
+                            <label class="form-check-label" for="anonymous_data">
+                                <strong>Contribute anonymous data for research</strong>
+                                <small class="d-block text-muted">Help improve dengue prediction models with anonymized data</small>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex flex-wrap gap-2 justify-content-between align-items-center">
+                            <div>
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-save me-2"></i>Save Changes
+                                </button>
+                                <a href="{{ url_for('profile') }}" class="btn btn-outline-secondary ms-2">
+                                    <i class="fas fa-times me-2"></i>Cancel
+                                </a>
+                            </div>
+                            
+                            <div>
+                                <small class="text-muted">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    Changes are saved immediately and will update your risk assessments accordingly.
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Form validation and enhancement
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    const ageInput = document.getElementById('age');
+    const emailInput = document.getElementById('email');
+    const nameInput = document.getElementById('name');
+    
+    // Age validation
+    ageInput.addEventListener('input', function() {
+        const age = parseInt(this.value);
+        if (age && (age < 5 || age > 120)) {
+            this.setCustomValidity('Age must be between 5 and 120 years');
+        } else {
+            this.setCustomValidity('');
+        }
+    });
+    
+    // Form submission validation
+    form.addEventListener('submit', function(e) {
+        const age = parseInt(ageInput.value);
+        const email = emailInput.value;
+        const name = nameInput.value;
+        
+        if (!name.trim()) {
+            e.preventDefault();
+            alert('Full name is required');
+            nameInput.focus();
+            return;
+        }
+        
+        if (!email.trim()) {
+            e.preventDefault();
+            alert('Email address is required');
+            emailInput.focus();
+            return;
+        }
+        
+        if (age && (age < 5 || age > 120)) {
+            e.preventDefault();
+            alert('Please enter a valid age between 5 and 120 years');
+            ageInput.focus();
+            return;
+        }
+    });
+    
+    // Show confirmation for major settings changes
+    const criticalCheckboxes = ['dengue_alerts', 'profile_visibility'];
+    criticalCheckboxes.forEach(id => {
+        const checkbox = document.getElementById(id);
+        if (checkbox) {
+            checkbox.addEventListener('change', function() {
+                if (!this.checked) {
+                    const confirmed = confirm(`Are you sure you want to disable ${this.nextElementSibling.querySelector('strong').textContent}? This may affect your safety and access to important health information.`);
+                    if (!confirmed) {
+                        this.checked = true;
+                    }
+                }
+            });
+        }
+    });
+});
+
+// Enhance form with Bootstrap validation styling
+(function() {
+    'use strict';
+    
+    const forms = document.querySelectorAll('form');
+    forms.forEach(function(form) {
+        form.addEventListener('submit', function(event) {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        }, false);
+    });
+})();
+</script>
+{% endblock %}
+
+{% block styles %}
+<style>
+.form-check-label strong {
+    font-weight: 600;
+}
+
+.form-switch .form-check-input:checked {
+    background-color: #198754;
+    border-color: #198754;
+}
+
+.card {
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.form-check-input:focus {
+    border-color: #86b7fe;
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+@media (max-width: 768px) {
+    .d-flex.justify-content-between {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .d-flex.justify-content-between > div {
+        text-align: center;
+    }
+}
+</style>
+{% endblock %}

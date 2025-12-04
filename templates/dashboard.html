@@ -22,6 +22,9 @@
                                 <i class="fas fa-database me-2"></i>Admin
                             </a>
                             {% endif %}
+                            <button id="install-button" class="btn btn-success me-2" style="display: none;">
+                                <i class="fas fa-mobile-alt me-2"></i>Install App
+                            </button>
                             <a href="{{ url_for('logout') }}" class="btn btn-light">
                                 <i class="fas fa-sign-out-alt me-2"></i>Logout
                             </a>
@@ -87,6 +90,11 @@
                         <div class="col-lg-3 col-md-6 mb-2">
                             <a href="{{ url_for('symptom_checker_route') }}" class="btn btn-outline-info w-100">
                                 <i class="fas fa-stethoscope me-2"></i>Symptom Check
+                            </a>
+                        </div>
+                        <div class="col-lg-3 col-md-6 mb-2">
+                            <a href="{{ url_for('dengue_experience') }}" class="btn btn-outline-danger w-100">
+                                <i class="fas fa-heartbeat me-2"></i>My Experience
                             </a>
                         </div>
                         <div class="col-lg-3 col-md-6 mb-2">
@@ -225,5 +233,21 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('Dashboard loaded for user: {{ current_user.name }}');
     console.log('Total checks: {{ total_checks }}');
 });
+
+function quickStats() {
+    fetch('/api/experiences/stats')
+        .then(response => response.json())
+        .then(data => {
+            alert(`🏥 Community Health Stats:\\n\\n` +
+                  `📊 Total Experiences: ${data.total_experiences}\\n` +
+                  `💚 Recoveries: ${data.recoveries}\\n` +
+                  `⚠️ Active Cases: ${data.active_cases}\\n` +
+                  `🏥 Hospital Rate: ${data.hospitalization_rate}%\\n\\n` +
+                  `Help grow our community health database!`);
+        })
+        .catch(error => {
+            alert('📱 Community stats coming soon. Share your experience to help build our health insights!');
+        });
+}
 </script>
 {% endblock %}

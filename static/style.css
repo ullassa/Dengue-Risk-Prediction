@@ -1,13 +1,32 @@
 /* Custom styles for Dengue Risk Prediction System */
-/* Following Bootstrap dark theme guidelines */
+/* Enhanced color grading and modern design */
 
 :root {
-    /* Custom color variables for dengue-specific styling */
-    --dengue-danger: #dc3545;
-    --dengue-warning: #ffc107;
-    --dengue-success: #198754;
-    --dengue-info: #0dcaf0;
-    --dengue-primary: #0d6efd;
+    /* Enhanced high-visibility color variables */
+    --dengue-danger: #dc2626;
+    --dengue-danger-dark: #991b1b;
+    --dengue-warning: #ea580c;
+    --dengue-warning-dark: #c2410c;
+    --dengue-success: #16a34a;
+    --dengue-success-dark: #15803d;
+    --dengue-info: #0891b2;
+    --dengue-info-dark: #0e7490;
+    --dengue-primary: #2563eb;
+    --dengue-primary-dark: #1d4ed8;
+    
+    /* High-contrast gradient variables */
+    --gradient-danger: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+    --gradient-warning: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
+    --gradient-success: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+    --gradient-info: linear-gradient(135deg, #0891b2 0%, #0e7490 100%);
+    --gradient-primary: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    
+    /* High-visibility shadow variables */
+    --shadow-danger: 0 8px 25px rgba(220, 38, 38, 0.3);
+    --shadow-warning: 0 8px 25px rgba(234, 88, 12, 0.3);
+    --shadow-success: 0 8px 25px rgba(22, 163, 74, 0.3);
+    --shadow-info: 0 8px 25px rgba(8, 145, 178, 0.3);
+    --shadow-primary: 0 8px 25px rgba(37, 99, 235, 0.3);
 }
 
 /* Global enhancements */
@@ -22,15 +41,62 @@ body {
     font-weight: bold;
 }
 
-/* Card enhancements */
-.card {
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-    border-radius: 0.5rem;
+/* Enhanced Card Hover Effects */
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
 }
 
-.card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+/* Enhanced Gradient Card Styles */
+.gradient-card-danger {
+    background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+    border-left: 5px solid var(--dengue-danger);
+}
+
+.gradient-card-warning {
+    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+    border-left: 5px solid var(--dengue-warning);
+}
+
+.gradient-card-success {
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    border-left: 5px solid var(--dengue-success);
+}
+
+.gradient-card-info {
+    background: linear-gradient(135deg, #ecfeff 0%, #cffafe 100%);
+    border-left: 5px solid var(--dengue-info);
+}
+
+.gradient-card-primary {
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+    border-left: 5px solid var(--dengue-primary);
+}
+
+/* Enhanced Icon Background Gradients */
+.icon-gradient-danger {
+    background: var(--gradient-danger);
+    color: white;
+}
+
+.icon-gradient-warning {
+    background: var(--gradient-warning);
+    color: white;
+}
+
+.icon-gradient-success {
+    background: var(--gradient-success);
+    color: white;
+}
+
+.icon-gradient-info {
+    background: var(--gradient-info);
+    color: white;
+}
+
+.icon-gradient-primary {
+    background: var(--gradient-primary);
+    color: white;
 }
 
 /* Risk level specific styling */

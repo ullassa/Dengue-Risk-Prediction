@@ -1,0 +1,451 @@
+{% extends "base.html" %}
+
+{% block title %}Comparison Analytics - Dengue Risk System{% endblock %}
+
+{% block content %}
+<div class="container-fluid" style="background: linear-gradient(135deg, #1e1b4b, #312e81); min-height: 100vh; padding: 20px;">
+    <div class="row justify-content-center">
+        <div class="col-lg-11">
+            <!-- Header -->
+            <div class="text-center mb-4">
+                <h1 class="display-5 fw-bold text-light mb-3">
+                    <i class="fas fa-chart-bar me-3 text-warning"></i>Comparison Analytics
+                </h1>
+                <p class="lead text-light mb-4">Compare dengue trends across cities and time periods</p>
+            </div>
+
+            <!-- Comparison Controls -->
+            <div class="card mb-4" style="background: linear-gradient(135deg, #374151, #4b5563);">
+                <div class="card-header" style="background: linear-gradient(135deg, #1f2937, #374151);">
+                    <h5 class="text-light mb-0">
+                        <i class="fas fa-filter me-2"></i>Comparison Settings
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label text-light">Select Cities</label>
+                            <select class="form-control" id="citySelector" multiple>
+                                <option value="bangalore" selected>Bangalore</option>
+                                <option value="mangalore" selected>Mangalore</option>
+                                <option value="hubli">Hubli</option>
+                                <option value="mysore">Mysore</option>
+                                <option value="belgaum">Belgaum</option>
+                                <option value="tumkur">Tumkur</option>
+                                <option value="pune">Pune</option>
+                                <option value="ahmedabad">Ahmedabad</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label text-light">Time Period</label>
+                            <select class="form-control" id="timePeriod">
+                                <option value="week">Last 7 Days</option>
+                                <option value="month" selected>Last 30 Days</option>
+                                <option value="quarter">Last 90 Days</option>
+                                <option value="year">Last Year</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label text-light">Metric Type</label>
+                            <select class="form-control" id="metricType">
+                                <option value="cases" selected>Total Cases</option>
+                                <option value="rate">Infection Rate</option>
+                                <option value="growth">Growth Rate</option>
+                                <option value="risk">Risk Score</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label text-light">Chart Type</label>
+                            <select class="form-control" id="chartType">
+                                <option value="line" selected>Line Chart</option>
+                                <option value="bar">Bar Chart</option>
+                                <option value="radar">Radar Chart</option>
+                                <option value="heatmap">Heatmap</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="updateComparison()">
+                        <i class="fas fa-sync me-2"></i>Update Comparison
+                    </button>
+                </div>
+            </div>
+
+            <!-- Main Comparison Chart -->
+            <div class="row">
+                <div class="col-lg-8 mb-4">
+                    <div class="card" style="background: linear-gradient(135deg, #374151, #4b5563);">
+                        <div class="card-header" style="background: linear-gradient(135deg, #1f2937, #374151);">
+                            <h5 class="text-light mb-0">
+                                <i class="fas fa-chart-line me-2"></i>Trend Comparison
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="comparisonChart" height="400"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 mb-4">
+                    <div class="card" style="background: linear-gradient(135deg, #374151, #4b5563);">
+                        <div class="card-header" style="background: linear-gradient(135deg, #1f2937, #374151);">
+                            <h5 class="text-light mb-0">
+                                <i class="fas fa-trophy me-2"></i>City Rankings
+                            </h5>
+                        </div>
+                        <div class="card-body" id="cityRankings">
+                            <div class="d-flex justify-content-between align-items-center mb-3 p-2 rounded" style="background-color: #ef4444; color: white;">
+                                <span><i class="fas fa-medal me-2"></i>Mangalore</span>
+                                <span>89 cases</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-3 p-2 rounded" style="background-color: #f97316; color: white;">
+                                <span><i class="fas fa-medal me-2"></i>Bangalore</span>
+                                <span>67 cases</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-3 p-2 rounded" style="background-color: #eab308; color: white;">
+                                <span><i class="fas fa-medal me-2"></i>Hubli</span>
+                                <span>45 cases</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-2 p-2 rounded" style="background-color: #22c55e; color: white;">
+                                <span><i class="fas fa-medal me-2"></i>Mysore</span>
+                                <span>23 cases</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed Analytics -->
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <div class="card" style="background: linear-gradient(135deg, #374151, #4b5563);">
+                        <div class="card-header" style="background: linear-gradient(135deg, #1f2937, #374151);">
+                            <h5 class="text-light mb-0">
+                                <i class="fas fa-percentage me-2"></i>Growth Rate Analysis
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="growthChart" height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 mb-4">
+                    <div class="card" style="background: linear-gradient(135deg, #374151, #4b5563);">
+                        <div class="card-header" style="background: linear-gradient(135deg, #1f2937, #374151);">
+                            <h5 class="text-light mb-0">
+                                <i class="fas fa-thermometer-half me-2"></i>Risk Distribution
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="riskChart" height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Correlation Analysis -->
+            <div class="card mb-4" style="background: linear-gradient(135deg, #374151, #4b5563);">
+                <div class="card-header" style="background: linear-gradient(135deg, #1f2937, #374151);">
+                    <h5 class="text-light mb-0">
+                        <i class="fas fa-link me-2"></i>Correlation Analysis
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <canvas id="correlationChart" height="300"></canvas>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-warning mb-3">Key Correlations</h6>
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between text-light mb-1">
+                                    <span>Temperature vs Cases</span>
+                                    <span class="text-warning">0.76</span>
+                                </div>
+                                <div class="progress" style="height: 8px;">
+                                    <div class="progress-bar bg-warning" style="width: 76%"></div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between text-light mb-1">
+                                    <span>Humidity vs Cases</span>
+                                    <span class="text-info">0.89</span>
+                                </div>
+                                <div class="progress" style="height: 8px;">
+                                    <div class="progress-bar bg-info" style="width: 89%"></div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between text-light mb-1">
+                                    <span>Rainfall vs Cases</span>
+                                    <span class="text-success">0.64</span>
+                                </div>
+                                <div class="progress" style="height: 8px;">
+                                    <div class="progress-bar bg-success" style="width: 64%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistical Summary -->
+            <div class="card" style="background: linear-gradient(135deg, #374151, #4b5563);">
+                <div class="card-header" style="background: linear-gradient(135deg, #1f2937, #374151);">
+                    <h5 class="text-light mb-0">
+                        <i class="fas fa-calculator me-2"></i>Statistical Summary
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 text-center mb-3">
+                            <h4 class="text-primary">67.5</h4>
+                            <small class="text-light">Average Cases</small>
+                        </div>
+                        <div class="col-md-3 text-center mb-3">
+                            <h4 class="text-warning">23.2</h4>
+                            <small class="text-light">Std Deviation</small>
+                        </div>
+                        <div class="col-md-3 text-center mb-3">
+                            <h4 class="text-success">0.84</h4>
+                            <small class="text-light">Correlation Coeff</small>
+                        </div>
+                        <div class="col-md-3 text-center mb-3">
+                            <h4 class="text-info">+12%</h4>
+                            <small class="text-light">Overall Growth</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let comparisonChart, growthChart, riskChart, correlationChart;
+
+// Sample data
+const sampleData = {
+    bangalore: [45, 52, 48, 61, 55, 67, 72],
+    mangalore: [67, 73, 69, 82, 76, 89, 95],
+    hubli: [34, 41, 38, 45, 42, 48, 51],
+    mysore: [23, 28, 25, 31, 29, 34, 37]
+};
+
+function initializeCharts() {
+    // Main Comparison Chart
+    const compCtx = document.getElementById('comparisonChart').getContext('2d');
+    comparisonChart = new Chart(compCtx, {
+        type: 'line',
+        data: {
+            labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6', 'Week 7'],
+            datasets: [
+                {
+                    label: 'Bangalore',
+                    data: sampleData.bangalore,
+                    borderColor: '#105aa5',
+                    backgroundColor: 'rgba(16, 90, 165, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                },
+                {
+                    label: 'Mumbai',
+                    data: sampleData.mumbai,
+                    borderColor: '#814a4a',
+                    backgroundColor: 'rgba(129, 74, 74, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                },
+                {
+                    label: 'Delhi',
+                    data: sampleData.delhi,
+                    borderColor: '#8daccc',
+                    backgroundColor: 'rgba(141, 172, 204, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                },
+                {
+                    label: 'Chennai',
+                    data: sampleData.chennai,
+                    borderColor: '#61254f',
+                    backgroundColor: 'rgba(97, 37, 79, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    labels: {
+                        color: '#fff'
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    ticks: { color: '#fff' },
+                    grid: { color: 'rgba(255,255,255,0.1)' }
+                },
+                x: {
+                    ticks: { color: '#fff' },
+                    grid: { color: 'rgba(255,255,255,0.1)' }
+                }
+            }
+        }
+    });
+
+    // Growth Chart
+    const growthCtx = document.getElementById('growthChart').getContext('2d');
+    growthChart = new Chart(growthCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Bangalore', 'Mumbai', 'Delhi', 'Chennai'],
+            datasets: [{
+                label: 'Growth Rate (%)',
+                data: [15.2, 18.7, 12.3, 8.9],
+                backgroundColor: [
+                    'rgba(16, 90, 165, 0.8)',
+                    'rgba(129, 74, 74, 0.8)',
+                    'rgba(141, 172, 204, 0.8)',
+                    'rgba(97, 37, 79, 0.8)'
+                ],
+                borderColor: [
+                    '#105aa5',
+                    '#814a4a', 
+                    '#8daccc',
+                    '#61254f'
+                ],
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    labels: { color: '#fff' }
+                }
+            },
+            scales: {
+                y: {
+                    ticks: { color: '#fff' },
+                    grid: { color: 'rgba(255,255,255,0.1)' }
+                },
+                x: {
+                    ticks: { color: '#fff' },
+                    grid: { color: 'rgba(255,255,255,0.1)' }
+                }
+            }
+        }
+    });
+
+    // Risk Distribution Chart
+    const riskCtx = document.getElementById('riskChart').getContext('2d');
+    riskChart = new Chart(riskCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Very High', 'High', 'Moderate', 'Low'],
+            datasets: [{
+                data: [25, 35, 30, 10],
+                backgroundColor: [
+                    '#ef4444',
+                    '#f97316',
+                    '#eab308',
+                    '#22c55e'
+                ],
+                borderWidth: 2,
+                borderColor: '#374151'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'right',
+                    labels: { color: '#fff' }
+                }
+            }
+        }
+    });
+
+    // Correlation Chart
+    const corrCtx = document.getElementById('correlationChart').getContext('2d');
+    correlationChart = new Chart(corrCtx, {
+        type: 'scatter',
+        data: {
+            datasets: [{
+                label: 'Temperature vs Cases',
+                data: [
+                    {x: 28, y: 45}, {x: 32, y: 67}, {x: 25, y: 34}, 
+                    {x: 30, y: 56}, {x: 35, y: 78}, {x: 27, y: 42}
+                ],
+                backgroundColor: 'rgba(234, 179, 8, 0.6)',
+                borderColor: '#eab308'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    labels: { color: '#fff' }
+                }
+            },
+            scales: {
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Cases',
+                        color: '#fff'
+                    },
+                    ticks: { color: '#fff' },
+                    grid: { color: 'rgba(255,255,255,0.1)' }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Temperature (°C)',
+                        color: '#fff'
+                    },
+                    ticks: { color: '#fff' },
+                    grid: { color: 'rgba(255,255,255,0.1)' }
+                }
+            }
+        }
+    });
+}
+
+function updateComparison() {
+    // Simulate updating charts with new data
+    console.log('Updating comparison with new parameters...');
+    
+    // Update main chart
+    if (comparisonChart) {
+        comparisonChart.data.datasets.forEach(dataset => {
+            dataset.data = dataset.data.map(() => Math.floor(Math.random() * 100) + 20);
+        });
+        comparisonChart.update();
+    }
+    
+    // Update growth chart
+    if (growthChart) {
+        growthChart.data.datasets[0].data = [
+            Math.random() * 20,
+            Math.random() * 20,
+            Math.random() * 20,
+            Math.random() * 20
+        ];
+        growthChart.update();
+    }
+}
+
+// Initialize charts when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    initializeCharts();
+});
+</script>
+{% endblock %}

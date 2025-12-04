@@ -5,46 +5,87 @@
 {% block content %}
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-6 col-lg-5">
+        <div class="col-md-8 col-lg-7">
             <div class="card shadow">
                 <div class="card-header bg-primary text-white">
                     <h3 class="card-title mb-0 text-center">
-                        <i class="fas fa-user-plus me-2"></i>Create Account
+                        <i class="fas fa-user-plus me-2"></i>Create Your Profile
                     </h3>
                 </div>
                 <div class="card-body p-4">
-                    <p class="text-muted text-center mb-4">Join the Dengue Risk Prediction System</p>
+                    <p class="text-muted text-center mb-4">Join the Dengue Risk Prediction System - Complete your profile for personalized health insights</p>
                     
                     <form method="POST" action="{{ url_for('signup') }}">
-                        <div class="mb-3">
-                            <label for="name" class="form-label">
-                                <i class="fas fa-user me-1"></i>Full Name
-                            </label>
-                            <input type="text" 
-                                   class="form-control" 
-                                   id="name" 
-                                   name="name" 
-                                   required 
-                                   value="{{ request.form.name or '' }}"
-                                   placeholder="Enter your full name">
+                        <!-- Basic Information -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5 class="text-primary mb-3">
+                                    <i class="fas fa-user me-2"></i>Basic Information
+                                </h5>
+                            </div>
                         </div>
-                        
-                        <div class="mb-3">
-                            <label for="email" class="form-label">
-                                <i class="fas fa-envelope me-1"></i>Email Address
-                            </label>
-                            <input type="email" 
-                                   class="form-control" 
-                                   id="email" 
-                                   name="email" 
-                                   required 
-                                   value="{{ request.form.email or '' }}"
-                                   placeholder="Enter your email address">
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="name" class="form-label">
+                                    <i class="fas fa-id-card me-1"></i>Full Name <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="name" 
+                                       name="name" 
+                                       required 
+                                       value="{{ request.form.name or '' }}"
+                                       placeholder="Enter your full name">
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="form-label">
+                                    <i class="fas fa-envelope me-1"></i>Email Address <span class="text-danger">*</span>
+                                </label>
+                                <input type="email" 
+                                       class="form-control" 
+                                       id="email" 
+                                       name="email" 
+                                       required 
+                                       value="{{ request.form.email or '' }}"
+                                       placeholder="Enter your email address">
+                            </div>
                         </div>
-                        
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="age" class="form-label">
+                                    <i class="fas fa-birthday-cake me-1"></i>Age
+                                </label>
+                                <input type="number" 
+                                       class="form-control" 
+                                       id="age" 
+                                       name="age" 
+                                       min="5" 
+                                       max="120"
+                                       value="{{ request.form.age or '' }}"
+                                       placeholder="Your age">
+                                <div class="form-text">Age helps us provide more accurate risk assessments</div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="gender" class="form-label">
+                                    <i class="fas fa-venus-mars me-1"></i>Gender
+                                </label>
+                                <select class="form-select" id="gender" name="gender">
+                                    <option value="">Select gender</option>
+                                    <option value="male" {{ 'selected' if request.form.gender == 'male' }}>Male</option>
+                                    <option value="female" {{ 'selected' if request.form.gender == 'female' }}>Female</option>
+                                    <option value="other" {{ 'selected' if request.form.gender == 'other' }}>Other</option>
+                                    <option value="prefer_not_to_say" {{ 'selected' if request.form.gender == 'prefer_not_to_say' }}>Prefer not to say</option>
+                                </select>
+                            </div>
+                        </div>
+
                         <div class="mb-4">
                             <label for="password" class="form-label">
-                                <i class="fas fa-lock me-1"></i>Password
+                                <i class="fas fa-lock me-1"></i>Password <span class="text-danger">*</span>
                             </label>
                             <input type="password" 
                                    class="form-control" 
@@ -52,32 +93,180 @@
                                    name="password" 
                                    required 
                                    minlength="6"
-                                   placeholder="Choose a secure password (min 6 characters)">
+                                   placeholder="Create a secure password">
                             <div class="form-text">Password must be at least 6 characters long</div>
                         </div>
-                        
+
+                        <!-- Contact Information -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5 class="text-primary mb-3">
+                                    <i class="fas fa-address-book me-2"></i>Contact Information
+                                </h5>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="phone" class="form-label">
+                                    <i class="fas fa-phone me-1"></i>Phone Number
+                                </label>
+                                <input type="tel" 
+                                       class="form-control" 
+                                       id="phone" 
+                                       name="phone" 
+                                       value="{{ request.form.phone or '' }}"
+                                       placeholder="Your phone number">
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="city" class="form-label">
+                                    <i class="fas fa-map-marker-alt me-1"></i>City
+                                </label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="city" 
+                                       name="city" 
+                                       value="{{ request.form.city or '' }}"
+                                       placeholder="Your city in Karnataka">
+                                <div class="form-text">For location-specific dengue alerts</div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="occupation" class="form-label">
+                                <i class="fas fa-briefcase me-1"></i>Occupation
+                            </label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="occupation" 
+                                   name="occupation" 
+                                   value="{{ request.form.occupation or '' }}"
+                                   placeholder="Your profession or occupation">
+                        </div>
+
+                        <!-- Emergency Contact -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5 class="text-primary mb-3">
+                                    <i class="fas fa-first-aid me-2"></i>Emergency Contact <span class="text-muted small">(Optional)</span>
+                                </h5>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="emergency_contact" class="form-label">
+                                    <i class="fas fa-user-friends me-1"></i>Emergency Contact Name
+                                </label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="emergency_contact" 
+                                       name="emergency_contact" 
+                                       value="{{ request.form.emergency_contact or '' }}"
+                                       placeholder="Contact person name">
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="emergency_phone" class="form-label">
+                                    <i class="fas fa-phone-alt me-1"></i>Emergency Contact Phone
+                                </label>
+                                <input type="tel" 
+                                       class="form-control" 
+                                       id="emergency_phone" 
+                                       name="emergency_phone" 
+                                       value="{{ request.form.emergency_phone or '' }}"
+                                       placeholder="Emergency contact number">
+                            </div>
+                        </div>
+
+                        <!-- Medical Information -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5 class="text-primary mb-3">
+                                    <i class="fas fa-stethoscope me-2"></i>Medical Information <span class="text-muted small">(Optional)</span>
+                                </h5>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">
+                                <i class="fas fa-heartbeat me-1"></i>Pre-existing Medical Conditions
+                            </label>
+                            <div class="form-text mb-2">Select any conditions that may affect dengue risk assessment</div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="diabetes" name="medical_conditions" id="diabetes">
+                                        <label class="form-check-label" for="diabetes">Diabetes</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="hypertension" name="medical_conditions" id="hypertension">
+                                        <label class="form-check-label" for="hypertension">Hypertension</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="heart_disease" name="medical_conditions" id="heart_disease">
+                                        <label class="form-check-label" for="heart_disease">Heart Disease</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="asthma" name="medical_conditions" id="asthma">
+                                        <label class="form-check-label" for="asthma">Asthma</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="kidney_disease" name="medical_conditions" id="kidney_disease">
+                                        <label class="form-check-label" for="kidney_disease">Kidney Disease</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="liver_disease" name="medical_conditions" id="liver_disease">
+                                        <label class="form-check-label" for="liver_disease">Liver Disease</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="immunocompromised" name="medical_conditions" id="immunocompromised">
+                                        <label class="form-check-label" for="immunocompromised">Immunocompromised</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="pregnancy" name="medical_conditions" id="pregnancy">
+                                        <label class="form-check-label" for="pregnancy">Pregnancy</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
                         <div class="d-grid mb-3">
-                            <button type="submit" class="btn btn-primary">
+                            <button type="submit" class="btn btn-primary btn-lg">
                                 <i class="fas fa-user-plus me-2"></i>Create Account
                             </button>
                         </div>
+                        
+                        <div class="text-center">
+                            <p class="mb-0">Already have an account? 
+                                <a href="{{ url_for('login') }}" class="text-decoration-none">
+                                    <i class="fas fa-sign-in-alt me-1"></i>Sign In
+                                </a>
+                            </p>
+                        </div>
                     </form>
-                    
-                    <div class="text-center">
-                        <p class="mb-0">
-                            Already have an account? 
-                            <a href="{{ url_for('login') }}" class="text-decoration-none">
-                                Sign in here
-                            </a>
-                        </p>
-                    </div>
                 </div>
             </div>
-            
-            <div class="text-center mt-3">
-                <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">
-                    <i class="fas fa-home me-2"></i>Back to Home
-                </a>
+
+            <!-- Privacy Notice -->
+            <div class="card mt-3 bg-secondary bg-opacity-25">
+                <div class="card-body p-3">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-shield-alt text-primary me-3 fa-2x"></i>
+                        <div>
+                            <h6 class="mb-1 text-light">Your Privacy is Protected</h6>
+                            <small class="text-muted">
+                                Your personal information is encrypted and used only for health risk assessments. 
+                                We follow strict privacy guidelines and never share your data without consent.
+                            </small>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -89,10 +278,49 @@
 // Form validation
 document.querySelector('form').addEventListener('submit', function(e) {
     const password = document.getElementById('password').value;
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    const age = document.getElementById('age').value;
+    
     if (password.length < 6) {
         e.preventDefault();
         alert('Password must be at least 6 characters long');
+        return;
+    }
+    
+    if (!name.trim()) {
+        e.preventDefault();
+        alert('Full name is required');
+        return;
+    }
+    
+    if (!email.trim()) {
+        e.preventDefault();
+        alert('Email address is required');
+        return;
+    }
+    
+    if (age && (parseInt(age) < 5 || parseInt(age) > 120)) {
+        e.preventDefault();
+        alert('Please enter a valid age between 5 and 120');
+        return;
     }
 });
+
+// Enhance form with Bootstrap validation styling
+(function() {
+    'use strict';
+    
+    const forms = document.querySelectorAll('form');
+    forms.forEach(function(form) {
+        form.addEventListener('submit', function(event) {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        }, false);
+    });
+})();
 </script>
 {% endblock %}
