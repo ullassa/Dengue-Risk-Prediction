@@ -12,6 +12,7 @@ from modules.risk_calculator import RiskCalculator
 from modules.ai_predictor import DengueOutbreakPredictor
 from modules.visualizer import Visualizer
 from modules.doctor_consultation import doctor_bp, doctor_consultation
+from modules.health_guru_ai import health_guru
 
 # Load environment variables
 try:
@@ -282,6 +283,103 @@ class DengueExperience(db.Model):
             'advice_for_others': self.advice_for_others,
             'last_updated': self.last_updated.isoformat()
         }
+
+# Marketplace Models
+class ProductCategory(db.Model):
+    """Product categories for dengue prevention marketplace"""
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False, unique=True)
+    description = db.Column(db.Text)
+    icon = db.Column(db.String(50))  # FontAwesome icon class
+    active = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Relationship
+    products = db.relationship('Product', backref='category', lazy=True)
+
+class Product(db.Model):
+    """Products for dengue prevention marketplace"""
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.Text)
+    short_description = db.Column(db.Text)
+    price = db.Column(db.Float, nullable=False)
+    discounted_price = db.Column(db.Float, nullable=True)
+    category_id = db.Column(db.Integer, db.ForeignKey('product_category.id'), nullable=False)
+    image_url = db.Column(db.String(500))
+    stock_quantity = db.Column(db.Integer, default=100)
+    is_active = db.Column(db.Boolean, default=True)
+    is_featured = db.Column(db.Boolean, default=False)
+    effectiveness_rating = db.Column(db.Float, default=4.0)  # Out of 5
+    usage_instructions = db.Column(db.Text)
+    ingredients = db.Column(db.Text)  # For repellents, medicines
+    safety_notes = db.Column(db.Text)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    @property
+    def final_price(self):
+        """Get the final price (discounted if available)"""
+        return self.discounted_price if self.discounted_price else self.price
+    
+    @property
+    def discount_percentage(self):
+        """Calculate discount percentage"""
+        if self.discounted_price and self.discounted_price < self.price:
+            return int(((self.price - self.discounted_price) / self.price) * 100)
+        return 0
+
+class Cart(db.Model):
+    """Shopping cart for users"""
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
+    quantity = db.Column(db.Integer, default=1, nullable=False)
+    added_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Relationships
+    user = db.relationship('User', backref=db.backref('cart_items', lazy=True))
+    product = db.relationship('Product', backref='cart_items')
+    
+    @property
+    def total_price(self):
+        """Calculate total price for this cart item"""
+        return self.product.final_price * self.quantity
+
+class Order(db.Model):
+    """Orders placed by users"""
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    order_number = db.Column(db.String(50), unique=True, nullable=False)
+    status = db.Column(db.String(50), default='pending')  # pending, confirmed, shipped, delivered, cancelled
+    total_amount = db.Column(db.Float, nullable=False)
+    shipping_address = db.Column(db.Text, nullable=False)
+    phone_number = db.Column(db.String(20), nullable=False)
+    payment_method = db.Column(db.String(50), default='cash_on_delivery')
+    notes = db.Column(db.Text)
+    ordered_at = db.Column(db.DateTime, default=datetime.utcnow)
+    estimated_delivery = db.Column(db.Date)
+    
+    # Relationship
+    user = db.relationship('User', backref=db.backref('orders', lazy=True))
+    order_items = db.relationship('OrderItem', backref='order', lazy=True)
+
+class OrderItem(db.Model):
+    """Individual items in an order"""
+    id = db.Column(db.Integer, primary_key=True)
+    order_id = db.Column(db.Integer, db.ForeignKey('order.id'), nullable=False)
+    product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
+    product_name = db.Column(db.String(200), nullable=False)  # Store name at time of order
+    price = db.Column(db.Float, nullable=False)  # Store price at time of order
+    quantity = db.Column(db.Integer, nullable=False)
+    
+    # Relationship
+    product = db.relationship('Product')
+    
+    @property
+    def total_price(self):
+        """Calculate total price for this order item"""
+        return self.price * self.quantity
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -1648,6 +1746,691 @@ def doctor_consultation_page():
 def doctor_test():
     """Test route to verify doctor consultation is working"""
     return "<h1 style='color: green; text-align: center; margin-top: 100px;'>✅ Doctor Consultation Working!</h1><p style='text-align: center;'><a href='/doctor/book-consultation?city=Bangalore&risk_level=High'>Test Consultation Page</a></p>"
+
+# HealthGuru AI Chatbot Routes
+@app.route('/health-guru')
+def health_guru_chat():
+    """HealthGuru AI Chatbot Interface"""
+    return """
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>HealthGuru AI - Your Personal Health Assistant</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        <style>
+            body { 
+                background: #f8f9fa; 
+                min-height: 100vh; 
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                margin: 0;
+                padding: 0;
+            }
+            .chat-container { 
+                width: 100%; 
+                height: 100vh; 
+                margin: 0; 
+                background: white; 
+                border-radius: 0; 
+                box-shadow: none;
+                display: flex;
+                flex-direction: column;
+            }
+            .chat-header { 
+                background: linear-gradient(135deg, #4CAF50, #45a049); 
+                color: white; 
+                padding: 15px 20px; 
+                border-radius: 0; 
+                text-align: center;
+            }
+            .chat-messages { 
+                flex: 1; 
+                overflow-y: auto; 
+                padding: 20px; 
+                background: #f8f9fa;
+            }
+            .message { 
+                margin-bottom: 15px; 
+                animation: slideIn 0.3s ease-in;
+            }
+            .user-message { 
+                text-align: right; 
+            }
+            .user-message .bubble { 
+                background: #007bff; 
+                color: white; 
+                padding: 12px 18px; 
+                border-radius: 20px 20px 5px 20px; 
+                display: inline-block; 
+                max-width: 70%;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            }
+            .ai-message .bubble { 
+                background: #e9ecef; 
+                color: #333; 
+                padding: 12px 18px; 
+                border-radius: 20px 20px 20px 5px; 
+                display: inline-block; 
+                max-width: 80%;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                border-left: 4px solid #4CAF50;
+            }
+            .ai-avatar { 
+                width: 35px; 
+                height: 35px; 
+                background: #4CAF50; 
+                border-radius: 50%; 
+                display: inline-flex; 
+                align-items: center; 
+                justify-content: center; 
+                color: white; 
+                margin-right: 10px;
+                font-weight: bold;
+            }
+            .typing { 
+                opacity: 0.7; 
+                font-style: italic;
+            }
+            .quick-buttons { 
+                display: flex; 
+                flex-wrap: wrap; 
+                gap: 8px; 
+                margin-top: 15px;
+            }
+            .quick-btn { 
+                background: #f8f9fa; 
+                border: 2px solid #dee2e6; 
+                border-radius: 20px; 
+                padding: 8px 15px; 
+                font-size: 12px; 
+                cursor: pointer; 
+                transition: all 0.2s;
+            }
+            .quick-btn:hover { 
+                background: #4CAF50; 
+                color: white; 
+                transform: translateY(-2px);
+            }
+            .input-group { 
+                padding: 20px; 
+                border-radius: 0;
+                background: white;
+                border-top: 1px solid #dee2e6;
+            }
+            .btn-send { 
+                background: #4CAF50; 
+                border: none; 
+                border-radius: 25px;
+                padding: 12px 25px;
+            }
+            .btn-send:hover { 
+                background: #45a049; 
+                transform: translateY(-1px);
+            }
+            @keyframes slideIn { 
+                from { opacity: 0; transform: translateY(10px); } 
+                to { opacity: 1; transform: translateY(0); }
+            }
+            .loading { 
+                display: inline-block; 
+                width: 20px; 
+                height: 20px; 
+                border: 3px solid #f3f3f3; 
+                border-radius: 50%; 
+                border-top: 3px solid #4CAF50; 
+                animation: spin 1s linear infinite;
+            }
+            @keyframes spin { 
+                0% { transform: rotate(0deg); } 
+                100% { transform: rotate(360deg); }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="chat-container">
+                <div class="chat-header">
+                    <h3><i class="fas fa-robot me-2"></i>HealthGuru AI</h3>
+                    <p class="mb-0">Your Personal Dengue Prevention & Healthcare Assistant</p>
+                    <small>Powered by AI • Karnataka Health Expert • Available 24/7</small>
+                </div>
+                
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message ai-message">
+                        <div class="ai-avatar">HG</div>
+                        <div class="bubble">
+                            Hello! I'm HealthGuru, your AI healthcare assistant specialized in dengue prevention for Karnataka! 🌟
+                            <br><br>
+                            I can help you with:
+                            <br>• Dengue symptoms & prevention tips
+                            <br>• Weather-related health risks  
+                            <br>• When to consult a doctor
+                            <br>• Mosquito control strategies
+                            <br>• Karnataka-specific health guidance
+                            <br><br>
+                            How can I help you stay healthy today?
+                        </div>
+                        <div class="quick-buttons">
+                            <button class="quick-btn" onclick="sendQuickMessage('How to prevent dengue?')">🦟 Prevention Tips</button>
+                            <button class="quick-btn" onclick="sendQuickMessage('What are dengue symptoms?')">🤒 Symptoms</button>
+                            <button class="quick-btn" onclick="sendQuickMessage('When should I see a doctor?')">👨‍⚕️ See Doctor</button>
+                            <button class="quick-btn" onclick="sendQuickMessage('How does weather affect dengue?')">🌧️ Weather Impact</button>
+                            <button class="quick-btn" onclick="sendQuickMessage('Emergency signs to watch for')">🚨 Emergency</button>
+                            <button class="quick-btn" onclick="sendQuickMessage('Mosquito control tips')">🏠 Home Safety</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" id="messageInput" placeholder="Ask me anything about dengue prevention, symptoms, or health advice..." onkeypress="if(event.key==='Enter') sendMessage()">
+                        <button class="btn btn-send" type="button" onclick="sendMessage()">
+                            <i class="fas fa-paper-plane"></i> Send
+                        </button>
+                    </div>
+                    <div class="text-center">
+                        <small class="text-muted">
+                            <i class="fas fa-shield-alt text-success"></i> 
+                            Medical information for educational purposes only. Always consult healthcare professionals for medical advice.
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            function sendMessage() {
+                const input = document.getElementById('messageInput');
+                const message = input.value.trim();
+                if (!message) return;
+                
+                // Add user message to chat
+                addUserMessage(message);
+                input.value = '';
+                
+                // Show typing indicator
+                showTyping();
+                
+                // Send to AI
+                fetch('/health-guru/chat', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({message: message})
+                })
+                .then(response => response.json())
+                .then(data => {
+                    hideTyping();
+                    addAIMessage(data.response);
+                })
+                .catch(error => {
+                    hideTyping();
+                    addAIMessage("I apologize, but I'm having trouble connecting right now. Please try asking your question again, or contact a healthcare professional directly for medical concerns.");
+                });
+            }
+            
+            function sendQuickMessage(message) {
+                document.getElementById('messageInput').value = message;
+                sendMessage();
+            }
+            
+            function addUserMessage(message) {
+                const chatMessages = document.getElementById('chatMessages');
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'message user-message';
+                messageDiv.innerHTML = `<div class="bubble">${message}</div>`;
+                chatMessages.appendChild(messageDiv);
+                scrollToBottom();
+            }
+            
+            function addAIMessage(message) {
+                const chatMessages = document.getElementById('chatMessages');
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'message ai-message';
+                messageDiv.innerHTML = `
+                    <div class="ai-avatar">HG</div>
+                    <div class="bubble">${message.replace(/\\n/g, '<br>')}</div>
+                `;
+                chatMessages.appendChild(messageDiv);
+                scrollToBottom();
+            }
+            
+            function showTyping() {
+                const chatMessages = document.getElementById('chatMessages');
+                const typingDiv = document.createElement('div');
+                typingDiv.className = 'message ai-message typing';
+                typingDiv.id = 'typingIndicator';
+                typingDiv.innerHTML = `
+                    <div class="ai-avatar">HG</div>
+                    <div class="bubble">
+                        <div class="loading"></div> HealthGuru is thinking...
+                    </div>
+                `;
+                chatMessages.appendChild(typingDiv);
+                scrollToBottom();
+            }
+            
+            function hideTyping() {
+                const typingIndicator = document.getElementById('typingIndicator');
+                if (typingIndicator) {
+                    typingIndicator.remove();
+                }
+            }
+            
+            function scrollToBottom() {
+                const chatMessages = document.getElementById('chatMessages');
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+            
+            // Auto-focus input
+            document.getElementById('messageInput').focus();
+        </script>
+    </body>
+    </html>
+    """
+
+@app.route('/health-guru/chat', methods=['POST'])
+def health_guru_api():
+    """AI Chat API endpoint"""
+    try:
+        data = request.get_json()
+        user_message = data.get('message', '')
+        
+        # Get user context if available
+        user_context = {
+            'city': session.get('last_city', 'Karnataka'),
+            'risk_level': session.get('last_risk_level', 'Unknown'),
+            'symptoms': session.get('last_symptoms', 'None reported')
+        }
+        
+        # Get AI response
+        ai_response = health_guru.get_ai_response(user_message, user_context)
+        
+        return jsonify({'response': ai_response, 'status': 'success'})
+        
+    except Exception as e:
+        logging.error(f"HealthGuru chat error: {str(e)}")
+        return jsonify({
+            'response': "I'm sorry, I'm experiencing some technical difficulties. For immediate health concerns, please contact a healthcare professional or call emergency services (108).",
+            'status': 'error'
+        })
+
+# Marketplace Routes
+@app.route('/marketplace')
+def marketplace():
+    """Main marketplace page showing all products"""
+    try:
+        # Get all categories
+        categories = ProductCategory.query.filter_by(active=True).all()
+        
+        # Get featured products
+        featured_products = Product.query.filter_by(is_active=True, is_featured=True).limit(6).all()
+        
+        # Get category filter
+        category_id = request.args.get('category', type=int)
+        if category_id:
+            products = Product.query.filter_by(category_id=category_id, is_active=True).all()
+            selected_category = ProductCategory.query.get(category_id)
+        else:
+            products = Product.query.filter_by(is_active=True).all()
+            selected_category = None
+        
+        return render_template('marketplace/index.html', 
+                             categories=categories, 
+                             products=products,
+                             featured_products=featured_products,
+                             selected_category=selected_category)
+    except Exception as e:
+        flash('Error loading marketplace', 'error')
+        return redirect(url_for('index'))
+
+@app.route('/marketplace/product/<int:product_id>')
+def product_detail(product_id):
+    """Product detail page"""
+    try:
+        product = Product.query.get_or_404(product_id)
+        if not product.is_active:
+            flash('Product not available', 'warning')
+            return redirect(url_for('marketplace'))
+        
+        # Get related products from same category
+        related_products = Product.query.filter_by(
+            category_id=product.category_id, 
+            is_active=True
+        ).filter(Product.id != product_id).limit(4).all()
+        
+        return render_template('marketplace/product_detail.html', 
+                             product=product,
+                             related_products=related_products)
+    except Exception as e:
+        flash('Product not found', 'error')
+        return redirect(url_for('marketplace'))
+
+@app.route('/marketplace/add-to-cart/<int:product_id>', methods=['POST'])
+@login_required
+def add_to_cart(product_id):
+    """Add product to cart"""
+    try:
+        product = Product.query.get_or_404(product_id)
+        quantity = int(request.form.get('quantity', 1))
+        
+        if quantity <= 0:
+            return jsonify({'status': 'error', 'message': 'Invalid quantity'})
+        
+        if product.stock_quantity < quantity:
+            return jsonify({'status': 'error', 'message': 'Insufficient stock'})
+        
+        # Check if item already in cart
+        cart_item = Cart.query.filter_by(
+            user_id=current_user.id, 
+            product_id=product_id
+        ).first()
+        
+        if cart_item:
+            # Update quantity
+            if cart_item.quantity + quantity > product.stock_quantity:
+                return jsonify({'status': 'error', 'message': 'Insufficient stock'})
+            cart_item.quantity += quantity
+        else:
+            # Create new cart item
+            cart_item = Cart(
+                user_id=current_user.id,
+                product_id=product_id,
+                quantity=quantity
+            )
+            db.session.add(cart_item)
+        
+        db.session.commit()
+        
+        # Get cart count for response
+        cart_count = db.session.query(db.func.sum(Cart.quantity)).filter_by(user_id=current_user.id).scalar() or 0
+        
+        return jsonify({
+            'status': 'success', 
+            'message': f'{product.name} added to cart',
+            'cart_count': cart_count
+        })
+        
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': 'Failed to add to cart'})
+
+@app.route('/marketplace/cart')
+@login_required
+def view_cart():
+    """View shopping cart"""
+    try:
+        cart_items = Cart.query.filter_by(user_id=current_user.id).all()
+        total_amount = sum(item.total_price for item in cart_items)
+        
+        return render_template('marketplace/cart.html', 
+                             cart_items=cart_items,
+                             total_amount=total_amount)
+    except Exception as e:
+        flash('Error loading cart', 'error')
+        return redirect(url_for('marketplace'))
+
+@app.route('/marketplace/cart/update', methods=['POST'])
+@login_required
+def update_cart():
+    """Update cart item quantity"""
+    try:
+        cart_item_id = int(request.form.get('cart_item_id'))
+        quantity = int(request.form.get('quantity'))
+        
+        cart_item = Cart.query.filter_by(
+            id=cart_item_id, 
+            user_id=current_user.id
+        ).first_or_404()
+        
+        if quantity <= 0:
+            db.session.delete(cart_item)
+            message = 'Item removed from cart'
+        else:
+            if quantity > cart_item.product.stock_quantity:
+                flash('Insufficient stock available', 'warning')
+                return redirect(url_for('view_cart'))
+            cart_item.quantity = quantity
+            message = 'Cart updated'
+        
+        db.session.commit()
+        flash(message, 'success')
+        
+    except Exception as e:
+        flash('Error updating cart', 'error')
+    
+    return redirect(url_for('view_cart'))
+
+@app.route('/marketplace/cart/remove/<int:cart_item_id>', methods=['POST'])
+@login_required
+def remove_from_cart(cart_item_id):
+    """Remove item from cart"""
+    try:
+        cart_item = Cart.query.filter_by(
+            id=cart_item_id,
+            user_id=current_user.id
+        ).first_or_404()
+        
+        db.session.delete(cart_item)
+        db.session.commit()
+        
+        return jsonify({'status': 'success', 'message': 'Item removed from cart'})
+        
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': 'Failed to remove item'})
+
+@app.route('/marketplace/checkout')
+@login_required
+def checkout():
+    """Checkout page"""
+    try:
+        cart_items = Cart.query.filter_by(user_id=current_user.id).all()
+        
+        if not cart_items:
+            flash('Your cart is empty', 'warning')
+            return redirect(url_for('marketplace'))
+        
+        total_amount = sum(item.total_price for item in cart_items)
+        
+        return render_template('marketplace/checkout.html', 
+                             cart_items=cart_items,
+                             total_amount=total_amount)
+    except Exception as e:
+        flash('Error loading checkout', 'error')
+        return redirect(url_for('view_cart'))
+
+@app.route('/marketplace/place-order', methods=['POST'])
+@login_required
+def place_order():
+    """Place an order"""
+    print(f"🔥 PLACE ORDER ROUTE HIT! User: {current_user.name if current_user.is_authenticated else 'Anonymous'}")
+    try:
+        cart_items = Cart.query.filter_by(user_id=current_user.id).all()
+        print(f"🛒 Cart items found: {len(cart_items)}")
+        
+        if not cart_items:
+            print("❌ No cart items found")
+            flash('Your cart is empty', 'warning')
+            return redirect(url_for('marketplace'))
+        
+        # Get form data
+        shipping_address = request.form.get('shipping_address')
+        phone_number = request.form.get('phone_number')
+        payment_method = request.form.get('payment_method', 'cash_on_delivery')
+        notes = request.form.get('notes', '')
+        
+        print(f"📝 Form data - Address: {shipping_address}, Phone: {phone_number}")
+        
+        if not shipping_address or not phone_number:
+            print("❌ Missing required fields")
+            flash('Please fill in all required fields', 'error')
+            return redirect(url_for('checkout'))
+        
+        # Calculate total
+        total_amount = sum(item.total_price for item in cart_items)
+        
+        # Generate order number
+        import random, string
+        order_number = 'DNP' + ''.join(random.choices(string.digits, k=8))
+        
+        # Create order
+        order = Order(
+            user_id=current_user.id,
+            order_number=order_number,
+            total_amount=total_amount,
+            shipping_address=shipping_address,
+            phone_number=phone_number,
+            payment_method=payment_method,
+            notes=notes,
+            estimated_delivery=(datetime.now() + timedelta(days=3)).date()
+        )
+        db.session.add(order)
+        db.session.flush()  # To get order ID
+        
+        # Create order items
+        for cart_item in cart_items:
+            order_item = OrderItem(
+                order_id=order.id,
+                product_id=cart_item.product_id,
+                product_name=cart_item.product.name,
+                price=cart_item.product.final_price,
+                quantity=cart_item.quantity
+            )
+            db.session.add(order_item)
+            
+            # Update product stock
+            cart_item.product.stock_quantity -= cart_item.quantity
+        
+        # Clear cart
+        for cart_item in cart_items:
+            db.session.delete(cart_item)
+        
+        db.session.commit()
+        
+        # Track activity
+        track_activity('order_placed', 'marketplace', {
+            'order_number': order_number,
+            'total_amount': total_amount,
+            'items_count': len(cart_items)
+        })
+        
+        flash(f'Order placed successfully! Order number: {order_number}', 'success')
+        return redirect(url_for('order_confirmation', order_id=order.id))
+        
+    except Exception as e:
+        db.session.rollback()
+        flash('Error placing order. Please try again.', 'error')
+        return redirect(url_for('checkout'))
+
+@app.route('/marketplace/order/<int:order_id>')
+@login_required
+def order_confirmation(order_id):
+    """Order confirmation page"""
+    try:
+        order = Order.query.filter_by(
+            id=order_id,
+            user_id=current_user.id
+        ).first()
+        
+        if not order:
+            flash('Order not found', 'error')
+            return redirect(url_for('marketplace'))
+        
+        return render_template('marketplace/order_confirmation.html', order=order)
+    except Exception as e:
+        flash(f'Error loading order: {str(e)}', 'error')
+        return redirect(url_for('marketplace'))
+
+@app.route('/marketplace/my-orders')
+@login_required
+def my_orders():
+    """View user's orders"""
+    try:
+        orders = Order.query.filter_by(
+            user_id=current_user.id
+        ).order_by(Order.ordered_at.desc()).all()
+        
+        return render_template('marketplace/my_orders.html', orders=orders)
+    except Exception as e:
+        flash('Error loading orders', 'error')
+        return redirect(url_for('marketplace'))
+
+# Admin marketplace routes (if user is admin)
+@app.route('/admin/marketplace')
+@login_required
+def admin_marketplace():
+    """Admin marketplace management"""
+    if not current_user.is_admin:
+        flash('Access denied', 'error')
+        return redirect(url_for('marketplace'))
+    
+    try:
+        products = Product.query.all()
+        categories = ProductCategory.query.all()
+        orders = Order.query.order_by(Order.ordered_at.desc()).limit(20).all()
+        
+        return render_template('marketplace/admin_dashboard.html',
+                             products=products,
+                             categories=categories,
+                             orders=orders)
+    except Exception as e:
+        flash('Error loading admin dashboard', 'error')
+        return redirect(url_for('marketplace'))
+
+@app.route('/marketplace/cancel-order/<int:order_id>', methods=['POST'])
+@login_required
+def cancel_order(order_id):
+    """Cancel an order"""
+    try:
+        order = Order.query.filter_by(
+            id=order_id,
+            user_id=current_user.id
+        ).first_or_404()
+        
+        if order.status not in ['pending', 'confirmed']:
+            return jsonify({
+                'success': False, 
+                'message': 'Order cannot be cancelled at this stage'
+            })
+        
+        # Update order status
+        order.status = 'cancelled'
+        
+        # Restore product stock
+        for item in order.items:
+            product = Product.query.get(item.product_id)
+            if product:
+                product.stock_quantity += item.quantity
+        
+        db.session.commit()
+        
+        # Track activity
+        track_activity('order_cancelled', 'marketplace', {
+            'order_number': order.order_number,
+            'total_amount': order.total_amount
+        })
+        
+        return jsonify({
+            'success': True, 
+            'message': 'Order cancelled successfully'
+        })
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({
+            'success': False, 
+            'message': 'Failed to cancel order'
+        })
+
+@app.route('/api/cart-count')
+@login_required
+def cart_count():
+    """API endpoint to get cart count"""
+    try:
+        count = db.session.query(db.func.sum(Cart.quantity)).filter_by(user_id=current_user.id).scalar() or 0
+        return jsonify({'count': count})
+    except Exception as e:
+        return jsonify({'count': 0})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

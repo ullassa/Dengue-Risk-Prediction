@@ -1,0 +1,308 @@
+{% extends "base.html" %}
+
+{% block title %}My Orders - Order History{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4" style="background: linear-gradient(135deg, #0a2c5c, #499aa8); min-height: 100vh;">
+    
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-lg-12">
+            <div class="text-center mb-4">
+                <h1 class="display-5 text-white mb-3">
+                    <i class="fas fa-list me-3"></i>My Orders
+                </h1>
+                <p class="lead text-light">
+                    Track your dengue prevention product orders
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Breadcrumb -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb" style="background: rgba(16, 90, 165, 0.3); border: 1px solid rgba(73, 154, 168, 0.5);">
+                    <li class="breadcrumb-item">
+                        <a href="{{ url_for('marketplace') }}" class="text-warning">
+                            <i class="fas fa-store me-1"></i>Marketplace
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active text-light">My Orders</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    {% if orders %}
+    <!-- Orders List -->
+    <div class="row">
+        <div class="col-lg-12">
+            {% for order in orders %}
+            <div class="card mb-4" style="background: linear-gradient(135deg, rgba(16, 90, 165, 0.8), rgba(73, 154, 168, 0.8)); border: 1px solid rgba(73, 154, 168, 0.5); backdrop-filter: blur(10px);">
+                <div class="card-header">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <h5 class="text-light mb-0">
+                                <i class="fas fa-receipt me-2"></i>Order #{{ order.order_number }}
+                            </h5>
+                            <small class="text-light">Placed on {{ order.ordered_at.strftime('%B %d, %Y at %I:%M %p') }}</small>
+                        </div>
+                        <div class="col-md-6 text-md-end">
+                            <span class="badge 
+                                {% if order.status == 'pending' %}bg-warning
+                                {% elif order.status == 'confirmed' %}bg-info
+                                {% elif order.status == 'shipped' %}bg-primary
+                                {% elif order.status == 'delivered' %}bg-success
+                                {% elif order.status == 'cancelled' %}bg-danger
+                                {% else %}bg-secondary
+                                {% endif %} fs-6">
+                                {{ order.status.title() }}
+                            </span>
+                            <div class="mt-1">
+                                <span class="text-warning fs-5 fw-bold">₹{{ "%.0f"|format(order.total_amount) }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Order Items -->
+                        <div class="col-md-8">
+                            <h6 class="text-light mb-3">Items Ordered ({{ order.items|length }})</h6>
+                            {% for item in order.items %}
+                            <div class="d-flex align-items-center mb-2 p-2" style="background: rgba(16, 90, 165, 0.2); border-radius: 5px;">
+                                <div class="flex-grow-1">
+                                    <span class="text-light">{{ item.product_name }}</span>
+                                    <small class="text-light d-block">Qty: {{ item.quantity }} × ₹{{ "%.0f"|format(item.price) }}</small>
+                                </div>
+                                <div class="text-warning fw-bold">
+                                    ₹{{ "%.0f"|format(item.price * item.quantity) }}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        
+                        <!-- Order Details -->
+                        <div class="col-md-4">
+                            <h6 class="text-light mb-3">Order Details</h6>
+                            <ul class="list-unstyled text-light">
+                                <li class="mb-1"><strong>Payment:</strong> Cash on Delivery</li>
+                                <li class="mb-1"><strong>Phone:</strong> {{ order.phone_number }}</li>
+                                {% if order.estimated_delivery %}
+                                <li class="mb-1"><strong>Est. Delivery:</strong> {{ order.estimated_delivery.strftime('%b %d, %Y') }}</li>
+                                {% endif %}
+                            </ul>
+                            
+                            <!-- Shipping Address -->
+                            <div class="mt-3">
+                                <h6 class="text-light mb-2">Shipping Address</h6>
+                                <p class="text-light small">{{ order.shipping_address }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Order Notes -->
+                    {% if order.notes %}
+                    <div class="mt-3 pt-3" style="border-top: 1px solid rgba(73, 154, 168, 0.3);">
+                        <h6 class="text-light mb-2">Special Instructions</h6>
+                        <p class="text-light">{{ order.notes }}</p>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Action Buttons -->
+                    <div class="mt-3 pt-3" style="border-top: 1px solid rgba(73, 154, 168, 0.3);">
+                        <div class="d-flex flex-wrap gap-2">
+                            <a href="{{ url_for('order_confirmation', order_id=order.id) }}" 
+                               class="btn btn-outline-light btn-sm">
+                                <i class="fas fa-eye me-1"></i>View Details
+                            </a>
+                            {% if order.status in ['pending', 'confirmed'] %}
+                            <button class="btn btn-outline-danger btn-sm" 
+                                    onclick="cancelOrder({{ order.id }})">
+                                <i class="fas fa-times me-1"></i>Cancel Order
+                            </button>
+                            {% endif %}
+                            {% if order.status == 'delivered' %}
+                            <button class="btn btn-warning btn-sm">
+                                <i class="fas fa-star me-1"></i>Rate Products
+                            </button>
+                            {% endif %}
+                            <button class="btn btn-info btn-sm" onclick="trackOrder('{{ order.order_number }}')">
+                                <i class="fas fa-map-marker-alt me-1"></i>Track Order
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    {% else %}
+    <!-- No Orders -->
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card" style="background: linear-gradient(135deg, rgba(16, 90, 165, 0.8), rgba(73, 154, 168, 0.8)); border: 1px solid rgba(73, 154, 168, 0.5); backdrop-filter: blur(10px);">
+                <div class="card-body text-center py-5">
+                    <i class="fas fa-shopping-bag fa-4x text-light mb-4"></i>
+                    <h4 class="text-light mb-3">No Orders Yet</h4>
+                    <p class="text-light mb-4">
+                        You haven't placed any orders yet. Start shopping for dengue prevention products!
+                    </p>
+                    <a href="{{ url_for('marketplace') }}" class="btn btn-warning btn-lg">
+                        <i class="fas fa-store me-2"></i>Start Shopping
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Back Navigation -->
+    <div class="text-center mt-4">
+        <a href="{{ url_for('marketplace') }}" class="btn btn-outline-light">
+            <i class="fas fa-arrow-left me-2"></i>Back to Marketplace
+        </a>
+    </div>
+</div>
+
+<!-- Order Tracking Modal -->
+<div class="modal fade" id="trackingModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark">
+            <div class="modal-header">
+                <h5 class="modal-title text-light">Order Tracking</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="trackingContent" class="text-light">
+                    <!-- Tracking info will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function cancelOrder(orderId) {
+    if (confirm('Are you sure you want to cancel this order?')) {
+        fetch(`/marketplace/cancel-order/${orderId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Order cancelled successfully');
+                location.reload();
+            } else {
+                alert(data.message || 'Failed to cancel order');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to cancel order');
+        });
+    }
+}
+
+function trackOrder(orderNumber) {
+    const modal = new bootstrap.Modal(document.getElementById('trackingModal'));
+    const content = document.getElementById('trackingContent');
+    
+    content.innerHTML = `
+        <div class="text-center">
+            <div class="spinner-border text-warning" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2">Loading tracking information...</p>
+        </div>
+    `;
+    
+    modal.show();
+    
+    // Simulate tracking info (in real app, this would be an API call)
+    setTimeout(() => {
+        content.innerHTML = `
+            <h6 class="mb-3">Order #${orderNumber}</h6>
+            <div class="timeline">
+                <div class="timeline-item completed">
+                    <i class="fas fa-check-circle text-success"></i>
+                    <div class="timeline-content">
+                        <h6>Order Confirmed</h6>
+                        <small>Your order has been received and confirmed</small>
+                    </div>
+                </div>
+                <div class="timeline-item active">
+                    <i class="fas fa-box text-warning"></i>
+                    <div class="timeline-content">
+                        <h6>Being Prepared</h6>
+                        <small>Your order is being packed for dispatch</small>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <i class="fas fa-truck text-muted"></i>
+                    <div class="timeline-content">
+                        <h6>In Transit</h6>
+                        <small>Order will be dispatched soon</small>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <i class="fas fa-home text-muted"></i>
+                    <div class="timeline-content">
+                        <h6>Delivered</h6>
+                        <small>Order will be delivered to your address</small>
+                    </div>
+                </div>
+            </div>
+        `;
+    }, 1500);
+}
+</script>
+
+<style>
+.timeline {
+    position: relative;
+    padding-left: 30px;
+}
+.timeline-item {
+    position: relative;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+}
+.timeline-item:not(:last-child):before {
+    content: '';
+    position: absolute;
+    left: -22px;
+    top: 25px;
+    height: calc(100% + 10px);
+    width: 2px;
+    background: #495057;
+}
+.timeline-item.completed:not(:last-child):before {
+    background: #28a745;
+}
+.timeline-item.active:not(:last-child):before {
+    background: linear-gradient(to bottom, #28a745 50%, #495057 50%);
+}
+.timeline-item i {
+    position: absolute;
+    left: -30px;
+    top: 0;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+}
+.timeline-content h6 {
+    margin-bottom: 5px;
+}
+</style>
+{% endblock %}

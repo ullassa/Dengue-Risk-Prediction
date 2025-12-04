@@ -27,6 +27,133 @@
     <!-- Custom CSS -->
     <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
     
+    <!-- Floating AI Assistant Styles -->
+    <style>
+        .floating-ai-assistant {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+            z-index: 1000;
+            transition: all 0.3s ease;
+            animation: pulse 2s infinite;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+        }
+        .floating-ai-assistant:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 35px rgba(102, 126, 234, 0.6);
+        }
+        
+        /* Floating Prevention Store Button */
+        .floating-store-button {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #00ffff 0%, #00bfff 100%);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #000;
+            font-size: 20px;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(0, 255, 255, 0.8);
+            z-index: 999;
+            transition: all 0.3s ease;
+            animation: storePulse 3s infinite;
+            border: 3px solid rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+        }
+        .floating-store-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 15px 40px rgba(0, 255, 255, 1);
+            color: #000;
+            text-decoration: none;
+        }
+        .floating-store-button .store-text {
+            font-size: 9px;
+            font-weight: bold;
+            margin-top: 2px;
+            text-align: center;
+            line-height: 1;
+        }
+        @keyframes storePulse {
+            0% { box-shadow: 0 8px 25px rgba(0, 255, 255, 0.8); }
+            50% { box-shadow: 0 8px 25px rgba(0, 255, 255, 1), 0 0 0 10px rgba(0, 255, 255, 0.5); }
+            100% { box-shadow: 0 8px 25px rgba(0, 255, 255, 0.8); }
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4); }
+            50% { box-shadow: 0 8px 25px rgba(102, 126, 234, 0.8); }
+            100% { box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4); }
+        }
+        .ai-chat-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1050;
+            backdrop-filter: blur(5px);
+        }
+        .ai-chat-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 800px;
+            height: 80vh;
+            background: white;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        .ai-modal-header {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            padding: 20px;
+            border-radius: 20px 20px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .ai-modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .ai-modal-close:hover {
+            background: rgba(255,255,255,0.2);
+        }
+    </style>
+    
     <!-- Chart.js for visualizations -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
@@ -53,6 +180,26 @@
                     <li class="nav-item">
                         <a class="nav-link fw-bold" href="{{ url_for('dashboard') }}">
                             <i class="fas fa-home me-2"></i>Home
+                        </a>
+                    </li>
+                    <!-- Prominent Prevention Store Link -->
+                    <li class="nav-item">
+                        <a class="nav-link fw-bold position-relative" href="{{ url_for('marketplace') }}" 
+                           style="background: linear-gradient(135deg, rgba(0, 255, 255, 0.3), rgba(0, 191, 255, 0.3)); 
+                                  border-radius: 25px; 
+                                  padding: 8px 16px !important; 
+                                  margin: 0 5px;
+                                  border: 2px solid rgba(0, 255, 255, 0.7);
+                                  transition: all 0.3s ease;
+                                  box-shadow: 0 2px 8px rgba(0, 255, 255, 0.5);"
+                           onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 4px 15px rgba(0, 255, 255, 0.8)';"
+                           onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 2px 8px rgba(0, 255, 255, 0.5)';">
+                            <i class="fas fa-store me-2 text-info" style="font-size: 1.2em;"></i>
+                            <span class="text-white fw-bold">Prevention Store</span>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success" 
+                                  style="font-size: 0.6em; animation: pulse 2s infinite;">
+                                NEW
+                            </span>
                         </a>
                     </li>
                     <li class="nav-item dropdown">
@@ -84,6 +231,9 @@
                                 <i class="fas fa-broadcast-tower me-2 text-danger"></i>Live Data</a></li>
                             <li><a class="dropdown-item" href="{{ url_for('community_experiences') }}">
                                 <i class="fas fa-users me-2 text-info"></i>Community Stories</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ url_for('health_guru_chat') }}" style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));">
+                                <i class="fas fa-robot me-2 text-primary"></i>HealthGuru AI Assistant</a></li>
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
@@ -91,6 +241,9 @@
                             <i class="fas fa-tools me-2"></i>Tools
                         </a>
                         <ul class="dropdown-menu dropdown-menu-dark">
+                            <li><a class="dropdown-item" href="{{ url_for('marketplace') }}">
+                                <i class="fas fa-store me-2 text-warning"></i>Dengue Prevention Store</a></li>
+                            <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="{{ url_for('weather_prediction') }}">
                                 <i class="fas fa-cloud-rain me-2 text-info"></i>Weather Check</a></li>
                             <li><a class="dropdown-item" href="{{ url_for('local_alert_route') }}">
@@ -111,6 +264,23 @@
                 </ul>
                 <ul class="navbar-nav">
                     {% if current_user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link position-relative fw-bold" href="{{ url_for('view_cart') }}" 
+                           title="Shopping Cart" 
+                           style="background: linear-gradient(135deg, rgba(40, 167, 69, 0.2), rgba(25, 135, 84, 0.2)); 
+                                  border-radius: 20px; 
+                                  padding: 8px 12px !important; 
+                                  margin: 0 5px;
+                                  border: 2px solid rgba(40, 167, 69, 0.3);
+                                  transition: all 0.3s ease;"
+                           onmouseover="this.style.transform='scale(1.05)';"
+                           onmouseout="this.style.transform='scale(1)';">
+                            <i class="fas fa-shopping-cart text-success" style="font-size: 1.1em;"></i>
+                            <span id="navCartBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark" style="display: none; font-size: 0.6em;">
+                                0
+                            </span>
+                        </a>
+                    </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fas fa-user me-1"></i>{{ current_user.name }}
@@ -263,5 +433,80 @@
     </script>
     
     {% block scripts %}{% endblock %}
+    
+    <!-- Floating Prevention Store Button -->
+    {% if current_user.is_authenticated %}
+    <a href="{{ url_for('marketplace') }}" class="floating-store-button" title="Dengue Prevention Store 🛒">
+        <i class="fas fa-store"></i>
+        <div class="store-text">STORE</div>
+    </a>
+    {% endif %}
+    
+    <!-- Floating AI Assistant -->
+    <div class="floating-ai-assistant" onclick="openAIChat()" title="Chat with HealthGuru AI 🤖">
+        <i class="fas fa-robot"></i>
+    </div>
+    
+    <!-- AI Chat Modal -->
+    <div class="ai-chat-modal" id="aiChatModal">
+        <div class="ai-chat-container">
+            <div class="ai-modal-header">
+                <div>
+                    <h4 class="mb-0"><i class="fas fa-robot me-2"></i>HealthGuru AI</h4>
+                    <small>Your Personal Health Assistant 24/7</small>
+                </div>
+                <button class="ai-modal-close" onclick="closeAIChat()" title="Close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <iframe id="aiChatFrame" src="" style="flex: 1; border: none; border-radius: 0 0 20px 20px;"></iframe>
+        </div>
+    </div>
+
+    <!-- AI Assistant Scripts -->
+    <script>
+        function openAIChat() {
+            const modal = document.getElementById('aiChatModal');
+            const frame = document.getElementById('aiChatFrame');
+            frame.src = '{{ url_for("health_guru_chat") }}';
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            
+            // Analytics - track AI assistant usage
+            console.log('HealthGuru AI Assistant opened');
+        }
+        
+        function closeAIChat() {
+            const modal = document.getElementById('aiChatModal');
+            const frame = document.getElementById('aiChatFrame');
+            modal.style.display = 'none';
+            frame.src = '';
+            document.body.style.overflow = 'auto';
+        }
+        
+        // Close modal when clicking outside
+        document.getElementById('aiChatModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeAIChat();
+            }
+        });
+        
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && document.getElementById('aiChatModal').style.display === 'block') {
+                closeAIChat();
+            }
+        });
+        
+        // Add entrance animation
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                const aiButton = document.querySelector('.floating-ai-assistant');
+                if (aiButton) {
+                    aiButton.style.animation = 'pulse 2s infinite, bounceIn 0.8s ease-out';
+                }
+            }, 1000);
+        });
+    </script>
 </body>
 </html>
