@@ -66,7 +66,7 @@ python app.py
 # System Architecture
 
 ## Frontend Architecture
-- **Template Engine**: Jinja2 templating with Bootstrap 5 dark theme
+- **Template Engine**: Jinja2 templating with Bootstrap 5 dark theme,
 - **UI Framework**: Bootstrap CSS framework with Font Awesome icons
 - **JavaScript Libraries**: Chart.js for visualizations, Leaflet for maps
 - **Responsive Design**: Mobile-first approach with responsive grid system
