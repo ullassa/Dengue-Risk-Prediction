@@ -108,12 +108,5 @@ The Dengue Prevention Marketplace is a comprehensive e-commerce platform integra
 
 ## 🎉 Ready for Exhibition!
 
-The marketplace feature is **fully functional** and ready for demonstration at your December 5, 2025 exhibition. It showcases:
-- ✅ Complete e-commerce functionality
-- ✅ Professional user interface
-- ✅ Real-world product catalog
-- ✅ Integrated payment system
-- ✅ Mobile-responsive design
 
-**Access URL**: http://localhost:5000/marketplace
 
