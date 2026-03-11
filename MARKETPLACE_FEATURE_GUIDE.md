@@ -117,4 +117,3 @@ The marketplace feature is **fully functional** and ready for demonstration at y
 
 **Access URL**: http://localhost:5000/marketplace
 
-*This feature demonstrates the evolution from health monitoring to complete health ecosystem management.*
